@@ -98,3 +98,5 @@ pylint.max-public-methods = 30
     # "PLR0913", # - complexity sometimes ok
     # "PLR0917", # - complexity sometimes ok
 ]
+"tests/**/*.py" = [ "T201", "SLF001" ]
+"src/**/cli.py" = [ "T201" ]

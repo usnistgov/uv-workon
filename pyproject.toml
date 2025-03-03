@@ -17,7 +17,7 @@ license-files = [ "LICENSE" ]
 authors = [
     { name = "William P. Krekelberg", email = "wpk@nist.gov" },
 ]
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 classifiers = [
     "Development Status :: 2 - Pre-Alpha",
     "Intended Audience :: Science/Research",
@@ -25,7 +25,6 @@ classifiers = [
     "Operating System :: OS Independent",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
@@ -48,7 +47,6 @@ scripts.uv_workon = "uv_workon.cli:main"
 dev = [
     { include-group = "dev-extras" },
     { include-group = "mypy" },
-    # { include-group = "nbval" },
     { include-group = "test" },
     { include-group = "typing" },
     { include-group = "uvxrun" },
@@ -58,8 +56,7 @@ test = [
 ]
 docs = [
     "autodocsumm",
-    "myst-nb; python_version>'3.9'",
-    # myst-parser, ipython,
+    "myst-parser",
     "pyenchant",
     "sphinx>=5.3.0",
     "sphinx-book-theme",
