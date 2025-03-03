@@ -256,40 +256,15 @@ pytest-accept = { pip = true }
 
 [tool.pyproject2conda.envs.dev]
 groups = "dev"
-style = [ "requirements", "yaml" ]
 
 [tool.pyproject2conda.envs.test]
 groups = "test"
 python = "all"
-style = [ "requirements", "yaml" ]
 
 [tool.pyproject2conda.envs.test-extras]
 groups = "test-extras"
 python = "all"
 skip_package = true
-style = [ "requirements", "yaml" ]
-
-[tool.pyproject2conda.envs.test-notebook]
-groups = "test-notebook"
-style = "requirements"
-
-[tool.pyproject2conda.envs.docs]
-groups = "docs"
-style = "requirements"
-
-[tool.pyproject2conda.envs.docs-live]
-groups = "docs-live"
-style = "requirements"
-
-[tool.pyproject2conda.envs.typing]
-groups = "typing"
-python = "all"
-style = "requirements"
-
-[tool.pyproject2conda.envs.build]
-groups = "build-system.requires"
-skip_package = true
-style = "requirements"
 
 [tool.pyproject2conda.envs.uvxrun-tools]
 reqs = [
