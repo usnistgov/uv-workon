@@ -1,0 +1,26 @@
+{
+  "template": "https://github.com/usnistgov/cookiecutter-nist-python.git",
+  "commit": "d40f28760a088c7bac210a0cab3db44e88ef6929",
+  "checkout": "develop",
+  "context": {
+    "cookiecutter": {
+      "project_name": "uv-workon",
+      "project_slug": "uv_workon",
+      "project_short_description": "Tools activate and run from virtual environments",
+      "full_name": "William P. Krekelberg",
+      "email": "wpk@nist.gov",
+      "github_username": "wpk-nist-gov",
+      "pypi_username": "wpk-nist",
+      "conda_channel": "wpk-nist",
+      "command_line_interface": "typer",
+      "sphinx_use_autodocsumm": true,
+      "sphinx_theme": "sphinx_book_theme",
+      "year": "2025",
+      "__answers": "",
+      "_copy_without_render": [],
+      "_template": "https://github.com/usnistgov/cookiecutter-nist-python.git",
+      "_commit": "d40f28760a088c7bac210a0cab3db44e88ef6929"
+    }
+  },
+  "directory": null
+}
