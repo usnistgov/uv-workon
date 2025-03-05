@@ -11,9 +11,12 @@ channels:
   - conda-forge
 dependencies:
   - python=3.10
+  - attrs
   - pytest
   - pytest-cov
   - pytest-sugar
   - pytest-xdist
+  - simple-term-menu
   - typer
+  - typing-extensions
   - pip

@@ -21,11 +21,11 @@ preview = true
 select = [
     "ALL",
 ]
-# fixable = ["ALL"]
+# fixable = [ "ALL" ]
 unfixable = [
     "ERA",
     "PLR6104",
-    "T",
+    "T",       # NOTE: remove this option when ready to go to new annotation style (needs python >= 3.10)
 ]
 ignore = [
     "ANN401",  # - Any ok sometimes
@@ -97,6 +97,7 @@ pylint.max-public-methods = 30
     # "PLR2004", # - numbers in comparison sometimes ok
     # "PLR0913", # - complexity sometimes ok
     # "PLR0917", # - complexity sometimes ok
+    "DOC402",
 ]
 "tests/**/*.py" = [ "T201", "SLF001" ]
 "src/**/cli.py" = [ "T201" ]

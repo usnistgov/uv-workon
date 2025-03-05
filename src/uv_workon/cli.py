@@ -1,255 +1,52 @@
 """
 Console script (:mod:`~uv_workon.cli`)
-==========================================================
+======================================
 """
 
 from __future__ import annotations
 
-import argparse
 import itertools
 import logging
 import os
-import sys
+import shlex
+from functools import wraps
+from inspect import signature
 from pathlib import Path
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING, Annotated, Any, cast
+
+import click
+import typer
 
 from .core import (
-    clean_symlinks,
-    create_symlinks,
-    find_venvs,
-    get_path_name_pairs,
-    get_workon_script_path,
-    is_valid_venv,
+    VirtualEnvPathAndLink,
+    generate_shell_config,
+    get_invalid_symlinks,
+    infer_virtualenv_path,
     list_venv_paths,
+    select_option,
+    validate_is_venv,
 )
 
 if TYPE_CHECKING:
-    from collections.abc import Iterable, Sequence
-    from typing import Any
+    from collections.abc import Callable, Iterable
+    from typing import Any, TypeVar
 
-    class _Parser:
-        """Typing interface to parser."""
-
-        command: str | None
-        venv: list[str]
-        no_default_venv: bool
-        paths: list[Path]
-        parent: list[Path]
-        workon_home: Path | None
-        force: bool
-        resolve: bool
-        verbose: int
-        dry_run: bool
-        full_path: bool
-        name: str | None
-        uv_options: str
-        run_path: Path | None
+    R = TypeVar("R")
 
 
-# * Logging
+# * Logging -------------------------------------------------------------------
 FORMAT = "[%(name)s - %(levelname)s] %(message)s"
 logging.basicConfig(level=logging.WARNING, format=FORMAT)
 logger = logging.getLogger(__name__)
 
 
-# * Options
-
-
-def get_parser() -> tuple[argparse.ArgumentParser, dict[str, argparse.ArgumentParser]]:
-    """Get base parser."""
-    # parent/shared parsers
-    shared_parent_parser = argparse.ArgumentParser(add_help=False)
-    shared_parent_parser.add_argument(
-        "--workon-home",
-        "-o",
-        type=Path,
-        default=None,
-        help="""
-        Directory containing the virtual environments and links to virtual
-        environments. If not passed, uses in order, `WORKON_HOME` environment
-        variable, then `~/.virtualenvs` directory.
-        """,
-    )
-    shared_parent_parser.add_argument(
-        "--dry-run",
-        action="store_true",
-        help="Perform a dry run, without executing any action",
-    )
-    shared_parent_parser.add_argument(
-        "--verbose",
-        "-v",
-        action="count",
-        default=0,
-        help="Set verbosity level.  Can specify multiple times",
-    )
-
-    resolve_parent_parser = argparse.ArgumentParser(add_help=False)
-    resolve_parent_parser.add_argument(
-        "--resolve",
-        action="store_true",
-        help="Pass this option to use absolute paths.  Default is to use relative paths.",
-    )
-
-    venvs_parent_parser = argparse.ArgumentParser(add_help=False)
-    venvs_parent_parser.add_argument(
-        "--venv",
-        type=str,
-        default=[],
-        action="append",
-        help="""
-        Virtual environment pattern. Can specify multiple times.
-        Default is to include virtual environment directories of form
-        `.venv` or `venv`.  To exclude these defaults, pass `--no-default-venv`.
-        """,
-    )
-    venvs_parent_parser.add_argument(
-        "--no-default-venv",
-        action="store_true",
-        help="""
-        Default is to include virtual environment patterns `.venv` and `venv`.
-        Pass `--no-default-venv` to exclude these default values.
-        """,
-    )
-
-    # Main parsers
-    parser = argparse.ArgumentParser(
-        description="Program to work with centralized virtual environments",
-    )
-
-    parser.add_argument(
-        "--version", action="version", version=f"%(prog)s {_get_version_string()}"
-    )
-
-    subparsers = parser.add_subparsers(dest="command")
-    parser_link = subparsers.add_parser(
-        name="link",
-        help="Create symlinks",
-        description="Create symlinks from central location to virtual environments.",
-        parents=[shared_parent_parser, resolve_parent_parser, venvs_parent_parser],
-    )
-    parser_clean = subparsers.add_parser(
-        name="clean",
-        help="Clean symlinks",
-        description="Remove broken symlinked virtual environments",
-        parents=[shared_parent_parser],
-    )
-    parser_list = subparsers.add_parser(
-        name="list",
-        help="List venvs",
-        description="List available centralized virtual environments",
-        parents=[shared_parent_parser, resolve_parent_parser],
-    )
-    parser_script = subparsers.add_parser(
-        name="script",
-        help="Print path to script",
-        description="To be used with `source $(uv-workon script)`",
-        parents=[shared_parent_parser],
-    )
-    parser_run = subparsers.add_parser(
-        name="uv-run",
-        aliases=["run"],
-        help="Run commands using uv run",
-        description="Run uv commands using using the named or specified virtual environment.",
-        epilog="""
-        For example, use `symlink-venv uv-run -n my-env -- python ...` is
-        translated to `uv run -p patt/to/my-env --no-project python ...`.
-        """,
-        parents=[shared_parent_parser, venvs_parent_parser],
-    )
-
-    subparsers_with_subcommands = {
-        "link": parser_link,
-        "clean": parser_clean,
-        "list": parser_list,
-        "script": parser_script,
-    }
-
-    parser_link.add_argument(
-        "paths",
-        type=Path,
-        nargs="*",
-        help="""
-        Paths to virtual environments. These can either be full paths to
-        virtual environments, or path to the parent of a virtual environment
-        that has name `venv_pattern`. If the name (the last element) of the
-        path matches `venv_pattern`, then the name of the linked virtual
-        environment will come from the parent directory. Otherwise, it will be
-        the name.
-        """,
-    )
-    parser_link.add_argument(
-        "--parent",
-        type=Path,
-        default=[],
-        action="append",
-        help="""
-        Parent of directories to check for `venv_pattern` directories
-        containing virtual environments. Using `uv-workon --parent a/path`
-        is roughly equivalent to using `uv-workon a/path/*`
-        """,
-    )
-    parser_link.add_argument(
-        "--force",
-        action="store_true",
-        help="Pass this option to overwrite existing symlinks",
-    )
-
-    # list
-    parser_list.add_argument(
-        "--full-path",
-        action="store_true",
-        help="Default is to list just names.  if `--full-path`, then include full path",
-    )
-
-    # run
-    parser_run.add_argument(
-        "-n", "--name", type=str, default=None, help="venv name use in run"
-    )
-    parser_run.add_argument(
-        "-p",
-        "--path",
-        dest="run_path",
-        type=Path,
-        default=None,
-        help="""Path to venv""",
-    )
-    parser_run.add_argument(
-        "uv_options",
-        type=str,
-        nargs="+",
-        default=[],
-        help="run `uv run -p {workon}/{name} --no-config {commands}`",
-    )
-
-    return parser, subparsers_with_subcommands
-
-
-def set_verbosity_level(
-    verbosity: int,
-) -> None:
-    """Set verbosity level."""
-    if verbosity < 0:
-        level = logging.ERROR
-    elif not verbosity:
-        level = logging.WARNING
-    elif verbosity == 1:
-        level = logging.INFO
-    else:
-        level = logging.DEBUG
-
-    for _logger in map(logging.getLogger, logging.root.manager.loggerDict):  # pylint: disable=no-member
-        _logger.setLevel(level)
-
-
-def _get_version_string() -> str:
-    from . import __version__
-
-    return __version__
-
-
+# * Utils ---------------------------------------------------------------------
 def _get_venv_dir_names(
-    venv_patterns: list[str], use_default: bool = True
+    venv_patterns: list[str] | None, use_default: bool = True
 ) -> list[str]:
+    if venv_patterns is None:
+        venv_patterns = []
+
     if not (out := list({*venv_patterns, *((".venv", "venv") if use_default else ())})):
         msg = (
             "No venv_patterns specified.  Either pass venv_patterns or allow defaults."
@@ -258,121 +55,399 @@ def _get_venv_dir_names(
     return out
 
 
-def _get_input_paths(paths: list[Path], parents: list[Path]) -> Iterable[Path]:
+def _get_input_paths(
+    paths: list[Path] | None, parents: list[Path] | None
+) -> Iterable[Path]:
+    if paths is None:
+        paths = []
+    if parents is None:
+        parents = []
+
     return itertools.chain(paths, *[p.glob("*") for p in parents])
 
 
 def _get_workon_home(workon_home: Path | None) -> Path:
     if workon_home is None:
         workon_home = Path(os.environ.get("WORKON_HOME", Path.home() / ".virtualenvs"))
+
+    workon_home = workon_home.expanduser()
     return workon_home.expanduser()
 
 
-def _link_venvs(options: _Parser, parser: argparse.ArgumentParser) -> None:
-    if not (options.parent or options.paths):
-        parser.print_help()
+def _print_help() -> None:
+    with click.get_current_context() as ctx:
+        typer.echo(ctx.get_help())
 
-    venv_patterns = _get_venv_dir_names(options.venv, not options.no_default_venv)
-    input_paths = _get_input_paths(options.paths, options.parent)
 
-    logger.info("venv_patterns: %s", venv_patterns)
+# * Main app ------------------------------------------------------------------
+app_typer = typer.Typer(no_args_is_help=True)
 
-    venv_paths = find_venvs(*input_paths, venv_patterns=venv_patterns)
-    logger.info("venv_paths: %s", venv_paths)
 
-    workon_home = _get_workon_home(options.workon_home)
-    logger.info("workon_home: %s", workon_home)
+def version_callback(value: bool) -> None:
+    """Versioning call back."""
+    from uv_workon import __version__
 
-    create_symlinks(
-        get_path_name_pairs(
-            venv_paths, resolve=options.resolve, venv_patterns=venv_patterns
-        ),
-        symlink_parent=workon_home,
-        force=options.force,
-        resolve=options.resolve,
-        dry_run=options.dry_run,
+    if value:
+        typer.echo(f"uv-workon, version {__version__}")
+        raise typer.Exit
+
+
+@app_typer.callback()
+def main(
+    version: bool = typer.Option(  # noqa: ARG001
+        None, "--version", "-v", callback=version_callback, is_eager=True
+    ),
+) -> None:
+    """Manage uv virtual environments from central location."""
+    return
+
+
+# * Options -------------------------------------------------------------------
+
+WORKON_HOME_CLI = Annotated[
+    Path | None,
+    typer.Option(
+        "--workon-home",
+        "-o",
+        help="""
+        Directory containing the virtual environments and links to virtual
+        environments. If not passed, uses in order, `WORKON_HOME` environment
+        variable, then `~/.virtualenvs` directory.
+        """,
+    ),
+]
+DRY_RUN_CLI = Annotated[
+    bool,
+    typer.Option(
+        "--dry-run",
+        help="Perform a dry run, without executing any action",
+    ),
+]
+VERBOSE_CLI = Annotated[
+    int | None,
+    typer.Option(
+        "--verbose",
+        "-v",
+        help="Set verbosity level.  Can specify multiple times",
+        count=True,
+    ),
+]
+VENV_PATTERNS_CLI = Annotated[
+    list[str] | None,
+    typer.Option(
+        "--venv",
+        help="""
+        Virtual environment pattern. Can specify multiple times.
+        Default is to include virtual environment directories of form
+        `.venv` or `venv`.  To exclude these defaults, pass `--no-default-venv`.
+        """,
+    ),
+]
+NO_DEFAULT_VENV_CLI = Annotated[
+    bool,
+    typer.Option(
+        "--no-default-venv",
+        help="""
+        Default is to include virtual environment patterns `.venv` and `venv`.
+        Pass `--no-default-venv` to exclude these default values.
+        """,
+    ),
+]
+RESOLVE_CLI = Annotated[
+    bool,
+    typer.Option(
+        "--resolve",
+        help="""
+        Pass this option to use absolute paths.  Default is to use relative paths.
+
+        """,
+    ),
+]
+PATHS_CLI = Annotated[
+    list[Path] | None,
+    typer.Argument(
+        help="""
+        Paths to virtual environments. These can either be full paths to
+        virtual environments, or path to the parent of a virtual environment
+        that has name `venv_pattern`. If the name (the last element) of the
+        path matches `venv_pattern`, then the name of the linked virtual
+        environment will come from the parent directory. Otherwise, it will be
+        the name.
+        """,
+    ),
+]
+PARENTS_CLI = Annotated[
+    list[Path] | None,
+    typer.Option(
+        "--parent",
+        help="""
+    Parent of directories to check for `venv_pattern` directories
+    containing virtual environments. Using `uv-workon --parent a/path`
+    is roughly equivalent to using `uv-workon a/path/*`
+    """,
+    ),
+]
+FORCE_CLI = Annotated[
+    bool,
+    typer.Option(
+        "--force",
+        help="Pass this option to overwrite existing symlinks",
+    ),
+]
+YES_CLI = Annotated[
+    bool,
+    typer.Option(
+        "--yes",
+        help="Answer yes to all confirmations",
+    ),
+]
+FULL_PATH_CLI = Annotated[
+    bool,
+    typer.Option(
+        "--full-path",
+        help="Default is to list just names.  if `--full-path`, then include full path",
+    ),
+]
+VENV_NAME_CLI = Annotated[
+    str | None,
+    typer.Option(
+        "--name", "-n", help="Use virtual environment located at ${workon_home}/{name}."
+    ),
+]
+VENV_PATH_CLI = Annotated[
+    Path | None,
+    typer.Option(
+        "-p",
+        "--path",
+        help="""Path to venv""",
+    ),
+]
+UV_RUN_OPTIONS_CLI = Annotated[
+    list[str], typer.Argument(help="Arguments and options passed to `uv run ...`")
+]
+
+
+def _add_verbose_logger(
+    verbose_arg: str = "verbose",
+) -> Callable[[Callable[..., R]], Callable[..., R]]:
+    """Decorator factory to add logger and set logger level based on verbosity argument value."""
+
+    def decorator(func: Callable[..., R]) -> Callable[..., R]:
+        bind = signature(func).bind
+
+        @wraps(func)
+        def wrapped(*args: Any, **kwargs: Any) -> R:
+            params = bind(*args, **kwargs)
+            params.apply_defaults()
+
+            if (verbosity := cast("int | None", params.arguments[verbose_arg])) is None:
+                # leave where it is:
+                pass
+            else:
+                if verbosity < 0:  # pragma: no cover
+                    level = logging.ERROR
+                elif not verbosity:  # pragma: no cover
+                    level = logging.WARNING
+                elif verbosity == 1:
+                    level = logging.INFO
+                else:  # pragma: no cover
+                    level = logging.DEBUG
+
+                for _logger in map(logging.getLogger, logging.root.manager.loggerDict):  # pylint: disable=no-member
+                    _logger.setLevel(level)
+
+            # add error logger to function call
+            try:
+                return func(*args, **kwargs)
+            except Exception:
+                logger.exception("found error")
+                raise
+
+        return wrapped
+
+    return decorator
+
+
+# * Commands ------------------------------------------------------------------
+@app_typer.command("link")
+@_add_verbose_logger()
+def symlink_venvs(
+    workon_home: WORKON_HOME_CLI = None,
+    dry_run: DRY_RUN_CLI = False,
+    verbose: VERBOSE_CLI = None,
+    venv_patterns: VENV_PATTERNS_CLI = None,
+    no_default_venv: NO_DEFAULT_VENV_CLI = False,
+    yes: YES_CLI = False,
+    parents: PARENTS_CLI = None,
+    paths: PATHS_CLI = None,
+    resolve: RESOLVE_CLI = False,
+) -> None:
+    """Create symlink from paths to workon_home."""
+    input_paths = list(_get_input_paths(paths, parents))
+    if not input_paths:
+        _print_help()
+        return
+
+    venv_patterns = _get_venv_dir_names(venv_patterns, use_default=not no_default_venv)
+    workon_home = _get_workon_home(workon_home)
+
+    logger.debug("params: %s", locals())
+
+    objs = list(
+        VirtualEnvPathAndLink.from_paths_and_workon(
+            input_paths,
+            workon_home=workon_home,
+            venv_patterns=venv_patterns,
+        )
     )
 
-
-def _run_command(options: _Parser) -> None:
-    logger.info("uv_options: %s", options.uv_options)
-
-    if options.name:
-        workon_home = _get_workon_home(options.workon_home)
-        path = workon_home / options.name
-        if not is_valid_venv(path):
-            msg = f"{path} not a venv"
-            raise ValueError(msg)
-
-    elif options.run_path:  # pylint: disable=confusing-consecutive-elif
-        venv_patterns = _get_venv_dir_names(options.venv, not options.no_default_venv)
-        paths = find_venvs(options.run_path, venv_patterns=venv_patterns)
-        if len(paths) == 1:
-            path = paths[0]
+    for obj in objs:
+        if (not obj.link.exists()) or (
+            obj.link.is_symlink() and (yes or typer.confirm(f"Overwrite {obj.link}"))
+        ):
+            obj.create_symlink(resolve=resolve, dry_run=dry_run)
         else:
-            msg = f"No venv found at {options.run_path}"
-            raise ValueError(msg)
+            logger.debug("Skipping: %s -> %s", obj.link, obj.path)
 
+
+@app_typer.command("list")
+@_add_verbose_logger()
+def list_venvs(
+    workon_home: WORKON_HOME_CLI = None,
+    verbose: VERBOSE_CLI = None,
+    resolve: RESOLVE_CLI = False,
+    full_path: FULL_PATH_CLI = False,
+) -> None:
+    """List available central virtual environments"""
+    workon_home = _get_workon_home(workon_home)
+    venv_paths = list_venv_paths(workon_home)
+
+    logger.debug("params: %s", locals())
+
+    seq: Any
+    if resolve:
+        seq = (p.resolve() for p in venv_paths)
+    elif full_path:
+        seq = venv_paths
     else:
-        msg = "Must specify name or path"
-        raise ValueError(msg)
+        seq = (p.name for p in venv_paths)
 
-    args = ["uv", "run", "-p", str(path), "--no-project", *options.uv_options]
+    for x in seq:
+        typer.echo(x)
+
+
+@app_typer.command("clean")
+@_add_verbose_logger()
+def clean(
+    workon_home: WORKON_HOME_CLI = None,
+    dry_run: DRY_RUN_CLI = False,
+    verbose: VERBOSE_CLI = None,  # noqa: ARG001
+    yes: bool = False,
+) -> None:
+    """Remove missing broken virtual environment symlinks."""
+    workon_home = _get_workon_home(workon_home)
+    for path in get_invalid_symlinks(workon_home):
+        if yes or typer.confirm(f"Remove {path} -> {path.readlink()}"):
+            logger.info("Remove symlink: %s -> %s", path, path.readlink())
+            if not dry_run:
+                path.unlink()
+
+
+@app_typer.command(
+    "run",
+    context_settings={
+        "allow_extra_args": True,
+        "ignore_unknown_options": True,
+    },
+)
+@_add_verbose_logger()
+def run_command(
+    ctx: typer.Context,
+    workon_home: WORKON_HOME_CLI = None,
+    dry_run: DRY_RUN_CLI = False,
+    verbose: VERBOSE_CLI = None,
+    venv_name: VENV_NAME_CLI = None,
+    venv_path: VENV_PATH_CLI = None,
+    venv_patterns: VENV_PATTERNS_CLI = None,
+) -> None:
+    """
+    Run uv commands using using the named or specified virtual environment.
+
+    For example, use `symlink-venv uv-run -n my-env -- python ...` is
+    translated to `uv run -p patt/to/my-env --no-project python ...`.
+
+    If an option mirrors one of the command options (-n, etc), pass it after `--`.
+    """
+    logger.info("params: %s", locals())
+
+    if not ctx.args:
+        typer.echo(ctx.get_help())
+        return
+
+    if venv_path:
+        path = infer_virtualenv_path(venv_path, _get_venv_dir_names(venv_patterns))
+    elif venv_name:
+        path = validate_is_venv(_get_workon_home(workon_home) / venv_name)
+    else:
+        workon_home = _get_workon_home(workon_home)
+        options = [p.name for p in list_venv_paths(workon_home)]
+        path = workon_home / select_option(options, title="venv")
+
+    args = ["uv", "run", "-p", str(path), "--no-project", *ctx.args]
     logger.info("running args: %s", args)
-    if not options.dry_run:
+    logger.info("command: %s", shlex.join(args))
+
+    if not dry_run:
         import subprocess
 
-        subprocess.run(args, check=True)
+        subprocess.run(
+            args,
+            check=True,
+            env={
+                **os.environ,
+                "VIRTUAL_ENV": str(path),
+                "UV_PROJECT_ENVIRONMENT": str(path),
+            },
+        )
 
 
-def main(
-    args: Sequence[str] | None = None,
-) -> int:
-    """Main cli application."""
-    parser, subparsers = get_parser()
+# * Shell commands
+@app_typer.command("shell-config")
+def shell_config() -> None:
+    """
+    Use eval $(uv-workon shell-config)
 
-    options = cast(
-        "_Parser",
-        parser.parse_args() if args is None else parser.parse_args(args),
-    )  # pragma: no cover
 
-    if options.command is not None:
-        set_verbosity_level(verbosity=options.verbose)
-        logger.debug("cli options: %s", options)
+    This will add the subcommand `uv-workon activate` which
+    automatically sources the environment found from `uv-workon shell-activate`
+    """
+    typer.echo(generate_shell_config())
 
-    logger.debug("command: %s", options.command)
-    if options.command == "link":
-        _link_venvs(options, subparsers["link"])
 
-    elif options.command == "clean":
-        workon_home = _get_workon_home(options.workon_home)
-        clean_symlinks(workon_home, options.dry_run)
-
-    elif options.command == "list":
-        workon_home = _get_workon_home(options.workon_home)
-        venv_paths = list_venv_paths(workon_home)
-
-        seq: Any
-        if options.resolve:
-            seq = (p.resolve() for p in venv_paths)
-        elif options.full_path:
-            seq = venv_paths
-        else:
-            seq = (p.name for p in venv_paths)
-
-        for x in seq:
-            print(x)
-
-    elif options.command == "script":
-        print(get_workon_script_path())
-
-    elif options.command in {"uv-run", "run"}:
-        _run_command(options)
-
+@app_typer.command("shell-activate")
+def shell_activate(
+    workon_home: WORKON_HOME_CLI = None,
+    venv_name: VENV_NAME_CLI = None,
+    venv_path: VENV_PATH_CLI = None,
+    venv_patterns: VENV_PATTERNS_CLI = None,
+) -> None:
+    """Use to activate virtual environment with `source $(uv-workon shell-activate -n ...)`"""
+    if venv_path:
+        path = infer_virtualenv_path(venv_path, _get_venv_dir_names(venv_patterns))
+    elif venv_name:
+        path = validate_is_venv(_get_workon_home(workon_home) / venv_name)
     else:
-        parser.print_help()
-    return 0
+        workon_home = _get_workon_home(workon_home)
+        options = [p.name for p in list_venv_paths(workon_home)]
+        path = workon_home / select_option(options, title="venv")
 
+    if (activate := path / "bin" / "activate").exists() or (
+        activate := path / "Scripts" / "activate"
+    ).exists():
+        typer.echo(str(activate))
+
+
+app = typer.main.get_command(app_typer)
 
 if __name__ == "__main__":
-    sys.exit(main())  # pragma: no cover
+    app()

@@ -225,7 +225,7 @@ class Specifications:
         self, specs: str | Requirement | Iterable[str | Requirement]
     ) -> Specifications:
         """Assign value."""
-        if isinstance(specs, (str, Requirement)):
+        if isinstance(specs, str | Requirement):
             specs = [specs]
 
         return type(self)(
@@ -253,7 +253,7 @@ class Specifications:
         """Create from requirements."""
         if requirements is None:
             requirements = []
-        elif isinstance(requirements, (str, Path)):
+        elif isinstance(requirements, str | Path):
             requirements = [requirements]
 
         specs_dict: dict[str, Requirement] = {

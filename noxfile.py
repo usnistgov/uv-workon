@@ -47,11 +47,6 @@ if TYPE_CHECKING:
     from nox import Session
 
 
-# Should only use on python version > 3.10
-if sys.version_info < (3, 10):
-    msg = "python>=3.10 required"
-    raise RuntimeError(msg)
-
 # * Names ------------------------------------------------------------------------------
 
 PACKAGE_NAME = "uv-workon"

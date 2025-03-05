@@ -17,7 +17,7 @@ license-files = [ "LICENSE" ]
 authors = [
     { name = "William P. Krekelberg", email = "wpk@nist.gov" },
 ]
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 classifiers = [
     "Development Status :: 2 - Pre-Alpha",
     "Intended Audience :: Science/Research",
@@ -25,7 +25,6 @@ classifiers = [
     "Operating System :: OS Independent",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
@@ -37,11 +36,15 @@ dynamic = [
     "version",
 ]
 dependencies = [
+    "attrs",
+    "simple-term-menu",
     "typer",
+    "typing-extensions; python_version<'3.11'",
 ]
 urls.Documentation = "https://pages.nist.gov/uv-workon/"
 urls.Homepage = "https://github.com/wpk-nist-gov/uv-workon"
-scripts.uv_workon = "uv_workon.cli:main"
+scripts.uv-workon = "uv_workon.cli:app"
+scripts.uvw = "uv_workon.cli:app"
 
 [dependency-groups]
 dev = [
@@ -181,9 +184,9 @@ exclude = [
 check_untyped_defs = true
 strict = true
 
-# [[tool.mypy.overrides]]
-# ignore_missing_imports = true
-# module = [  ]
+[[tool.mypy.overrides]]
+ignore_missing_imports = true
+module = [ "simple_term_menu.*" ]
 
 # [[tool.mypy.overrides]]
 # ignore_errors = true
