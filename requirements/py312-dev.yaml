@@ -14,7 +14,7 @@ dependencies:
   - attrs
   - ipykernel
   - ipython
-  - mypy>=1.14.0
+  - mypy>=1.15.0
   - nbclient>=0.10.0
   - nox>=2024.4.15
   - packaging

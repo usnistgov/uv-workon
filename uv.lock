@@ -1966,7 +1966,7 @@ cog = [{ name = "cogapp" }]
 dev = [
     { name = "ipykernel" },
     { name = "ipython" },
-    { name = "mypy", specifier = ">=1.14.0" },
+    { name = "mypy", specifier = ">=1.15.0" },
     { name = "nbclient", specifier = ">=0.10.0" },
     { name = "nox", specifier = ">=2024.4.15" },
     { name = "packaging" },
@@ -2005,7 +2005,7 @@ docs-live = [
     { name = "sphinx-copybutton" },
     { name = "sphinxcontrib-spelling" },
 ]
-mypy = [{ name = "mypy", specifier = ">=1.14.0" }]
+mypy = [{ name = "mypy", specifier = ">=1.15.0" }]
 nbval = [{ name = "nbval" }]
 test = [
     { name = "pytest" },
