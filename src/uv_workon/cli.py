@@ -12,7 +12,7 @@ import shlex
 from functools import wraps
 from inspect import signature
 from pathlib import Path
-from typing import TYPE_CHECKING, Annotated, cast
+from typing import TYPE_CHECKING, Annotated, Any, cast
 
 import click
 import typer
@@ -29,7 +29,7 @@ from .core import (
 
 if TYPE_CHECKING:
     from collections.abc import Callable, Iterable
-    from typing import Any, TypeVar
+    from typing import TypeVar
 
     R = TypeVar("R")
 
@@ -62,32 +62,26 @@ def _get_input_paths(
         paths = []
     if parents is None:
         parents = []
-
     return itertools.chain(paths, *[p.glob("*") for p in parents])
-
-
-def _get_workon_home(workon_home: Path | None) -> Path:
-    if workon_home is None:
-        workon_home = Path(os.environ.get("WORKON_HOME", Path.home() / ".virtualenvs"))
-
-    workon_home = workon_home.expanduser()
-    return workon_home.expanduser()
 
 
 def _select_venv_path(
     venv_path: Path | None,
     venv_name: str | None,
-    workon_home: Path | None,
+    workon_home: Path,
     venv_patterns: list[str] | None,
 ) -> Path:
     if venv_path:
         return infer_virtualenv_path(venv_path, _get_venv_dir_names(venv_patterns))
     if venv_name:
-        return validate_is_venv(_get_workon_home(workon_home) / venv_name)
+        return validate_is_venv(workon_home / venv_name)
 
-    workon_home = _get_workon_home(workon_home)
     options = [p.name for p in list_venv_paths(workon_home)]
     return workon_home / select_option(options, title="venv")
+
+
+def _expand_user(x: Path) -> Path:
+    return x.expanduser()
 
 
 def _print_help() -> None:
@@ -120,8 +114,9 @@ def main(
 
 # * Options -------------------------------------------------------------------
 
+WORKON_HOME_DEFAULT = Path("~/.virtualenvs")
 WORKON_HOME_CLI = Annotated[
-    Path | None,
+    Path,
     typer.Option(
         "--workon-home",
         "-o",
@@ -130,6 +125,8 @@ WORKON_HOME_CLI = Annotated[
         environments. If not passed, uses in order, `WORKON_HOME` environment
         variable, then `~/.virtualenvs` directory.
         """,
+        envvar="WORKON_HOME",
+        callback=_expand_user,
     ),
 ]
 DRY_RUN_CLI = Annotated[
@@ -192,6 +189,18 @@ PATHS_CLI = Annotated[
         """,
     ),
 ]
+LINK_NAMES_CLI = Annotated[
+    list[str] | None,
+    typer.Option(
+        "--link-name",
+        help="""
+        Name of the linked virtual environment. Default is to infer the name
+        from path. Can specify multiple times. If use this option, it must
+        match up with the number of paths. It is intended to be used once only.
+        Use with care in other cases.
+        """,
+    ),
+]
 PARENTS_CLI = Annotated[
     list[Path] | None,
     typer.Option(
@@ -215,13 +224,6 @@ YES_CLI = Annotated[
     typer.Option(
         "--yes",
         help="Answer yes to all confirmations",
-    ),
-]
-FULL_PATH_CLI = Annotated[
-    bool,
-    typer.Option(
-        "--full-path",
-        help="Default is to list just names.  if `--full-path`, then include full path",
     ),
 ]
 VENV_NAME_CLI = Annotated[
@@ -285,10 +287,11 @@ def _add_verbose_logger(
 
 
 # * Commands ------------------------------------------------------------------
+# NOTE: return locals() for testing purposes.
 @app_typer.command("link")
 @_add_verbose_logger()
 def symlink_venvs(
-    workon_home: WORKON_HOME_CLI = None,
+    workon_home: WORKON_HOME_CLI = WORKON_HOME_DEFAULT,
     dry_run: DRY_RUN_CLI = False,
     verbose: VERBOSE_CLI = None,
     venv_patterns: VENV_PATTERNS_CLI = None,
@@ -296,16 +299,15 @@ def symlink_venvs(
     yes: YES_CLI = False,
     parents: PARENTS_CLI = None,
     paths: PATHS_CLI = None,
+    link_names: LINK_NAMES_CLI = None,
     resolve: RESOLVE_CLI = False,
-) -> None:
+) -> dict[str, Any]:
     """Create symlink from paths to workon_home."""
     if not (input_paths := list(_get_input_paths(paths, parents))):
         _print_help()
-        return
+        return locals()
 
     venv_patterns = _get_venv_dir_names(venv_patterns, use_default=not no_default_venv)
-    workon_home = _get_workon_home(workon_home)
-
     logger.debug("params: %s", locals())
 
     objs = list(
@@ -313,6 +315,7 @@ def symlink_venvs(
             input_paths,
             workon_home=workon_home,
             venv_patterns=venv_patterns,
+            names=link_names,
         )
     )
 
@@ -324,43 +327,34 @@ def symlink_venvs(
         else:
             logger.debug("Skipping: %s -> %s", obj.link, obj.path)
 
+    return locals()
+
 
 @app_typer.command("list")
 @_add_verbose_logger()
 def list_venvs(
-    workon_home: WORKON_HOME_CLI = None,
+    workon_home: WORKON_HOME_CLI = WORKON_HOME_DEFAULT,
     verbose: VERBOSE_CLI = None,
-    resolve: RESOLVE_CLI = False,
-    full_path: FULL_PATH_CLI = False,
 ) -> None:
     """List available central virtual environments"""
-    workon_home = _get_workon_home(workon_home)
     venv_paths = list_venv_paths(workon_home)
-
     logger.debug("params: %s", locals())
 
-    seq: Iterable[Any]
-    if resolve:
-        seq = (p.resolve() for p in venv_paths)
-    elif full_path:
-        seq = venv_paths
-    else:
-        seq = (p.name for p in venv_paths)
-
-    for x in sorted(seq):
-        typer.echo(x)
+    for p in sorted(venv_paths, key=lambda x: x.name):
+        typer.echo(f"{p.name:25}  {p.resolve()}")
 
 
 @app_typer.command("clean")
 @_add_verbose_logger()
 def clean(
-    workon_home: WORKON_HOME_CLI = None,
+    workon_home: WORKON_HOME_CLI = WORKON_HOME_DEFAULT,
     dry_run: DRY_RUN_CLI = False,
-    verbose: VERBOSE_CLI = None,  # noqa: ARG001
+    verbose: VERBOSE_CLI = None,
     yes: bool = False,
 ) -> None:
     """Remove missing broken virtual environment symlinks."""
-    workon_home = _get_workon_home(workon_home)
+    logger.debug("params: %s", locals())
+
     for path in get_invalid_symlinks(workon_home):
         if yes or typer.confirm(f"Remove {path} -> {path.readlink()}"):
             logger.info("Remove symlink: %s -> %s", path, path.readlink())
@@ -378,7 +372,7 @@ def clean(
 @_add_verbose_logger()
 def run_command(
     ctx: typer.Context,
-    workon_home: WORKON_HOME_CLI = None,
+    workon_home: WORKON_HOME_CLI = WORKON_HOME_DEFAULT,
     dry_run: DRY_RUN_CLI = False,
     verbose: VERBOSE_CLI = None,
     venv_name: VENV_NAME_CLI = None,
@@ -446,7 +440,7 @@ def shell_config() -> None:
 
 @app_typer.command("shell-activate")
 def shell_activate(
-    workon_home: WORKON_HOME_CLI = None,
+    workon_home: WORKON_HOME_CLI = WORKON_HOME_DEFAULT,
     venv_name: VENV_NAME_CLI = None,
     venv_path: VENV_PATH_CLI = None,
     venv_patterns: VENV_PATTERNS_CLI = None,

@@ -14,7 +14,6 @@ from uv_workon import cli
 from uv_workon.core import generate_shell_config
 
 if TYPE_CHECKING:
-    from collections.abc import Iterable
     from typing import Any
 
     from click.testing import CliRunner
@@ -71,30 +70,6 @@ def test__get_input_paths(venvs_parent_path: Path) -> None:
     expected2.add(venvs_parent_path / "has_venv_0" / "venv")
 
     assert set(out) == expected2
-
-
-@pytest.mark.parametrize(
-    ("cli_val", "environment_val", "expected"),
-    [
-        ("~/hello", None, "~/hello"),
-        (None, "~/there", "~/there"),
-        (None, None, "~/.virtualenvs"),
-        ("~/a", "~/b", "~/a"),
-        ("a/b", None, "a/b"),
-    ],
-)
-def test__get_workon_home(
-    monkeypatch: Any, cli_val: str | None, environment_val: str | None, expected: Path
-) -> None:
-    if environment_val is not None:
-        monkeypatch.setenv("WORKON_HOME", environment_val)
-    elif "WORKON_HOME" in os.environ:
-        monkeypatch.delenv("WORKON_HOME")
-
-    assert (
-        cli._get_workon_home(None if cli_val is None else Path(cli_val)).expanduser()
-        == Path(expected).expanduser()
-    )
 
 
 def test_verbosity() -> None:
@@ -204,33 +179,40 @@ def test_symlink_venvs_parent(
 
 
 @pytest.mark.parametrize(
-    "options",
+    ("cli_val", "environment_val", "expected"),
     [
-        ("--resolve",),
-        ("--full-path",),
-        (),
+        ("~/hello", None, "~/hello"),
+        (None, "~/there", "~/there"),
+        (None, None, "~/.virtualenvs"),
+        ("~/a", "~/b", "~/a"),
+        ("a/b", None, "a/b"),
     ],
 )
+def test_workon_home(
+    clirunner: CliRunner,
+    environment_val: str | None,
+    cli_val: str | None,
+    expected: Path,
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    env = {"WORKON_HOME": environment_val} if environment_val else {}
+    opts = [] if cli_val is None else ["--workon-home", cli_val]
+    clirunner.invoke(cli.app, ["list", "-vv", *opts], env=env)
+
+    assert f"'workon_home': {Path(expected).expanduser()!r}" in caplog.text
+
+
 def test_list(
-    clirunner: CliRunner, workon_home_with_is_venv: Path, options: tuple[str]
+    clirunner: CliRunner,
+    workon_home_with_is_venv: Path,
 ) -> None:
     out = clirunner.invoke(
-        cli.app, ["list", "--workon-home", str(workon_home_with_is_venv), *options]
+        cli.app, ["list", "--workon-home", str(workon_home_with_is_venv)]
     )
 
-    links = workon_home_with_is_venv.glob("*")
-
-    expected: Iterable[Any]
-    if options == ("--resolve",):
-        expected = (x.resolve() for x in links)
-
-    elif options == ("--full-path",):
-        expected = links
-
-    else:
-        expected = (x.name for x in links)
-
-    assert "\n".join(map(str, sorted(expected))) == out.output.strip()
+    links = sorted(workon_home_with_is_venv.glob("*"), key=lambda x: x.name)
+    expected = "\n".join([f"{p.name:25}  {p.resolve()}" for p in links])
+    assert expected == out.output.strip()
 
 
 @pytest.mark.parametrize("dry", [True, False])
@@ -323,3 +305,9 @@ def test_run(
 def test_shell_config(clirunner: CliRunner) -> None:
     out = clirunner.invoke(cli.app, ["shell-config"])
     assert out.output.strip() == generate_shell_config().strip()
+
+
+def test__main__() -> None:
+    from subprocess import check_call
+
+    assert not check_call(["python", "-m", "uv_workon"])

@@ -14,9 +14,8 @@ import attrs
 
 if TYPE_CHECKING:
     from collections.abc import Iterable, Sequence
-    from typing import Any
 
-    from ._typing import VirtualEnvPattern
+    from ._typing import PathLike, VirtualEnvPattern
     from ._typing_compat import Self
 
 logger = logging.getLogger(__name__)
@@ -46,7 +45,7 @@ def is_valid_venv(path: Path) -> bool:
     return path.is_dir() and (path / "pyvenv.cfg").exists()
 
 
-def validate_is_venv(path: os.PathLike[Any]) -> Path:
+def validate_is_venv(path: PathLike) -> Path:
     """Validate is a virtual environment path"""
     path = Path(path)
     if not is_valid_venv(path):
@@ -63,9 +62,7 @@ def infer_virtualenv_name(path: Path, venv_patterns: VirtualEnvPattern) -> str:
     return name
 
 
-def infer_virtualenv_path(
-    path: os.PathLike[Any], venv_patterns: VirtualEnvPattern
-) -> Path:
+def infer_virtualenv_path(path: PathLike, venv_patterns: VirtualEnvPattern) -> Path:
     """Find a virtual env by pattern."""
     path = Path(path)
     if is_valid_venv(path):
@@ -79,7 +76,7 @@ def infer_virtualenv_path(
     raise NoVirtualEnvError(msg)
 
 
-def validate_dir_exists(path: os.PathLike[Any]) -> Path:
+def validate_dir_exists(path: PathLike) -> Path:
     """Validate that path is a directory."""
     path = Path(path)
     if not path.is_dir():
@@ -88,20 +85,20 @@ def validate_dir_exists(path: os.PathLike[Any]) -> Path:
     return path
 
 
-def validate_symlink(path: os.PathLike[Any]) -> Path:
+def validate_symlink(path: PathLike) -> Path:
     """If path exists, assert it is a symlink"""
     path = Path(path)
     if path.exists() and not path.is_symlink():
-        msg = f"{path} is not a symlink"
+        msg = f"{path} exists and is not a symlink"
         raise ValueError(msg)
     return path
 
 
-def _converter_pathlike(path: str | os.PathLike[Any]) -> Path:
+def _converter_pathlike(path: PathLike) -> Path:
     return Path(path)
 
 
-def _converter_pathlike_absolute(path: str | os.PathLike[Any]) -> Path:
+def _converter_pathlike_absolute(path: PathLike) -> Path:
     return Path(path).absolute()
 
 
@@ -120,9 +117,7 @@ class VirtualEnvPath:
         return attrs.evolve(self, path=self.path.resolve())
 
     @classmethod
-    def from_path(
-        cls, path: os.PathLike[Any], venv_patterns: VirtualEnvPattern
-    ) -> Self:
+    def from_path(cls, path: PathLike, venv_patterns: VirtualEnvPattern) -> Self:
         """Create object from path."""
         return cls(infer_virtualenv_path(path, validate_venv_patterns(venv_patterns)))
 
@@ -156,8 +151,8 @@ class VirtualEnvPathAndLink(VirtualEnvPath):
     @classmethod
     def from_path_and_workon(
         cls,
-        path: os.PathLike[Any],
-        workon_home: os.PathLike[Any],
+        path: PathLike,
+        workon_home: PathLike,
         name: str | None,
         venv_patterns: VirtualEnvPattern,
     ) -> Self:
@@ -166,26 +161,38 @@ class VirtualEnvPathAndLink(VirtualEnvPath):
         path = infer_virtualenv_path(path, venv_patterns)
         if name is None:
             name = infer_virtualenv_name(path, venv_patterns)
-        return cls(path=path, link=validate_dir_exists(workon_home) / name)
+        link = validate_symlink(validate_dir_exists(workon_home) / name)
+        return cls(path=path, link=link)
 
     @classmethod
     def from_paths_and_workon(
         cls,
-        paths: Iterable[os.PathLike[Any]],
-        workon_home: os.PathLike[Any],
+        paths: Iterable[PathLike],
+        workon_home: PathLike,
         venv_patterns: VirtualEnvPattern,
+        names: str | Iterable[str] | None = None,
     ) -> Iterable[Self]:
         """Get iterable of objects."""
         venv_patterns = validate_venv_patterns(venv_patterns)
         workon_home = validate_dir_exists(workon_home)
 
-        for _path in paths:
+        seq: Iterable[tuple[PathLike, str | None]]
+        if isinstance(names, str) or names is None:
+            from itertools import zip_longest
+
+            seq = zip_longest(paths, [names])
+        else:
+            seq = zip(paths, names, strict=True)
+
+        for _path, _name in seq:
             try:
                 path = infer_virtualenv_path(_path, venv_patterns)
             except NoVirtualEnvError:
                 continue
 
-            name = infer_virtualenv_name(path, venv_patterns)
+            name = (
+                infer_virtualenv_name(path, venv_patterns) if _name is None else _name
+            )
             link = validate_symlink(workon_home / name)
 
             yield cls(path=path, link=link)

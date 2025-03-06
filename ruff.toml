@@ -11,7 +11,7 @@ extend-exclude = [
     # "src/testpackage_book_nocli/tests",
 ]
 fix = true
-# unsafe-fixes = true
+unsafe-fixes = true
 
 [format]
 docstring-code-format = true
