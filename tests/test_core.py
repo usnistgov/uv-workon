@@ -1,10 +1,11 @@
 from __future__ import annotations
 
+from functools import partial
 from typing import TYPE_CHECKING
 
 import pytest
 
-from uv_workon.core import find_venvs, get_workon_script_path, is_valid_venv
+from uv_workon.core import VirtualEnvPathAndLink, generate_shell_config, is_valid_venv
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -31,8 +32,22 @@ def test_is_valid_venv(
         assert is_valid_venv(path) == valid
 
 
-def test_find_venvs_explicit(venvs_parent_path: Path) -> None:
-    # pylint: disable=use-implicit-booleaness-not-comparison
+def find_venvs_interface(
+    *args: Path, workon_home: Path, venv_patterns: list[str] | None = None
+) -> list[Path]:
+    if venv_patterns is None:
+        venv_patterns = [".venv", "venv"]
+
+    return [
+        obj.path
+        for obj in VirtualEnvPathAndLink.from_paths_and_workon(
+            args, workon_home=workon_home, venv_patterns=venv_patterns
+        )
+    ]
+
+
+def test_find_venvs_explicit(venvs_parent_path: Path, workon_home: Path) -> None:
+    find_venvs = partial(find_venvs_interface, workon_home=workon_home)
     paths_dotvenv = list(venvs_parent_path.glob("has_dotvenv_*/.venv"))
 
     assert find_venvs(*paths_dotvenv) == paths_dotvenv
@@ -54,10 +69,5 @@ def test_find_venvs_explicit(venvs_parent_path: Path) -> None:
     assert find_venvs(*venvs_parent_path.glob("no_venv_*")) == []
 
 
-def test_get_workon_script_path() -> None:
-    from importlib.resources import files
-
-    assert (
-        str(files("uv_workon").joinpath("scripts", "workon.sh"))
-        == get_workon_script_path()
-    )
+def test_generate_shell_config() -> None:
+    assert "__UV_WORKON" in generate_shell_config()

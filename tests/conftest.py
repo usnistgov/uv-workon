@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 import os
+import shutil
 from pathlib import Path
 from typing import TYPE_CHECKING
 
 import pytest
+from click.testing import CliRunner
 
 if TYPE_CHECKING:
     from collections.abc import Generator
@@ -23,6 +25,16 @@ def example_path(tmp_path: Path) -> Generator[Path]:
     os.chdir(old_cwd)
 
     assert Path.cwd().absolute() == old_cwd.absolute()
+
+
+@pytest.fixture
+def workon_home(example_path: Path) -> Generator[Path]:
+    out = example_path / "venvs"
+    out.mkdir(exist_ok=True)
+
+    yield out
+
+    shutil.rmtree(out)
 
 
 @pytest.fixture(scope="session")
@@ -51,3 +63,22 @@ def venvs_parent_path(tmp_path_factory: pytest.TempPathFactory) -> Path:
             d.mkdir(parents=True)
 
     return parent_path
+
+
+@pytest.fixture(scope="session")
+def clirunner() -> CliRunner:
+    return CliRunner()
+
+
+@pytest.fixture
+def workon_home_with_is_venv(
+    workon_home: Path, venvs_parent_path: Path, clirunner: CliRunner
+) -> Path:
+    from uv_workon.cli import app
+
+    paths = venvs_parent_path.glob("is_venv_*")
+    clirunner.invoke(
+        app, ["link", "--workon-home", str(workon_home), "-vv", *map(str, paths)]
+    )
+
+    return workon_home

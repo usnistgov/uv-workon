@@ -12,7 +12,7 @@ import shlex
 from functools import wraps
 from inspect import signature
 from pathlib import Path
-from typing import TYPE_CHECKING, Annotated, Any, cast
+from typing import TYPE_CHECKING, Annotated, cast
 
 import click
 import typer
@@ -72,6 +72,22 @@ def _get_workon_home(workon_home: Path | None) -> Path:
 
     workon_home = workon_home.expanduser()
     return workon_home.expanduser()
+
+
+def _select_venv_path(
+    venv_path: Path | None,
+    venv_name: str | None,
+    workon_home: Path | None,
+    venv_patterns: list[str] | None,
+) -> Path:
+    if venv_path:
+        return infer_virtualenv_path(venv_path, _get_venv_dir_names(venv_patterns))
+    if venv_name:
+        return validate_is_venv(_get_workon_home(workon_home) / venv_name)
+
+    workon_home = _get_workon_home(workon_home)
+    options = [p.name for p in list_venv_paths(workon_home)]
+    return workon_home / select_option(options, title="venv")
 
 
 def _print_help() -> None:
@@ -283,8 +299,7 @@ def symlink_venvs(
     resolve: RESOLVE_CLI = False,
 ) -> None:
     """Create symlink from paths to workon_home."""
-    input_paths = list(_get_input_paths(paths, parents))
-    if not input_paths:
+    if not (input_paths := list(_get_input_paths(paths, parents))):
         _print_help()
         return
 
@@ -324,7 +339,7 @@ def list_venvs(
 
     logger.debug("params: %s", locals())
 
-    seq: Any
+    seq: Iterable[Any]
     if resolve:
         seq = (p.resolve() for p in venv_paths)
     elif full_path:
@@ -332,7 +347,7 @@ def list_venvs(
     else:
         seq = (p.name for p in venv_paths)
 
-    for x in seq:
+    for x in sorted(seq):
         typer.echo(x)
 
 
@@ -369,6 +384,7 @@ def run_command(
     venv_name: VENV_NAME_CLI = None,
     venv_path: VENV_PATH_CLI = None,
     venv_patterns: VENV_PATTERNS_CLI = None,
+    resolve: RESOLVE_CLI = False,
 ) -> None:
     """
     Run uv commands using using the named or specified virtual environment.
@@ -384,18 +400,20 @@ def run_command(
         typer.echo(ctx.get_help())
         return
 
-    if venv_path:
-        path = infer_virtualenv_path(venv_path, _get_venv_dir_names(venv_patterns))
-    elif venv_name:
-        path = validate_is_venv(_get_workon_home(workon_home) / venv_name)
-    else:
-        workon_home = _get_workon_home(workon_home)
-        options = [p.name for p in list_venv_paths(workon_home)]
-        path = workon_home / select_option(options, title="venv")
+    path = _select_venv_path(
+        venv_path=venv_path,
+        venv_name=venv_name,
+        workon_home=workon_home,
+        venv_patterns=venv_patterns,
+    )
+
+    if resolve:
+        path = path.resolve()
 
     args = ["uv", "run", "-p", str(path), "--no-project", *ctx.args]
+    command = f"VIRTUAL_ENV={path} UV_PROJECT_ENVIRONMENT={path} {shlex.join(args)}"
     logger.info("running args: %s", args)
-    logger.info("command: %s", shlex.join(args))
+    logger.info("command: %s", command)
 
     if not dry_run:
         import subprocess
@@ -409,6 +427,8 @@ def run_command(
                 "UV_PROJECT_ENVIRONMENT": str(path),
             },
         )
+    else:
+        typer.echo(command)
 
 
 # * Shell commands
@@ -430,16 +450,18 @@ def shell_activate(
     venv_name: VENV_NAME_CLI = None,
     venv_path: VENV_PATH_CLI = None,
     venv_patterns: VENV_PATTERNS_CLI = None,
+    resolve: RESOLVE_CLI = False,
 ) -> None:
     """Use to activate virtual environment with `source $(uv-workon shell-activate -n ...)`"""
-    if venv_path:
-        path = infer_virtualenv_path(venv_path, _get_venv_dir_names(venv_patterns))
-    elif venv_name:
-        path = validate_is_venv(_get_workon_home(workon_home) / venv_name)
-    else:
-        workon_home = _get_workon_home(workon_home)
-        options = [p.name for p in list_venv_paths(workon_home)]
-        path = workon_home / select_option(options, title="venv")
+    path = _select_venv_path(
+        venv_path=venv_path,
+        venv_name=venv_name,
+        workon_home=workon_home,
+        venv_patterns=venv_patterns,
+    )
+
+    if resolve:
+        path = path.resolve()
 
     if (activate := path / "bin" / "activate").exists() or (
         activate := path / "Scripts" / "activate"

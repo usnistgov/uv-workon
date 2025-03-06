@@ -97,8 +97,12 @@ def validate_symlink(path: os.PathLike[Any]) -> Path:
     return path
 
 
-def _converter_pathlike(path: os.PathLike[Any]) -> Path:
+def _converter_pathlike(path: str | os.PathLike[Any]) -> Path:
     return Path(path)
+
+
+def _converter_pathlike_absolute(path: str | os.PathLike[Any]) -> Path:
+    return Path(path).absolute()
 
 
 @attrs.define()
@@ -127,7 +131,7 @@ class VirtualEnvPath:
 class VirtualEnvPathAndLink(VirtualEnvPath):
     """Class to handle virtual environment with link"""
 
-    link: Path = attrs.field(converter=_converter_pathlike)
+    link: Path = attrs.field(converter=_converter_pathlike_absolute)
 
     def is_valid_link(self) -> bool:
         """Whether link does not exist or is a symlink"""
@@ -142,7 +146,7 @@ class VirtualEnvPathAndLink(VirtualEnvPath):
         path = (
             self.path.resolve()
             if resolve
-            else os.path.relpath(self.path, self.link.parent)
+            else os.path.relpath(self.path.absolute(), self.link.parent)
         )
         logger.info("Creating symlink %s -> %s", self.link, path)
         if not dry_run:
@@ -199,13 +203,6 @@ def list_venv_paths(
 ) -> list[Path]:
     """Get list of venvs by name"""
     return [path for path in workon_home.glob("*") if is_valid_venv(path)]
-
-
-def get_workon_script_path() -> str:
-    """Get location of woorkon script."""
-    from importlib.resources import files
-
-    return str(files("uv_workon").joinpath("scripts", "workon.sh"))
 
 
 def select_option(

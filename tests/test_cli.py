@@ -11,66 +11,13 @@ from typing import TYPE_CHECKING
 import pytest
 
 from uv_workon import cli
+from uv_workon.core import generate_shell_config
 
 if TYPE_CHECKING:
-    import argparse
+    from collections.abc import Iterable
     from typing import Any
 
-
-def parse_args(arg: str = "") -> argparse.Namespace:
-    parser, _ = cli.get_parser()
-    return parser.parse_args(shlex.split(arg))
-
-
-def parse_args_as_dict(arg: str = "") -> dict[str, Any]:
-    return vars(parse_args(arg))
-
-
-def base_cli_options(
-    command: str = "link",
-    venv: list[str] | None = None,
-    no_default_venv: bool = False,
-    paths: list[Path] | None = None,
-    parent: list[Path] | None = None,
-    workon_home: Path | None = None,
-    force: bool = False,
-    resolve: bool = False,
-    verbose: int = 0,
-    dry_run: bool = False,
-) -> dict[str, Any]:
-    return {
-        "command": command,
-        "venv": [] if venv is None else venv,
-        "no_default_venv": no_default_venv,
-        "paths": [] if paths is None else paths,
-        "parent": [] if parent is None else parent,
-        "workon_home": workon_home,
-        "force": force,
-        "resolve": resolve,
-        "verbose": verbose,
-        "dry_run": dry_run,
-    }
-
-
-@pytest.mark.parametrize(
-    ("arg", "kwargs"),
-    [
-        (
-            "",
-            {},
-        ),
-        ("a/b c/d", {"paths": [Path("a/b"), Path("c/d")]}),
-        ("--parent a/b --parent c/d", {"parent": [Path("a/b"), Path("c/d")]}),
-        (
-            "--dry-run",
-            {"dry_run": True},
-        ),
-        ("--venv hello", {"venv": ["hello"]}),
-        ("-o a/dir", {"workon_home": Path("a/dir")}),
-    ],
-)
-def test_parser_link(arg: str, kwargs: dict[str, Any]) -> None:
-    assert parse_args_as_dict(f"link {arg}") == base_cli_options(**kwargs)
+    from click.testing import CliRunner
 
 
 @pytest.mark.parametrize(
@@ -150,27 +97,229 @@ def test__get_workon_home(
     )
 
 
-def test__main() -> None:
-    from subprocess import check_output
-
-    out = check_output(["python", "-m", "uv_workon"]).decode()
-    assert "Program to work" in out
-
-
 def test_verbosity() -> None:
     import logging
 
-    cli.main([])
-    assert not cli.logger.level
+    cli.list_venvs(verbose=-1)
+    assert cli.logger.level == logging.ERROR
 
-    cli.set_verbosity_level(-1)
-    assert cli.logger.level == logging.ERROR  # type: ignore[comparison-overlap]
-
-    cli.set_verbosity_level(0)
+    cli.list_venvs(verbose=0)
     assert cli.logger.level == logging.WARNING
 
-    cli.set_verbosity_level(1)
+    cli.list_venvs(verbose=1)
     assert cli.logger.level == logging.INFO
 
-    cli.set_verbosity_level(2)
+    cli.list_venvs(verbose=2)
     assert cli.logger.level == logging.DEBUG
+
+
+@pytest.mark.parametrize(
+    ("pattern", "parts"),
+    [
+        ("is_venv*", ("is_venv_{i}",)),
+        ("has_dotvenv_*", ("has_dotvenv_{i}", ".venv")),
+        ("has_dotvenv_*/.venv", ("has_dotvenv_{i}", ".venv")),
+        ("has_venv_*", ("has_venv_{i}", "venv")),
+        ("has_venv_*/venv", ("has_venv_{i}", "venv")),
+        ("bad_dotvenv_*", None),
+        ("bad_dotvenv_*/.venv", None),
+    ],
+)
+@pytest.mark.parametrize("resolve", [True, False])
+@pytest.mark.parametrize("dry", [True, False])
+def test_symlink_venvs_paths(
+    clirunner: CliRunner,
+    workon_home: Path,
+    venvs_parent_path: Path,
+    pattern: str,
+    parts: tuple[str] | None,
+    resolve: bool,
+    dry: bool,
+) -> None:
+    paths = venvs_parent_path.glob(pattern)
+
+    clirunner.invoke(
+        cli.app,
+        [
+            "link",
+            "--workon-home",
+            str(workon_home),
+            "-vv",
+            *map(str, paths),
+            *(["--resolve"] if resolve else []),
+            *(["--dry-run"] if dry else []),
+        ],
+    )
+
+    if dry:
+        assert set(workon_home.glob("*")) == set()
+        return
+
+    expected_symlinks: set[Path] = (
+        set()
+        if parts is None
+        else {workon_home / parts[0].format(i=i) for i in range(3)}
+    )
+
+    assert expected_symlinks == set(workon_home.glob("*"))
+
+    if parts is not None:
+        # look at readlink
+        expected_paths = {
+            venvs_parent_path.joinpath(*[_.format(i=i) for _ in parts])
+            for i in range(3)
+        }
+
+        if not resolve:
+            expected_paths = {
+                Path(os.path.relpath(p, workon_home)) for p in expected_paths
+            }
+
+        print(expected_paths)
+        assert expected_paths == {p.readlink() for p in workon_home.glob("*")}
+
+
+def test_symlink_venvs_parent(
+    clirunner: CliRunner, workon_home: Path, venvs_parent_path: Path
+) -> None:
+    clirunner.invoke(
+        cli.app,
+        [
+            "link",
+            "--workon-home",
+            str(workon_home),
+            "-vv",
+            "--parent",
+            str(venvs_parent_path),
+        ],
+    )
+
+    expected_symlinks = {
+        workon_home / fmt.format(i=i)
+        for fmt in ("has_dotvenv_{i}", "has_venv_{i}", "is_venv_{i}")
+        for i in range(3)
+    }
+
+    assert expected_symlinks == set(workon_home.glob("*"))
+
+
+@pytest.mark.parametrize(
+    "options",
+    [
+        ("--resolve",),
+        ("--full-path",),
+        (),
+    ],
+)
+def test_list(
+    clirunner: CliRunner, workon_home_with_is_venv: Path, options: tuple[str]
+) -> None:
+    out = clirunner.invoke(
+        cli.app, ["list", "--workon-home", str(workon_home_with_is_venv), *options]
+    )
+
+    links = workon_home_with_is_venv.glob("*")
+
+    expected: Iterable[Any]
+    if options == ("--resolve",):
+        expected = (x.resolve() for x in links)
+
+    elif options == ("--full-path",):
+        expected = links
+
+    else:
+        expected = (x.name for x in links)
+
+    assert "\n".join(map(str, sorted(expected))) == out.output.strip()
+
+
+@pytest.mark.parametrize("dry", [True, False])
+def test_clean(
+    clirunner: CliRunner,
+    workon_home_with_is_venv: Path,
+    venvs_parent_path: Path,
+    dry: bool,
+) -> None:
+    paths = venvs_parent_path.glob("is_venv_*")
+    clirunner.invoke(
+        cli.app,
+        [
+            "link",
+            "--workon-home",
+            str(workon_home_with_is_venv),
+            "-vv",
+            *map(str, paths),
+        ],
+    )
+
+    # additional bad venv
+    path = venvs_parent_path / "no_venv_0"
+    link = workon_home_with_is_venv / "no_venv_0"
+
+    link.symlink_to(path)
+
+    assert link.exists()
+    assert link.readlink() == path
+
+    clirunner.invoke(
+        cli.app,
+        [
+            "clean",
+            "--workon-home",
+            str(workon_home_with_is_venv),
+            "--yes",
+            *(["--dry-run"] if dry else []),
+        ],
+    )
+
+    if dry:
+        assert link.exists()
+    else:
+        assert not link.exists()
+
+
+@pytest.mark.parametrize("dry", [True])
+@pytest.mark.parametrize("named", [True, False])
+@pytest.mark.parametrize("resolve", [True, False])
+# @pytest.mark.parametrize("resolve", [False])
+def test_run(
+    clirunner: CliRunner,
+    workon_home_with_is_venv: Path,
+    dry: bool,
+    named: bool,
+    resolve: bool,
+) -> None:
+    args = ["python", "-c", "import sys; print(sys.executable)"]
+
+    path = workon_home_with_is_venv / "is_venv_0"
+    if resolve:
+        path = path.resolve()
+
+    opts = (
+        ["-n", "is_venv_0"]
+        if named
+        else ["-p", str(workon_home_with_is_venv / "is_venv_0")]
+    )
+
+    out = clirunner.invoke(
+        cli.app,
+        [
+            "run",
+            "--workon-home",
+            str(workon_home_with_is_venv),
+            *opts,
+            *args,
+            *(["--dry-run"] if dry else []),
+            *(["--resolve"] if resolve else []),
+        ],
+    )
+
+    if dry:
+        expected = f"VIRTUAL_ENV={path} UV_PROJECT_ENVIRONMENT={path} uv run -p {path} --no-project {shlex.join(args)}"
+
+        assert expected == out.output.strip()
+
+
+def test_shell_config(clirunner: CliRunner) -> None:
+    out = clirunner.invoke(cli.app, ["shell-config"])
+    assert out.output.strip() == generate_shell_config().strip()
