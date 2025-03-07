@@ -25,6 +25,8 @@ class NoVirtualEnvError(ValueError):
     """Error to raise if no virtual environment found."""
 
 
+# * Utilities -----------------------------------------------------------------
+# ** Validate
 def validate_venv_patterns(venv_patterns: VirtualEnvPattern) -> list[str]:
     """Validate venv patterns."""
     # fast exit for most likely cas
@@ -40,40 +42,18 @@ def validate_venv_patterns(venv_patterns: VirtualEnvPattern) -> list[str]:
     return list(venv_patterns)
 
 
-def is_valid_venv(path: Path) -> bool:
+def is_valid_virtualenv(path: Path) -> bool:
     """Check if path is a valid venv"""
     return path.is_dir() and (path / "pyvenv.cfg").exists()
 
 
-def validate_is_venv(path: PathLike) -> Path:
+def validate_is_virtualenv(path: PathLike) -> Path:
     """Validate is a virtual environment path"""
     path = Path(path)
-    if not is_valid_venv(path):
+    if not is_valid_virtualenv(path):
         msg = f"{path} is not a valid virtual environment"
         raise NoVirtualEnvError(msg)
     return path
-
-
-def infer_virtualenv_name(path: Path, venv_patterns: VirtualEnvPattern) -> str:
-    """Infer a virtual environment name from path."""
-    path_resolved = path.resolve()
-    if (name := path_resolved.name) in validate_venv_patterns(venv_patterns):
-        return path_resolved.parent.name
-    return name
-
-
-def infer_virtualenv_path(path: PathLike, venv_patterns: VirtualEnvPattern) -> Path:
-    """Find a virtual env by pattern."""
-    path = Path(path)
-    if is_valid_venv(path):
-        return path
-
-    for pattern in validate_venv_patterns(venv_patterns):
-        if is_valid_venv(path_pattern := path / pattern):
-            return path_pattern
-
-    msg = f"No venv found at {path}"
-    raise NoVirtualEnvError(msg)
 
 
 def validate_dir_exists(path: PathLike) -> Path:
@@ -94,6 +74,39 @@ def validate_symlink(path: PathLike) -> Path:
     return path
 
 
+# ** Infer
+def infer_virtualenv_name(path: Path, venv_patterns: VirtualEnvPattern) -> str:
+    """Infer a virtual environment name from path."""
+    path_resolved = path.resolve()
+    if (name := path_resolved.name) in validate_venv_patterns(venv_patterns):
+        return path_resolved.parent.name
+    return name
+
+
+def infer_virtualenv_path(
+    path: PathLike, venv_patterns: VirtualEnvPattern
+) -> Path | None:
+    """Find a virtual env by pattern and return None if not found."""
+    path = Path(path)
+    if is_valid_virtualenv(path):
+        return path
+    for pattern in validate_venv_patterns(venv_patterns):
+        if is_valid_virtualenv(path_pattern := path / pattern):
+            return path_pattern
+    return None
+
+
+def infer_virtualenv_path_raise(
+    path: PathLike, venv_patterns: VirtualEnvPattern
+) -> Path:
+    """Find a virtual env by pattern and raise if not found."""
+    if (path_ := infer_virtualenv_path(path, venv_patterns)) is None:
+        msg = f"No venv found at {path}"
+        raise NoVirtualEnvError(msg)
+    return path_
+
+
+# ** Convert
 def _converter_pathlike(path: PathLike) -> Path:
     return Path(path)
 
@@ -103,34 +116,11 @@ def _converter_pathlike_absolute(path: PathLike) -> Path:
 
 
 @attrs.define()
-class VirtualEnvPath:
-    """Class to handle virtual environment path."""
-
-    path: Path = attrs.field(converter=_converter_pathlike)
-
-    def is_valid_path(self) -> bool:
-        """Check if path is a valid virtual environment"""
-        return is_valid_venv(self.path)
-
-    def resolve(self) -> Self:
-        """Create new object with resolved path."""
-        return attrs.evolve(self, path=self.path.resolve())
-
-    @classmethod
-    def from_path(cls, path: PathLike, venv_patterns: VirtualEnvPattern) -> Self:
-        """Create object from path."""
-        return cls(infer_virtualenv_path(path, validate_venv_patterns(venv_patterns)))
-
-
-@attrs.define()
-class VirtualEnvPathAndLink(VirtualEnvPath):
+class VirtualEnvPathAndLink:
     """Class to handle virtual environment with link"""
 
+    path: Path = attrs.field(converter=_converter_pathlike)
     link: Path = attrs.field(converter=_converter_pathlike_absolute)
-
-    def is_valid_link(self) -> bool:
-        """Whether link does not exist or is a symlink"""
-        return (not self.link.exists()) or self.path.is_symlink()
 
     def create_symlink(
         self,
@@ -149,22 +139,6 @@ class VirtualEnvPathAndLink(VirtualEnvPath):
             self.link.symlink_to(path)
 
     @classmethod
-    def from_path_and_workon(
-        cls,
-        path: PathLike,
-        workon_home: PathLike,
-        name: str | None,
-        venv_patterns: VirtualEnvPattern,
-    ) -> Self:
-        """Create a (path, link) pair."""
-        venv_patterns = validate_venv_patterns(venv_patterns)
-        path = infer_virtualenv_path(path, venv_patterns)
-        if name is None:
-            name = infer_virtualenv_name(path, venv_patterns)
-        link = validate_symlink(validate_dir_exists(workon_home) / name)
-        return cls(path=path, link=link)
-
-    @classmethod
     def from_paths_and_workon(
         cls,
         paths: Iterable[PathLike],
@@ -172,7 +146,7 @@ class VirtualEnvPathAndLink(VirtualEnvPath):
         venv_patterns: VirtualEnvPattern,
         names: str | Iterable[str] | None = None,
     ) -> Iterable[Self]:
-        """Get iterable of objects."""
+        """Get iterable of objects from paths"""
         venv_patterns = validate_venv_patterns(venv_patterns)
         workon_home = validate_dir_exists(workon_home)
 
@@ -185,23 +159,20 @@ class VirtualEnvPathAndLink(VirtualEnvPath):
             seq = zip(paths, names, strict=True)
 
         for _path, _name in seq:
-            try:
-                path = infer_virtualenv_path(_path, venv_patterns)
-            except NoVirtualEnvError:
-                continue
-
-            name = (
-                infer_virtualenv_name(path, venv_patterns) if _name is None else _name
-            )
-            link = validate_symlink(workon_home / name)
-
-            yield cls(path=path, link=link)
+            if (path := infer_virtualenv_path(_path, venv_patterns)) is not None:
+                name = (
+                    infer_virtualenv_name(path, venv_patterns)
+                    if _name is None
+                    else _name
+                )
+                link = validate_symlink(workon_home / name)
+                yield cls(path=path, link=link)
 
 
 def get_invalid_symlinks(workon_home: Path) -> Iterable[Path]:
     """Get Iterable of paths to invalid symlinks."""
     for path in workon_home.glob("*"):
-        if path.is_symlink() and not is_valid_venv(path):
+        if path.is_symlink() and not is_valid_virtualenv(path):
             yield path
 
 
@@ -209,7 +180,7 @@ def list_venv_paths(
     workon_home: Path,
 ) -> list[Path]:
     """Get list of venvs by name"""
-    return [path for path in workon_home.glob("*") if is_valid_venv(path)]
+    return [path for path in workon_home.glob("*") if is_valid_virtualenv(path)]
 
 
 def select_option(

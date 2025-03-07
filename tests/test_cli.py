@@ -75,16 +75,16 @@ def test__get_input_paths(venvs_parent_path: Path) -> None:
 def test_verbosity() -> None:
     import logging
 
-    cli.list_venvs(verbose=-1)
+    cli.list_virtualenvs(verbose=-1)
     assert cli.logger.level == logging.ERROR
 
-    cli.list_venvs(verbose=0)
+    cli.list_virtualenvs(verbose=0)
     assert cli.logger.level == logging.WARNING
 
-    cli.list_venvs(verbose=1)
+    cli.list_virtualenvs(verbose=1)
     assert cli.logger.level == logging.INFO
 
-    cli.list_venvs(verbose=2)
+    cli.list_virtualenvs(verbose=2)
     assert cli.logger.level == logging.DEBUG
 
 
@@ -102,7 +102,7 @@ def test_verbosity() -> None:
 )
 @pytest.mark.parametrize("resolve", [True, False])
 @pytest.mark.parametrize("dry", [True, False])
-def test_symlink_venvs_paths(
+def test_link_paths(
     clirunner: CliRunner,
     workon_home: Path,
     venvs_parent_path: Path,
@@ -154,7 +154,7 @@ def test_symlink_venvs_paths(
         assert expected_paths == {p.readlink() for p in workon_home.glob("*")}
 
 
-def test_symlink_venvs_parent(
+def test_link_parent(
     clirunner: CliRunner, workon_home: Path, venvs_parent_path: Path
 ) -> None:
     clirunner.invoke(

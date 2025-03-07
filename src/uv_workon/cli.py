@@ -9,7 +9,7 @@ import itertools
 import logging
 import os
 import shlex
-from functools import wraps
+from functools import lru_cache, wraps
 from inspect import signature
 from pathlib import Path
 from typing import TYPE_CHECKING, Annotated, Any, cast
@@ -21,10 +21,10 @@ from .core import (
     VirtualEnvPathAndLink,
     generate_shell_config,
     get_invalid_symlinks,
-    infer_virtualenv_path,
+    infer_virtualenv_path_raise,
     list_venv_paths,
     select_option,
-    validate_is_venv,
+    validate_is_virtualenv,
 )
 
 if TYPE_CHECKING:
@@ -65,19 +65,28 @@ def _get_input_paths(
     return itertools.chain(paths, *[p.glob("*") for p in parents])
 
 
-def _select_venv_path(
+def _select_virtualenv_path(
     venv_path: Path | None,
     venv_name: str | None,
     workon_home: Path,
     venv_patterns: list[str] | None,
+    resolve: bool = False,
 ) -> Path:
     if venv_path:
-        return infer_virtualenv_path(venv_path, _get_venv_dir_names(venv_patterns))
-    if venv_name:
-        return validate_is_venv(workon_home / venv_name)
+        path = infer_virtualenv_path_raise(
+            venv_path, _get_venv_dir_names(venv_patterns)
+        )
+    elif venv_name:
+        path = validate_is_virtualenv(workon_home / venv_name)
 
-    options = [p.name for p in list_venv_paths(workon_home)]
-    return workon_home / select_option(options, title="venv")
+    else:
+        options = [p.name for p in list_venv_paths(workon_home)]
+        path = workon_home / select_option(options, title="venv")
+
+    if resolve:
+        path = path.resolve()
+
+    return path
 
 
 def _expand_user(x: Path) -> Path:
@@ -87,6 +96,17 @@ def _expand_user(x: Path) -> Path:
 def _print_help() -> None:
     with click.get_current_context() as ctx:
         typer.echo(ctx.get_help())
+
+
+@lru_cache
+def _all_virtualenv_names() -> list[str]:
+    workon_home = Path(os.environ.get("WORKON_HOME", "~/.virtualenvs")).expanduser()
+    return [p.name for p in list_venv_paths(workon_home)]
+
+
+def _complete_virtualenv_names(incomplete: str) -> list[str]:
+    valid_names = _all_virtualenv_names()
+    return [name for name in valid_names if name.startswith(incomplete)]
 
 
 # * Main app ------------------------------------------------------------------
@@ -229,7 +249,10 @@ YES_CLI = Annotated[
 VENV_NAME_CLI = Annotated[
     str | None,
     typer.Option(
-        "--name", "-n", help="Use virtual environment located at ${workon_home}/{name}."
+        "--name",
+        "-n",
+        help="Use virtual environment located at ${workon_home}/{name}.",
+        autocompletion=_complete_virtualenv_names,
     ),
 ]
 VENV_PATH_CLI = Annotated[
@@ -242,6 +265,16 @@ VENV_PATH_CLI = Annotated[
 ]
 UV_RUN_OPTIONS_CLI = Annotated[
     list[str], typer.Argument(help="Arguments and options passed to `uv run ...`")
+]
+NO_COMMAND_CLI = Annotated[
+    bool,
+    typer.Option(
+        "--no-command",
+        help="""
+        Default is to include the command name with the output.
+        If pass `--no-command`, only list the path.
+        """,
+    ),
 ]
 
 
@@ -290,7 +323,7 @@ def _add_verbose_logger(
 # NOTE: return locals() for testing purposes.
 @app_typer.command("link")
 @_add_verbose_logger()
-def symlink_venvs(
+def link_virtualenvs(
     workon_home: WORKON_HOME_CLI = WORKON_HOME_DEFAULT,
     dry_run: DRY_RUN_CLI = False,
     verbose: VERBOSE_CLI = None,
@@ -332,7 +365,7 @@ def symlink_venvs(
 
 @app_typer.command("list")
 @_add_verbose_logger()
-def list_venvs(
+def list_virtualenvs(
     workon_home: WORKON_HOME_CLI = WORKON_HOME_DEFAULT,
     verbose: VERBOSE_CLI = None,
 ) -> None:
@@ -346,7 +379,7 @@ def list_venvs(
 
 @app_typer.command("clean")
 @_add_verbose_logger()
-def clean(
+def clean_virtualenvs(
     workon_home: WORKON_HOME_CLI = WORKON_HOME_DEFAULT,
     dry_run: DRY_RUN_CLI = False,
     verbose: VERBOSE_CLI = None,
@@ -370,7 +403,7 @@ def clean(
     },
 )
 @_add_verbose_logger()
-def run_command(
+def run_with_virtualenv(
     ctx: typer.Context,
     workon_home: WORKON_HOME_CLI = WORKON_HOME_DEFAULT,
     dry_run: DRY_RUN_CLI = False,
@@ -394,15 +427,13 @@ def run_command(
         typer.echo(ctx.get_help())
         return
 
-    path = _select_venv_path(
+    path = _select_virtualenv_path(
         venv_path=venv_path,
         venv_name=venv_name,
         workon_home=workon_home,
         venv_patterns=venv_patterns,
+        resolve=resolve,
     )
-
-    if resolve:
-        path = path.resolve()
 
     args = ["uv", "run", "-p", str(path), "--no-project", *ctx.args]
     command = f"VIRTUAL_ENV={path} UV_PROJECT_ENVIRONMENT={path} {shlex.join(args)}"
@@ -447,20 +478,38 @@ def shell_activate(
     resolve: RESOLVE_CLI = False,
 ) -> None:
     """Use to activate virtual environment with `source $(uv-workon shell-activate -n ...)`"""
-    path = _select_venv_path(
+    path = _select_virtualenv_path(
         venv_path=venv_path,
         venv_name=venv_name,
         workon_home=workon_home,
         venv_patterns=venv_patterns,
+        resolve=resolve,
     )
-
-    if resolve:
-        path = path.resolve()
 
     if (activate := path / "bin" / "activate").exists() or (
         activate := path / "Scripts" / "activate"
     ).exists():
         typer.echo(str(activate))
+
+
+@app_typer.command("shell-cd")
+def shell_cd(
+    workon_home: WORKON_HOME_CLI = WORKON_HOME_DEFAULT,
+    venv_name: VENV_NAME_CLI = None,
+    venv_path: VENV_PATH_CLI = None,
+    venv_patterns: VENV_PATTERNS_CLI = None,
+    resolve: RESOLVE_CLI = False,
+) -> None:
+    """Use to activate virtual environment with `source $(uv-workon shell-activate -n ...)`"""
+    path = _select_virtualenv_path(
+        venv_path=venv_path,
+        venv_name=venv_name,
+        workon_home=workon_home,
+        venv_patterns=venv_patterns,
+        resolve=resolve,
+    )
+
+    typer.echo(f"cd {path}")
 
 
 app = typer.main.get_command(app_typer)
