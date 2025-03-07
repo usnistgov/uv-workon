@@ -1,5 +1,5 @@
 """Enable `python -m open_notebook`"""
 
-from .cli import app
+from .cli import app_typer
 
-app(prog_name="uv-workon")
+app_typer(prog_name="uv-workon")

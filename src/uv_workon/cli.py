@@ -79,9 +79,11 @@ def _select_virtualenv_path(
     elif venv_name:
         path = validate_is_virtualenv(workon_home / venv_name)
 
-    else:
-        options = [p.name for p in list_venv_paths(workon_home)]
+    elif options := [p.name for p in list_venv_paths(workon_home)]:
         path = workon_home / select_option(options, title="venv")
+    else:
+        typer.echo("No virtual environment found")
+        raise typer.Exit(0)
 
     if resolve:
         path = path.resolve()
@@ -99,13 +101,13 @@ def _print_help() -> None:
 
 
 @lru_cache
-def _all_virtualenv_names() -> list[str]:
-    workon_home = Path(os.environ.get("WORKON_HOME", "~/.virtualenvs")).expanduser()
+def _all_virtualenv_names(workon_home: Path) -> list[str]:
     return [p.name for p in list_venv_paths(workon_home)]
 
 
-def _complete_virtualenv_names(incomplete: str) -> list[str]:
-    valid_names = _all_virtualenv_names()
+def _complete_virtualenv_names(ctx: typer.Context, incomplete: str) -> list[str]:
+    workon_home = ctx.params.get("workon_home")
+    valid_names = _all_virtualenv_names(workon_home)
     return [name for name in valid_names if name.startswith(incomplete)]
 
 
@@ -147,6 +149,7 @@ WORKON_HOME_CLI = Annotated[
         """,
         envvar="WORKON_HOME",
         callback=_expand_user,
+        is_eager=True,  # needed for autocompletion
     ),
 ]
 DRY_RUN_CLI = Annotated[
@@ -469,13 +472,14 @@ def shell_config() -> None:
     typer.echo(generate_shell_config())
 
 
-@app_typer.command("shell-activate")
+@app_typer.command("activate")
 def shell_activate(
     workon_home: WORKON_HOME_CLI = WORKON_HOME_DEFAULT,
     venv_name: VENV_NAME_CLI = None,
     venv_path: VENV_PATH_CLI = None,
     venv_patterns: VENV_PATTERNS_CLI = None,
     resolve: RESOLVE_CLI = False,
+    no_command: NO_COMMAND_CLI = False,
 ) -> None:
     """Use to activate virtual environment with `source $(uv-workon shell-activate -n ...)`"""
     path = _select_virtualenv_path(
@@ -489,7 +493,10 @@ def shell_activate(
     if (activate := path / "bin" / "activate").exists() or (
         activate := path / "Scripts" / "activate"
     ).exists():
-        typer.echo(str(activate))
+        typer.echo(str(activate) if no_command else f"source {activate}")
+    else:
+        logger.error("No activate script found for path %s", path)
+        raise typer.Exit(1)
 
 
 @app_typer.command("shell-cd")
@@ -499,6 +506,7 @@ def shell_cd(
     venv_path: VENV_PATH_CLI = None,
     venv_patterns: VENV_PATTERNS_CLI = None,
     resolve: RESOLVE_CLI = False,
+    no_command: NO_COMMAND_CLI = False,
 ) -> None:
     """Use to activate virtual environment with `source $(uv-workon shell-activate -n ...)`"""
     path = _select_virtualenv_path(
@@ -508,11 +516,8 @@ def shell_cd(
         venv_patterns=venv_patterns,
         resolve=resolve,
     )
+    typer.echo(str(path) if no_command else f"cd {path}")
 
-    typer.echo(f"cd {path}")
-
-
-app = typer.main.get_command(app_typer)
 
 if __name__ == "__main__":
-    app()
+    app_typer()

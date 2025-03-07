@@ -221,7 +221,7 @@ def generate_shell_config() -> str:
         local cmd="${{1-__missing__}}"
         case "$cmd" in
             --help | -h) $__UV_WORKON shell-activate --help ;;
-            *) source $(command $__UV_WORKON shell-activate $@) ;;
+            *) source $(command $__UV_WORKON activate $@) ;;
         esac
     }}
 

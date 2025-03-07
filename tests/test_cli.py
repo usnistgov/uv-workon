@@ -16,6 +16,7 @@ from uv_workon.core import generate_shell_config
 if TYPE_CHECKING:
     from typing import Any
 
+    from click import Command
     from click.testing import CliRunner
 
 
@@ -103,6 +104,7 @@ def test_verbosity() -> None:
 @pytest.mark.parametrize("resolve", [True, False])
 @pytest.mark.parametrize("dry", [True, False])
 def test_link_paths(
+    click_app: Command,
     clirunner: CliRunner,
     workon_home: Path,
     venvs_parent_path: Path,
@@ -114,7 +116,7 @@ def test_link_paths(
     paths = venvs_parent_path.glob(pattern)
 
     clirunner.invoke(
-        cli.app,
+        click_app,
         [
             "link",
             "--workon-home",
@@ -155,10 +157,10 @@ def test_link_paths(
 
 
 def test_link_parent(
-    clirunner: CliRunner, workon_home: Path, venvs_parent_path: Path
+    click_app: Command, clirunner: CliRunner, workon_home: Path, venvs_parent_path: Path
 ) -> None:
     clirunner.invoke(
-        cli.app,
+        click_app,
         [
             "link",
             "--workon-home",
@@ -189,6 +191,7 @@ def test_link_parent(
     ],
 )
 def test_workon_home(
+    click_app: Command,
     clirunner: CliRunner,
     environment_val: str | None,
     cli_val: str | None,
@@ -197,17 +200,18 @@ def test_workon_home(
 ) -> None:
     env = {"WORKON_HOME": environment_val} if environment_val else {}
     opts = [] if cli_val is None else ["--workon-home", cli_val]
-    clirunner.invoke(cli.app, ["list", "-vv", *opts], env=env)
+    clirunner.invoke(click_app, ["list", "-vv", *opts], env=env)
 
     assert f"'workon_home': {Path(expected).expanduser()!r}" in caplog.text
 
 
 def test_list(
+    click_app: Command,
     clirunner: CliRunner,
     workon_home_with_is_venv: Path,
 ) -> None:
     out = clirunner.invoke(
-        cli.app, ["list", "--workon-home", str(workon_home_with_is_venv)]
+        click_app, ["list", "--workon-home", str(workon_home_with_is_venv)]
     )
 
     links = sorted(workon_home_with_is_venv.glob("*"), key=lambda x: x.name)
@@ -217,6 +221,7 @@ def test_list(
 
 @pytest.mark.parametrize("dry", [True, False])
 def test_clean(
+    click_app: Command,
     clirunner: CliRunner,
     workon_home_with_is_venv: Path,
     venvs_parent_path: Path,
@@ -224,7 +229,7 @@ def test_clean(
 ) -> None:
     paths = venvs_parent_path.glob("is_venv_*")
     clirunner.invoke(
-        cli.app,
+        click_app,
         [
             "link",
             "--workon-home",
@@ -244,7 +249,7 @@ def test_clean(
     assert link.readlink() == path
 
     clirunner.invoke(
-        cli.app,
+        click_app,
         [
             "clean",
             "--workon-home",
@@ -265,6 +270,7 @@ def test_clean(
 @pytest.mark.parametrize("resolve", [True, False])
 # @pytest.mark.parametrize("resolve", [False])
 def test_run(
+    click_app: Command,
     clirunner: CliRunner,
     workon_home_with_is_venv: Path,
     dry: bool,
@@ -284,7 +290,7 @@ def test_run(
     )
 
     out = clirunner.invoke(
-        cli.app,
+        click_app,
         [
             "run",
             "--workon-home",
@@ -302,8 +308,8 @@ def test_run(
         assert expected == out.output.strip()
 
 
-def test_shell_config(clirunner: CliRunner) -> None:
-    out = clirunner.invoke(cli.app, ["shell-config"])
+def test_shell_config(click_app: Command, clirunner: CliRunner) -> None:
+    out = clirunner.invoke(click_app, ["shell-config"])
     assert out.output.strip() == generate_shell_config().strip()
 
 

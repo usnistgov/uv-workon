@@ -11,6 +11,17 @@ from click.testing import CliRunner
 if TYPE_CHECKING:
     from collections.abc import Generator
 
+    from click import Command
+
+
+@pytest.fixture(scope="session")
+def click_app() -> Command:
+    import typer
+
+    from uv_workon.cli import app_typer
+
+    return typer.main.get_command(app_typer)
+
 
 @pytest.fixture
 def example_path(tmp_path: Path) -> Generator[Path]:
@@ -72,13 +83,11 @@ def clirunner() -> CliRunner:
 
 @pytest.fixture
 def workon_home_with_is_venv(
-    workon_home: Path, venvs_parent_path: Path, clirunner: CliRunner
+    click_app: Command, workon_home: Path, venvs_parent_path: Path, clirunner: CliRunner
 ) -> Path:
-    from uv_workon.cli import app
-
     paths = venvs_parent_path.glob("is_venv_*")
     clirunner.invoke(
-        app, ["link", "--workon-home", str(workon_home), "-vv", *map(str, paths)]
+        click_app, ["link", "--workon-home", str(workon_home), "-vv", *map(str, paths)]
     )
 
     return workon_home

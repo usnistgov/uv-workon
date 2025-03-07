@@ -43,8 +43,8 @@ dependencies = [
 ]
 urls.Documentation = "https://pages.nist.gov/uv-workon/"
 urls.Homepage = "https://github.com/wpk-nist-gov/uv-workon"
-scripts.uv-workon = "uv_workon.cli:app"
-scripts.uvw = "uv_workon.cli:app"
+scripts.uv-workon = "uv_workon.cli:app_typer"
+scripts.uvw = "uv_workon.cli:app_typer"
 
 [dependency-groups]
 dev = [
