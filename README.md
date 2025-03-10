@@ -5,9 +5,9 @@
 [![Docs][docs-badge]][docs-link]
 [![PyPI license][license-badge]][license-link]
 [![PyPI version][pypi-badge]][pypi-link]
-<!-- [![Conda (channel only)][conda-badge]][conda-link] -->
 [![Code style: ruff][ruff-badge]][ruff-link]
 [![uv][uv-badge]][uv-link]
+<!-- [![Conda (channel only)][conda-badge]][conda-link] -->
 
 <!--
   For more badges, see
