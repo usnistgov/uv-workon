@@ -1,7 +1,5 @@
 """Enable `python -m open_notebook`"""
 
-import sys
+from .cli import app_typer
 
-from .cli import main
-
-sys.exit(main())
+app_typer(prog_name="uv-workon")

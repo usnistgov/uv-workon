@@ -47,11 +47,6 @@ if TYPE_CHECKING:
     from nox import Session
 
 
-# Should only use on python version > 3.10
-if sys.version_info < (3, 10):
-    msg = "python>=3.10 required"
-    raise RuntimeError(msg)
-
 # * Names ------------------------------------------------------------------------------
 
 PACKAGE_NAME = "uv-workon"
@@ -78,20 +73,18 @@ PYTHON_ALL_VERSIONS = [
 ]
 PYTHON_DEFAULT_VERSION = Path(".python-version").read_text(encoding="utf-8").strip()
 
-UVXRUN_LOCK_REQUIREMENTS = "requirements/lock/py{}-uvxrun-tools.txt".format(
-    PYTHON_DEFAULT_VERSION.replace(".", "")
-)
-UVXRUN_MIN_REQUIREMENTS = "requirements/uvxrun-tools.txt"
+UVXRUN_LOCK_CONSTRAINTS = "requirements/lock/uvxrun-tools.txt"
+UVXRUN_MIN_CONSTRAINTS = "requirements/uvxrun-tools.txt"
 PIP_COMPILE_CONFIG = "requirements/uv.toml"
 
 
 @lru_cache
-def get_uvxrun_specs(requirements: str | None = None) -> uvxrun.Specifications:
+def get_uvxrun_specs(constraints: str | None = None) -> uvxrun.Specifications:
     """Get specs for uvxrun."""
-    requirements = requirements or UVXRUN_MIN_REQUIREMENTS
-    if not Path(requirements).exists():
-        requirements = None
-    return uvxrun.Specifications.from_requirements(requirements=requirements)
+    constraints = constraints or UVXRUN_MIN_CONSTRAINTS
+    if not Path(constraints).exists():
+        constraints = None
+    return uvxrun.Specifications.from_constraints(constraints=constraints)
 
 
 class SessionOptionsDict(TypedDict, total=False):
@@ -149,6 +142,11 @@ class SessionParams(DataclassParser):
         "--reinstall-package",
         "-P",
         help="reinstall package.  Only works with uv sync and editable installs",
+    )
+    installpkg: str | None = add_option(
+        "--installpkg",
+        help="Use this package instead of editable or built package",
+        default=None,
     )
 
     # requirements
@@ -375,9 +373,13 @@ def install_package(
     *args: str,
     editable: bool = False,
     update: bool = True,
+    installpkg: str | None = None,
 ) -> None:
     """Install current package."""
-    if editable:
+    if installpkg is not None:
+        run = session.run
+        opts = [*args, installpkg]
+    elif editable:
         run = session.run if update else session.run_install
         opts = [*args, "-e", "."]
     else:
@@ -496,48 +498,54 @@ def lock(
             "uv",
             "sync" if opts.update else "lock",
             "--upgrade",
-            env={"VIRTUAL_ENV": ".venv"},
+            env={
+                "VIRTUAL_ENV": ".venv",
+                "UV_PROJECT_ENVIRONMENT": ".venv",
+            },
         )
+
+    from packaging.version import Version
+
+    min_python_version = min(PYTHON_ALL_VERSIONS, key=Version)
 
     reqs_path = Path("./requirements")
     for path in reqs_path.glob("*.txt"):
-        python_versions = (
-            PYTHON_ALL_VERSIONS
+        python_version = (
+            min_python_version
             if path.name in {"test.txt", "test-extras.txt", "typing.txt"}
-            else [PYTHON_DEFAULT_VERSION]
+            else PYTHON_DEFAULT_VERSION
         )
 
-        for python_version in python_versions:
-            lockpath = infer_requirement_path(
-                path.name,
-                ext=".txt",
-                python_version=python_version,
-                lock=True,
-                check_exists=False,
-            )
+        lockpath = infer_requirement_path(
+            path.name,
+            ext=".txt",
+            python_version=python_version,
+            lock=True,
+            check_exists=False,
+        )
 
-            with check_for_change_manager(
-                path,
-                target_path=lockpath,
-                force_write=force,
-            ) as changed:
-                if force or changed:
-                    session.run(
-                        "uv",
-                        "pip",
-                        "compile",
-                        "--universal",
-                        f"--config-file={PIP_COMPILE_CONFIG}",
-                        "-q",
-                        "--python-version",
-                        python_version,
-                        *options,
-                        path,
-                        "-o",
-                        lockpath,
-                    )
-                else:
-                    session.log(f"Skipping {lockpath}")
+        with check_for_change_manager(
+            path,
+            target_path=lockpath,
+            force_write=force,
+        ) as changed:
+            if force or changed:
+                session.run(
+                    "uv",
+                    "pip",
+                    "compile",
+                    "--universal",
+                    f"--config-file={PIP_COMPILE_CONFIG}",
+                    "-q",
+                    "--python-version",
+                    python_version,
+                    *options,
+                    path,
+                    "-o",
+                    lockpath,
+                )
+            else:
+                session.log(f"Skipping {lockpath}")
 
 
 # ** testing
@@ -579,7 +587,7 @@ def test(
 ) -> None:
     """Test environments with conda installs."""
     install_dependencies(session, name="test", opts=opts)
-    install_package(session, editable=False, update=True)
+    install_package(session, editable=False, update=True, installpkg=opts.installpkg)
 
     _test(
         session=session,
@@ -599,7 +607,7 @@ nox.session(name="test-conda", **CONDA_ALL_KWS)(test)
 def test_notebook(session: nox.Session, opts: SessionParams) -> None:
     """Run pytest --nbval."""
     install_dependencies(session, name="test-notebook", opts=opts)
-    install_package(session, editable=False, update=True)
+    install_package(session, editable=False, update=True, installpkg=opts.installpkg)
 
     test_nbval_opts = shlex.split(
         """
@@ -856,7 +864,7 @@ def typing(  # noqa: C901, PLR0912
 
     run = partial(
         uvxrun.run,
-        specs=get_uvxrun_specs(UVXRUN_LOCK_REQUIREMENTS),
+        specs=get_uvxrun_specs(UVXRUN_LOCK_CONSTRAINTS),
         session=session,
         python_version=session.python,
         python_executable=get_python_full_path(session),

@@ -33,46 +33,100 @@
 
 <!-- other links -->
 
+[uv]: https://docs.astral.sh/uv/
+[virtualenvwrapper]: https://virtualenvwrapper.readthedocs.io/en/latest/
+[conda]: https://github.com/conda/conda
+[uv-central-discussion]: https://github.com/astral-sh/uv/issues/1495
+
 <!-- prettier-ignore-end -->
 
 # `uv-workon`
 
-A Python package for stuff.
+Command line program `uvw` to work with multiple [uv] based virtual
+environments. Note that the program name `uvw` differs from the project name
+`uv-workon` as `uvw` was taken on pypi.
 
 ## Overview
 
-Quick overview...
+[`uv`][uv] has taken the python world by storm, and for good reason. It manages
+projects, dependencies, virtual environment creation, and much more, all while
+being blazingly fast. One of the central ideas of [uv] is that the old method of
+activating virtual environments should be replace with `uv run ...` and letting
+[uv] figure out the rest. We fully agree with this workflow, but it does run
+counter to how many have used python virtual environments day to day data work.
+For example, many have historically used tools like [`conda`][conda] or
+[`virtualenvwrapper`][virtualenvwrapper] to manage centrally located python
+environments, that can be reused for multiple tasks. While we discorage using
+"mega" environments (i.e., sticking every dependency you'll ever need in a
+single python environments), there is utility in using a virtual environment for
+multiple tasks. There is [active discussion][uv-central-discussion] regarding if
+and how [uv] should manage centralized virtual environments.
+
+We takes the perspective that python virtual environments should be managed with
+uv inside a project. `uvw` allows for the usage of such virtual environments
+_outside_ the project. The basic workflow is as follows:
+
+1. Create a project `my-project` using `uv init ...`
+2. Create a virtual environment `my-project/.venv` using `uv sync ...`
+3. Link to central location using `uvw link my-project`
+
+Now, from anywhere, you can use the virtual environment `my-project`:
+
+- Activate with `uvw activate -n my-project`
+- Run python using the `my-project` virtual environment with
+  `uvw run -n my-project ...`
+- Change to the `my-project` project directory with `uvw cd -n my-project`
 
 ## Features
 
-Some features...
+- Link virtual environment to central location with `uv link`. These links are
+  located at `WORKON_HOME` environment variable, defaulting to `~/.virtualenvs`.
+- Activate virtual environment with `uvw activate ...`
+- Run under virtual environment with `uvw run ...`
+- Change to project directory with `uvw cd ...`
+- List available virtual environments with `uvw list`
+- Cleanup missing symlinks with `uvw clean`
+
+Currently `uvw` is setup to work with `bash` and `zsh` shells only.
 
 ## Status
 
 This package is actively used by the author. Please feel free to create a pull
 request for wanted features and suggestions!
 
+<!-- end-docs -->
+
 ## Quick start
 
-Use one of the following
+<!-- start-installation -->
+
+It is recommended to install with [`uv`](https://docs.astral.sh/uv/):
 
 ```bash
-pip install uv-workon
+uv tool install uv-workon
 ```
 
-or
+### Add autocompletion
+
+Run the following to add autocompletion for `uvw`:
 
 ```bash
-conda install -c wpk-nist uv-workon
+uvw --install-completion
 ```
 
-## Example usage
+### Shell interaction
 
-```python
-import uv_workon
+To use `uvw activate` and `uvw cd`, you must enable the shell configuration with
+`eval "$(uvw shell-config)", or add it to you config script with:
+
+```bash
+# for zsh
+echo 'eval "$(uvw shell-config)"' >> ~/.zshrc
+# for bash
+echo 'eval "$(uvw shell-config)"' >> ~/.bashrc
 ```
 
-<!-- end-docs -->
+<!-- end-installation -->
 
 ## Documentation
 
