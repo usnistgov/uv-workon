@@ -9,6 +9,7 @@ import itertools
 import logging
 import os
 import shlex
+from collections.abc import Iterator  # noqa: TC003
 from functools import lru_cache, wraps
 from inspect import signature
 from pathlib import Path
@@ -81,9 +82,9 @@ def _select_virtualenv_path(
     elif venv_name:
         path = validate_is_virtualenv(workon_home / venv_name)
 
-    elif options := [p.name for p in list_venv_paths(workon_home)]:
+    elif options := [p.name for p in list_venv_paths(workon_home)]:  # pragma: no cover
         path = workon_home / select_option(options, title="venv")
-    else:
+    else:  # pragma: no cover
         typer.echo("No virtual environment found")
         raise typer.Exit(0)
 
@@ -97,20 +98,15 @@ def _expand_user(x: Path) -> Path:
     return x.expanduser()
 
 
-def _print_help() -> None:
-    with click.get_current_context() as ctx:
-        typer.echo(ctx.get_help())
-
-
 @lru_cache
 def _all_virtualenv_names(workon_home: Path) -> list[str]:
     return [p.name for p in list_venv_paths(workon_home)]
 
 
-def _complete_virtualenv_names(ctx: typer.Context, incomplete: str) -> list[str]:
+def _complete_virtualenv_names(ctx: typer.Context, incomplete: str) -> Iterator[str]:
     workon_home = ctx.params.get("workon_home")
     valid_names = _all_virtualenv_names(workon_home)
-    return [name for name in valid_names if name.startswith(incomplete)]
+    yield from (name for name in valid_names if name.startswith(incomplete))
 
 
 # * Main app ------------------------------------------------------------------
@@ -315,7 +311,7 @@ def _add_verbose_logger(
             # add error logger to function call
             try:
                 return func(*args, **kwargs)
-            except Exception:
+            except Exception:  # pragma: no cover
                 logger.exception("found error")
                 raise
 
@@ -339,11 +335,11 @@ def link_virtualenvs(
     paths: PATHS_CLI = None,
     link_names: LINK_NAMES_CLI = None,
     resolve: RESOLVE_CLI = False,
-) -> dict[str, Any]:
+) -> None:
     """Create symlink from paths to workon_home."""
     if not (input_paths := list(_get_input_paths(paths, parents))):
-        _print_help()
-        return locals()
+        with click.get_current_context() as ctx:
+            typer.echo(ctx.get_help())
 
     venv_patterns = _get_venv_dir_names(venv_patterns, use_default=not no_default_venv)
     logger.debug("params: %s", locals())
@@ -364,8 +360,6 @@ def link_virtualenvs(
             obj.create_symlink(resolve=resolve, dry_run=dry_run)
         else:
             logger.debug("Skipping: %s -> %s", obj.link, obj.path)
-
-    return locals()
 
 
 @app_typer.command("list")
@@ -394,7 +388,9 @@ def clean_virtualenvs(
     logger.debug("params: %s", locals())
 
     for path in get_invalid_symlinks(workon_home):
-        if yes or typer.confirm(f"Remove {path} -> {path.readlink()}"):
+        if yes or typer.confirm(
+            f"Remove {path} -> {path.readlink()}"
+        ):  # pragma: no branch
             logger.info("Remove symlink: %s -> %s", path, path.readlink())
             if not dry_run:
                 path.unlink()
@@ -447,7 +443,7 @@ def run_with_virtualenv(
     logger.info("running args: %s", args)
     logger.info("command: %s", command)
 
-    if not dry_run:
+    if not dry_run:  # pragma: no cover
         import subprocess
 
         subprocess.run(
@@ -525,7 +521,3 @@ def shell_cd(
     ).parent
 
     typer.echo(str(path) if no_command else f"cd {path}")
-
-
-if __name__ == "__main__":
-    app_typer()

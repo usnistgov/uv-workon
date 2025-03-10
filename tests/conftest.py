@@ -71,6 +71,15 @@ def venvs_parent_path(tmp_path_factory: pytest.TempPathFactory) -> Path:
             d = parent_path.joinpath(*args)
             d.mkdir(parents=True)
 
+    # dummy make activate files ...
+    d = parent_path / "is_venv_0" / "bin"
+    d.mkdir()
+    (d / "activate").touch()
+
+    d = parent_path / "is_venv_1" / "Scripts"
+    d.mkdir()
+    (d / "activate").touch()
+
     return parent_path
 
 

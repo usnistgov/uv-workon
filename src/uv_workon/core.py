@@ -151,11 +151,14 @@ class VirtualEnvPathAndLink:
         workon_home = validate_dir_exists(workon_home)
 
         seq: Iterable[tuple[PathLike, str | None]]
-        if isinstance(names, str) or names is None:
+
+        if names is None:
             from itertools import zip_longest
 
             seq = zip_longest(paths, [names])
         else:
+            if isinstance(names, str):
+                names = [names]
             seq = zip(paths, names, strict=True)
 
         for _path, _name in seq:
@@ -187,7 +190,7 @@ def select_option(
     options: Sequence[str],
     title: str = "",
     usage: bool = True,
-) -> str:
+) -> str:  # pragma: no cover
     """Use selector"""
     from simple_term_menu import (  # pyright: ignore[reportMissingTypeStubs]
         TerminalMenu,

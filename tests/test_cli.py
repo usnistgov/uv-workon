@@ -6,7 +6,7 @@ import os
 import shlex
 from contextlib import nullcontext
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 import pytest
 
@@ -18,6 +18,7 @@ if TYPE_CHECKING:
 
     from click import Command
     from click.testing import CliRunner
+    from typer import Context
 
 
 @pytest.mark.parametrize(
@@ -87,6 +88,20 @@ def test_verbosity() -> None:
 
     cli.list_virtualenvs(verbose=2)
     assert cli.logger.level == logging.DEBUG
+
+
+def test_version(
+    click_app: Command,
+    clirunner: CliRunner,
+) -> None:
+    from uv_workon import __version__
+
+    out = clirunner.invoke(
+        click_app,
+        ["--version"],
+    )
+
+    assert f"uv-workon, version {__version__}" in out.output
 
 
 @pytest.mark.parametrize(
@@ -180,6 +195,15 @@ def test_link_parent(
     assert expected_symlinks == set(workon_home.glob("*"))
 
 
+def test_link_help(
+    click_app: Command,
+    clirunner: CliRunner,
+) -> None:
+    out = clirunner.invoke(click_app, ["link"])
+
+    assert "Create symlink from paths" in out.output
+
+
 @pytest.mark.parametrize(
     ("cli_val", "environment_val", "expected"),
     [
@@ -217,6 +241,27 @@ def test_list(
     links = sorted(workon_home_with_is_venv.glob("*"), key=lambda x: x.name)
     expected = "\n".join([f"{p.name:25}  {p.resolve()}" for p in links])
     assert expected == out.output.strip()
+
+
+def test_name_completions(
+    workon_home_with_is_venv: Path,
+) -> None:
+    class Dummy:
+        """Dummy class"""
+
+        def __init__(self, workon_home: Path) -> None:
+            self.params: dict[str, Any] = {"workon_home": workon_home}
+
+    d = cast("Context", Dummy(workon_home=workon_home_with_is_venv))
+    assert sorted(cli._complete_virtualenv_names(d, "")) == [
+        f"is_venv_{i}" for i in range(3)
+    ]
+    assert sorted(cli._complete_virtualenv_names(d, "is_venv_")) == [
+        f"is_venv_{i}" for i in range(3)
+    ]
+    assert sorted(cli._complete_virtualenv_names(d, "is_venv_0")) == [
+        f"is_venv_{i}" for i in range(1)
+    ]
 
 
 @pytest.mark.parametrize("dry", [True, False])
@@ -265,6 +310,18 @@ def test_clean(
         assert not link.exists()
 
 
+def test_run_help(
+    click_app: Command,
+    clirunner: CliRunner,
+) -> None:
+    out = clirunner.invoke(
+        click_app,
+        ["run"],
+    )
+
+    assert "Run uv commands using" in out.output
+
+
 @pytest.mark.parametrize("dry", [True])
 @pytest.mark.parametrize("named", [True, False])
 @pytest.mark.parametrize("resolve", [True, False])
@@ -311,6 +368,58 @@ def test_run(
 def test_shell_config(click_app: Command, clirunner: CliRunner) -> None:
     out = clirunner.invoke(click_app, ["shell-config"])
     assert out.output.strip() == generate_shell_config().strip()
+
+
+def test_shell_activate(
+    click_app: Command,
+    clirunner: CliRunner,
+    workon_home_with_is_venv: Path,
+) -> None:
+    out = clirunner.invoke(
+        click_app,
+        ["activate", "-n", "is_venv_0", "--workon-home", str(workon_home_with_is_venv)],
+    )
+    assert f"source {workon_home_with_is_venv}/is_venv_0" in out.output
+
+    out = clirunner.invoke(
+        click_app,
+        [
+            "activate",
+            "-p",
+            str(workon_home_with_is_venv / "is_venv_1"),
+            "--workon-home",
+            str(workon_home_with_is_venv),
+        ],
+    )
+    assert f"source {workon_home_with_is_venv}/is_venv_1" in out.output
+
+    out = clirunner.invoke(
+        click_app,
+        [
+            "activate",
+            "-p",
+            str(workon_home_with_is_venv / "is_venv_2"),
+            "--workon-home",
+            str(workon_home_with_is_venv),
+        ],
+    )
+
+    assert out.exit_code == 1
+
+
+def test_shell_cd(
+    click_app: Command,
+    clirunner: CliRunner,
+    workon_home_with_is_venv: Path,
+) -> None:
+    out = clirunner.invoke(
+        click_app,
+        ["cd", "-n", "is_venv_0", "--workon-home", str(workon_home_with_is_venv)],
+    )
+
+    path = (workon_home_with_is_venv / "is_venv_0").resolve().parent
+
+    assert f"cd {path}" in out.output
 
 
 def test__main__() -> None:
