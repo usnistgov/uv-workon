@@ -109,6 +109,14 @@ def _complete_virtualenv_names(ctx: typer.Context, incomplete: str) -> Iterator[
     yield from (name for name in valid_names if name.startswith(incomplete))
 
 
+# this is necessary because typer has a bug
+# where any path typed is considered 'complete'
+# for arguments (even if exists=True) and a space
+# is added to the end - this works around it.
+def _complete_path() -> list[str]:  # pragma: no cover
+    return []
+
+
 # * Main app ------------------------------------------------------------------
 app_typer = typer.Typer(no_args_is_help=True)
 
@@ -148,6 +156,7 @@ WORKON_HOME_CLI = Annotated[
         envvar="WORKON_HOME",
         callback=_expand_user,
         is_eager=True,  # needed for autocompletion
+        autocompletion=_complete_path,
     ),
 ]
 DRY_RUN_CLI = Annotated[
@@ -208,6 +217,7 @@ PATHS_CLI = Annotated[
         environment will come from the parent directory. Otherwise, it will be
         the name.
         """,
+        autocompletion=_complete_path,
     ),
 ]
 LINK_NAMES_CLI = Annotated[
@@ -231,6 +241,7 @@ PARENTS_CLI = Annotated[
     containing virtual environments. Using `uv-workon --parent a/path`
     is roughly equivalent to using `uv-workon a/path/*`
     """,
+        autocompletion=_complete_path,
     ),
 ]
 FORCE_CLI = Annotated[
@@ -262,6 +273,7 @@ VENV_PATH_CLI = Annotated[
         "-p",
         "--path",
         help="""Path to venv""",
+        autocompletion=_complete_path,
     ),
 ]
 UV_RUN_OPTIONS_CLI = Annotated[
