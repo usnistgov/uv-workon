@@ -5,7 +5,7 @@
 [![Docs][docs-badge]][docs-link]
 [![PyPI license][license-badge]][license-link]
 [![PyPI version][pypi-badge]][pypi-link]
-[![Conda (channel only)][conda-badge]][conda-link]
+<!-- [![Conda (channel only)][conda-badge]][conda-link] -->
 [![Code style: ruff][ruff-badge]][ruff-link]
 [![uv][uv-badge]][uv-link]
 
@@ -26,8 +26,8 @@
 [docs-link]: https://pages.nist.gov/uv-workon/
 [repo-badge]: https://img.shields.io/badge/--181717?logo=github&logoColor=ffffff
 [repo-link]: https://github.com/usnistgov/uv-workon
-[conda-badge]: https://img.shields.io/conda/v/wpk-nist/uv-workon
-[conda-link]: https://anaconda.org/wpk-nist/uv-workon
+<!-- [conda-badge]: https://img.shields.io/conda/v/wpk-nist/uv-workon -->
+<!-- [conda-link]: https://anaconda.org/wpk-nist/uv-workon -->
 [license-badge]: https://img.shields.io/pypi/l/uv-workon?color=informational
 [license-link]: https://github.com/usnistgov/uv-workon/blob/main/LICENSE
 
