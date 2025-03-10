@@ -8,7 +8,7 @@ test:
     - python {{ python_min }}
 
 about:
-  home: https://github.com/wpk-nist-gov/uv-workon
+  home: https://github.com/usnistgov/uv-workon
   summary: Tools activate and run from virtual environments
   description: |
     Tools activate and run from virtual environments

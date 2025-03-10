@@ -8,7 +8,7 @@ You can contribute in many ways:
 ## Types of Contributions
 
 <!-- prettier-ignore-start -->
-[issues]: https://github.com/wpk-nist-gov/uv-workon/issues
+[issues]: https://github.com/usnistgov/uv-workon/issues
 <!-- prettier-ignore-end -->
 
 ### Report Bugs
@@ -560,7 +560,7 @@ nox -s {session} -- +P/++update-package
 [pipx]: https://github.com/pypa/pipx
 [pre-commit]: https://pre-commit.com/
 [pyenv]: https://github.com/pyenv/pyenv
-[pyproject2conda]: https://github.com/wpk-nist-gov/pyproject2conda
+[pyproject2conda]: https://github.com/usnistgov/pyproject2conda
 [pyright]: https://github.com/microsoft/pyright
 [scriv]: https://github.com/nedbat/scriv
 [tox]: https://tox.wiki/en/latest/

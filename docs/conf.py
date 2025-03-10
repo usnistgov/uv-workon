@@ -135,7 +135,7 @@ nb_output_stderr = "remove"
 # - top level variables --------------------------------------------------------
 # set github_username variable to be subbed later.
 # this makes it easy to switch from wpk -> usnistgov later
-github_username = "wpk-nist-gov"
+github_username = "usnistgov"
 
 html_context = {
     "github_user": github_username,

@@ -9,7 +9,7 @@
       "project_short_description": "Tools activate and run from virtual environments",
       "full_name": "William P. Krekelberg",
       "email": "wpk@nist.gov",
-      "github_username": "wpk-nist-gov",
+      "github_username": "usnistgov",
       "pypi_username": "wpk-nist",
       "conda_channel": "wpk-nist",
       "command_line_interface": "typer",
