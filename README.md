@@ -25,11 +25,11 @@
 [docs-badge]: https://img.shields.io/badge/docs-sphinx-informational
 [docs-link]: https://pages.nist.gov/uv-workon/
 [repo-badge]: https://img.shields.io/badge/--181717?logo=github&logoColor=ffffff
-[repo-link]: https://github.com/wpk-nist-gov/uv-workon
+[repo-link]: https://github.com/usnistgov/uv-workon
 [conda-badge]: https://img.shields.io/conda/v/wpk-nist/uv-workon
 [conda-link]: https://anaconda.org/wpk-nist/uv-workon
 [license-badge]: https://img.shields.io/pypi/l/uv-workon?color=informational
-[license-link]: https://github.com/wpk-nist-gov/uv-workon/blob/main/LICENSE
+[license-link]: https://github.com/usnistgov/uv-workon/blob/main/LICENSE
 
 <!-- other links -->
 

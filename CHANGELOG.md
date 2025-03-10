@@ -7,7 +7,7 @@ Changelog for `uv-workon`
 
 ## Unreleased
 
-[changelog.d]: https://github.com/wpk-nist-gov/uv-workon/tree/main/changelog.d
+[changelog.d]: https://github.com/usnistgov/uv-workon/tree/main/changelog.d
 
 See the fragment files in [changelog.d]
 <!-- prettier-ignore-end -->
