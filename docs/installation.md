@@ -2,20 +2,13 @@
 
 ## Stable release
 
-To install, run this command in your terminal:
-
-```bash
-pip install uv-workon
+```{include} ../README.md
+:start-after: <!-- start-installation -->
+:end-before: <!-- end-installation -->
 ```
 
-or
-
-```bash
-conda install -c wpk-nist uv-workon
-```
-
-This is the preferred method to install, as it will always install the most
-recent stable release.
+This is the preferred method to install `uv-workon`, as it will always install
+the most recent stable release.
 
 ## From sources
 

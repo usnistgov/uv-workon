@@ -16,11 +16,9 @@ if TYPE_CHECKING:
 
 @pytest.fixture(scope="session")
 def click_app() -> Command:
-    import typer
+    import uv_workon._click
 
-    from uv_workon.cli import app_typer
-
-    return typer.main.get_command(app_typer)
+    return uv_workon._click.click_app  # pylint: disable=protected-access
 
 
 @pytest.fixture

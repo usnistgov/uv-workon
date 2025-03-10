@@ -212,28 +212,25 @@ def generate_shell_config() -> str:
     from shutil import which
     from textwrap import dedent
 
-    exe_location = which("uv-workon")
+    exe_location = which("uvw")
 
     return dedent(f"""\
-    __UV_WORKON={exe_location}
+    _UV_WORKON={exe_location}
 
-    __uv-workon-activate() {{
-        local cmd="${{1-__missing__}}"
-        case "$cmd" in
-            --help | -h) $__UV_WORKON shell-activate --help ;;
-            *) source $(command $__UV_WORKON activate $@) ;;
+    _uvw-interface() {{
+        local opt="${{2-__missing__}}"
+        case "$opt" in
+            --help | -h) $_UV_WORKON activate --help ;;
+            *) eval $(command $_UV_WORKON $@) ;;
         esac
     }}
 
-    uv-workon() {{
+    uvw() {{
         local cmd="${{1-__missing__}}"
-        if [[ "$cmd" == "activate" ]]; then
-            shift
-            __uv-workon-activate $@
-        else
-            command uv-workon $@
-        fi
+        case "$cmd" in
+            activate | cd) _uvw-interface $@ ;;
+            *) command $_UV_WORKON $@ ;;
+        esac
     }}
 
-    alias uvw=uv-workon
     """)

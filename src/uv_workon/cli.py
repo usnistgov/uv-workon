@@ -70,11 +70,13 @@ def _select_virtualenv_path(
     venv_name: str | None,
     workon_home: Path,
     venv_patterns: list[str] | None,
+    use_default_venv_patterns: bool = False,
     resolve: bool = False,
 ) -> Path:
     if venv_path:
         path = infer_virtualenv_path_raise(
-            venv_path, _get_venv_dir_names(venv_patterns)
+            venv_path,
+            _get_venv_dir_names(venv_patterns, use_default=use_default_venv_patterns),
         )
     elif venv_name:
         path = validate_is_virtualenv(workon_home / venv_name)
@@ -414,6 +416,7 @@ def run_with_virtualenv(
     venv_name: VENV_NAME_CLI = None,
     venv_path: VENV_PATH_CLI = None,
     venv_patterns: VENV_PATTERNS_CLI = None,
+    no_default_venv_patterns: NO_DEFAULT_VENV_CLI = False,
     resolve: RESOLVE_CLI = False,
 ) -> None:
     """
@@ -435,6 +438,7 @@ def run_with_virtualenv(
         venv_name=venv_name,
         workon_home=workon_home,
         venv_patterns=venv_patterns,
+        use_default_venv_patterns=not no_default_venv_patterns,
         resolve=resolve,
     )
 
@@ -463,11 +467,11 @@ def run_with_virtualenv(
 @app_typer.command("shell-config")
 def shell_config() -> None:
     """
-    Use eval $(uv-workon shell-config)
+    Use with `eval "$(uv-workon shell-config)"`.
 
 
-    This will add the subcommand `uv-workon activate` which
-    automatically sources the environment found from `uv-workon shell-activate`
+    This will add the subcommand `uvw activate` and `uvw cd` to the shell.  Without
+    running shell config, `activate` and `cd` will just print the command to screen.
     """
     typer.echo(generate_shell_config())
 
@@ -479,14 +483,16 @@ def shell_activate(
     venv_path: VENV_PATH_CLI = None,
     venv_patterns: VENV_PATTERNS_CLI = None,
     resolve: RESOLVE_CLI = False,
+    no_default_venv_patterns: NO_DEFAULT_VENV_CLI = False,
     no_command: NO_COMMAND_CLI = False,
 ) -> None:
-    """Use to activate virtual environment with `source $(uv-workon shell-activate -n ...)`"""
+    """Use to activate virtual environments.`"""
     path = _select_virtualenv_path(
         venv_path=venv_path,
         venv_name=venv_name,
         workon_home=workon_home,
         venv_patterns=venv_patterns,
+        use_default_venv_patterns=not no_default_venv_patterns,
         resolve=resolve,
     )
 
@@ -499,23 +505,25 @@ def shell_activate(
         raise typer.Exit(1)
 
 
-@app_typer.command("shell-cd")
+@app_typer.command("cd")
 def shell_cd(
     workon_home: WORKON_HOME_CLI = WORKON_HOME_DEFAULT,
     venv_name: VENV_NAME_CLI = None,
     venv_path: VENV_PATH_CLI = None,
     venv_patterns: VENV_PATTERNS_CLI = None,
-    resolve: RESOLVE_CLI = False,
+    no_default_venv_patterns: NO_DEFAULT_VENV_CLI = False,
     no_command: NO_COMMAND_CLI = False,
 ) -> None:
-    """Use to activate virtual environment with `source $(uv-workon shell-activate -n ...)`"""
+    """Command to change to parent directory of virtual environment."""
     path = _select_virtualenv_path(
         venv_path=venv_path,
         venv_name=venv_name,
         workon_home=workon_home,
         venv_patterns=venv_patterns,
-        resolve=resolve,
-    )
+        use_default_venv_patterns=not no_default_venv_patterns,
+        resolve=True,
+    ).parent
+
     typer.echo(str(path) if no_command else f"cd {path}")
 
 

@@ -109,7 +109,7 @@ def test_find_venvs_explicit(venvs_parent_path: Path, workon_home: Path) -> None
 
 
 def test_generate_shell_config() -> None:
-    assert "__UV_WORKON" in generate_shell_config()
+    assert "_UV_WORKON" in generate_shell_config()
 
 
 @pytest.mark.parametrize(

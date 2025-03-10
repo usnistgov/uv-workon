@@ -8,7 +8,6 @@
 :maxdepth: 1
 
 installation
-examples/index
 reference/index
 license
 contributing
