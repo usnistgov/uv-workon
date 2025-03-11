@@ -210,6 +210,36 @@ def select_option(
     return options[index]
 
 
+def uv_run(
+    venv_path: Path,
+    *args: str,
+    dry_run: bool = False,
+) -> str:
+    """Construct and run command under uv"""
+    import shlex
+
+    args = ("uv", "run", "-p", str(venv_path), "--no-project", *args)
+    command: str = (
+        f"VIRTUAL_ENV={venv_path} UV_PROJECT_ENVIRONMENT={venv_path} {shlex.join(args)}"
+    )
+
+    logger.info("running args: %s", args)
+    logger.info("command: %s", command)
+    if not dry_run:
+        import subprocess
+
+        subprocess.run(
+            args,
+            check=True,
+            env={
+                **os.environ,
+                "VIRTUAL_ENV": str(venv_path),
+                "UV_PROJECT_ENVIRONMENT": str(venv_path),
+            },
+        )
+    return command
+
+
 def generate_shell_config() -> str:
     """Generate bash/zsh file for shell config."""
     from shutil import which
@@ -237,3 +267,10 @@ def generate_shell_config() -> str:
     }}
 
     """)
+
+
+def get_ipykernel_install_script_path() -> str:
+    """Get the path to ipykernel install script"""
+    from importlib.resources import files
+
+    return str(files("uv_workon").joinpath("scripts", "ipykernel_install_script.py"))

@@ -101,3 +101,4 @@ pylint.max-public-methods = 30
 ]
 "tests/**/*.py" = [ "T201", "SLF001" ]
 "src/**/cli.py" = [ "T201" ]
+"src/**/scripts/*.py" = [ "INP001" ]

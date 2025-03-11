@@ -1,5 +1,5 @@
 """
-Console script (:mod:`~uv_workon.cli`)
+Console script (:mod:`~uv_workon.cli`
 ======================================
 """
 
@@ -7,8 +7,6 @@ from __future__ import annotations
 
 import itertools
 import logging
-import os
-import shlex
 from collections.abc import Iterator  # noqa: TC003
 from functools import lru_cache, wraps
 from inspect import signature
@@ -22,9 +20,11 @@ from .core import (
     VirtualEnvPathAndLink,
     generate_shell_config,
     get_invalid_symlinks,
+    get_ipykernel_install_script_path,
     infer_virtualenv_path_raise,
     list_venv_paths,
     select_option,
+    uv_run,
     validate_is_virtualenv,
 )
 
@@ -98,6 +98,7 @@ def _expand_user(x: Path) -> Path:
     return x.expanduser()
 
 
+# * Completions
 @lru_cache
 def _all_virtualenv_names(workon_home: Path) -> list[str]:
     return [p.name for p in list_venv_paths(workon_home)]
@@ -150,8 +151,8 @@ WORKON_HOME_CLI = Annotated[
         "-o",
         help="""
         Directory containing the virtual environments and links to virtual
-        environments. If not passed, uses in order, `WORKON_HOME` environment
-        variable, then `~/.virtualenvs` directory.
+        environments. If not passed, uses in order, ``WORKON_HOME`` environment
+        variable, then ``~/.virtualenvs`` directory.
         """,
         envvar="WORKON_HOME",
         callback=_expand_user,
@@ -162,7 +163,7 @@ WORKON_HOME_CLI = Annotated[
 DRY_RUN_CLI = Annotated[
     bool,
     typer.Option(
-        "--dry-run",
+        "--dry-run/--no-dry-run",
         help="Perform a dry run, without executing any action",
     ),
 ]
@@ -182,27 +183,26 @@ VENV_PATTERNS_CLI = Annotated[
         help="""
         Virtual environment pattern. Can specify multiple times.
         Default is to include virtual environment directories of form
-        `.venv` or `venv`.  To exclude these defaults, pass `--no-default-venv`.
+        ``".venv"`` or ``"venv"``.  To exclude these defaults, pass ``--no-default-venv``.
         """,
     ),
 ]
-NO_DEFAULT_VENV_CLI = Annotated[
+USE_DEFAULT_VENV_CLI = Annotated[
     bool,
     typer.Option(
-        "--no-default-venv",
+        "--default-venv/--no-default-venv",
         help="""
-        Default is to include virtual environment patterns `.venv` and `venv`.
-        Pass `--no-default-venv` to exclude these default values.
+        Default is to include virtual environment patterns ``".venv"`` and ``"venv"``.
+        Pass ``--no-default-venv`` to exclude these default values.
         """,
     ),
 ]
 RESOLVE_CLI = Annotated[
     bool,
     typer.Option(
-        "--resolve",
+        "--resolve/--no-resolve",
         help="""
-        Pass this option to use absolute paths.  Default is to use relative paths.
-
+        Pass ``--resolve`` to resolve paths and symlinks.  Otherwise, use relative paths.
         """,
     ),
 ]
@@ -212,8 +212,8 @@ PATHS_CLI = Annotated[
         help="""
         Paths to virtual environments. These can either be full paths to
         virtual environments, or path to the parent of a virtual environment
-        that has name `venv_pattern`. If the name (the last element) of the
-        path matches `venv_pattern`, then the name of the linked virtual
+        that has name ``venv_pattern``. If the name (the last element) of the
+        path matches ``venv_pattern``, then the name of the linked virtual
         environment will come from the parent directory. Otherwise, it will be
         the name.
         """,
@@ -237,24 +237,17 @@ PARENTS_CLI = Annotated[
     typer.Option(
         "--parent",
         help="""
-    Parent of directories to check for `venv_pattern` directories
-    containing virtual environments. Using `uv-workon --parent a/path`
-    is roughly equivalent to using `uv-workon a/path/*`
+    Parent of directories to check for ``venv_pattern`` directories
+    containing virtual environments. Using ``uv-workon --parent a/path``
+    is roughly equivalent to using ``uv-workon a/path/*``
     """,
         autocompletion=_complete_path,
-    ),
-]
-FORCE_CLI = Annotated[
-    bool,
-    typer.Option(
-        "--force",
-        help="Pass this option to overwrite existing symlinks",
     ),
 ]
 YES_CLI = Annotated[
     bool,
     typer.Option(
-        "--yes",
+        "--yes/--no",
         help="Answer yes to all confirmations",
     ),
 ]
@@ -277,15 +270,15 @@ VENV_PATH_CLI = Annotated[
     ),
 ]
 UV_RUN_OPTIONS_CLI = Annotated[
-    list[str], typer.Argument(help="Arguments and options passed to `uv run ...`")
+    list[str], typer.Argument(help="Arguments and options passed to ``uv run ...``")
 ]
 NO_COMMAND_CLI = Annotated[
     bool,
     typer.Option(
-        "--no-command",
+        "--command/--no-command",
         help="""
-        Default is to include the command name with the output.
-        If pass `--no-command`, only list the path.
+        If ``--command``, include command name with output.
+        If ``--no-command``, only list the path.
         """,
     ),
 ]
@@ -341,7 +334,7 @@ def link_virtualenvs(
     dry_run: DRY_RUN_CLI = False,
     verbose: VERBOSE_CLI = None,
     venv_patterns: VENV_PATTERNS_CLI = None,
-    no_default_venv: NO_DEFAULT_VENV_CLI = False,
+    use_default_venv_patterns: USE_DEFAULT_VENV_CLI = True,
     yes: YES_CLI = False,
     parents: PARENTS_CLI = None,
     paths: PATHS_CLI = None,
@@ -353,7 +346,9 @@ def link_virtualenvs(
         with click.get_current_context() as ctx:
             typer.echo(ctx.get_help())
 
-    venv_patterns = _get_venv_dir_names(venv_patterns, use_default=not no_default_venv)
+    venv_patterns = _get_venv_dir_names(
+        venv_patterns, use_default=use_default_venv_patterns
+    )
     logger.debug("params: %s", locals())
 
     objs = list(
@@ -424,18 +419,18 @@ def run_with_virtualenv(
     venv_name: VENV_NAME_CLI = None,
     venv_path: VENV_PATH_CLI = None,
     venv_patterns: VENV_PATTERNS_CLI = None,
-    no_default_venv_patterns: NO_DEFAULT_VENV_CLI = False,
+    use_default_venv_patterns: USE_DEFAULT_VENV_CLI = True,
     resolve: RESOLVE_CLI = False,
 ) -> None:
     """
     Run uv commands using using the named or specified virtual environment.
 
-    For example, use `uvw run -n my-env -- python ...` is
-    translated to `uv run -p patt/to/my-env --no-project python ...`.
+    For example, use ``uvw run -n my-env -- python ...`` is
+    translated to ``uv run -p patt/to/my-env --no-project python ...``.
 
-    If an option mirrors one of the command options (-n, etc), pass it after `--`.
+    If an option mirrors one of the command options (-n, etc), pass it after ``--``.
 
-    Use `--dry-run` to echo the equivalent command to be run in the shell.
+    Use ``--dry-run`` to echo the equivalent command to be run in the shell.
     """
     logger.info("params: %s", locals())
 
@@ -448,28 +443,12 @@ def run_with_virtualenv(
         venv_name=venv_name,
         workon_home=workon_home,
         venv_patterns=venv_patterns,
-        use_default_venv_patterns=not no_default_venv_patterns,
+        use_default_venv_patterns=use_default_venv_patterns,
         resolve=resolve,
     )
 
-    args = ["uv", "run", "-p", str(path), "--no-project", *ctx.args]
-    command = f"VIRTUAL_ENV={path} UV_PROJECT_ENVIRONMENT={path} {shlex.join(args)}"
-    logger.info("running args: %s", args)
-    logger.info("command: %s", command)
-
-    if not dry_run:  # pragma: no cover
-        import subprocess
-
-        subprocess.run(
-            args,
-            check=True,
-            env={
-                **os.environ,
-                "VIRTUAL_ENV": str(path),
-                "UV_PROJECT_ENVIRONMENT": str(path),
-            },
-        )
-    else:
+    command = uv_run(path, *ctx.args, dry_run=dry_run)
+    if dry_run:
         typer.echo(command)
 
 
@@ -477,11 +456,11 @@ def run_with_virtualenv(
 @app_typer.command("shell-config")
 def shell_config() -> None:
     """
-    Use with `eval "$(uv-workon shell-config)"`.
+    Use with ``eval "$(uv-workon shell-config)"``.
 
 
-    This will add the subcommand `uvw activate` and `uvw cd` to the shell.  Without
-    running shell config, `activate` and `cd` will just print the command to screen.
+    This will add the subcommand ``uvw activate`` and ``uvw cd`` to the shell.  Without
+    running shell config, ``activate`` and ``cd`` will just print the command to screen.
     """
     typer.echo(generate_shell_config())
 
@@ -493,16 +472,16 @@ def shell_activate(
     venv_path: VENV_PATH_CLI = None,
     venv_patterns: VENV_PATTERNS_CLI = None,
     resolve: RESOLVE_CLI = False,
-    no_default_venv_patterns: NO_DEFAULT_VENV_CLI = False,
+    use_default_venv_patterns: USE_DEFAULT_VENV_CLI = True,
     no_command: NO_COMMAND_CLI = False,
 ) -> None:
-    """Use to activate virtual environments.`"""
+    """Use to activate virtual environments."""
     path = _select_virtualenv_path(
         venv_path=venv_path,
         venv_name=venv_name,
         workon_home=workon_home,
         venv_patterns=venv_patterns,
-        use_default_venv_patterns=not no_default_venv_patterns,
+        use_default_venv_patterns=use_default_venv_patterns,
         resolve=resolve,
     )
 
@@ -521,7 +500,7 @@ def shell_cd(
     venv_name: VENV_NAME_CLI = None,
     venv_path: VENV_PATH_CLI = None,
     venv_patterns: VENV_PATTERNS_CLI = None,
-    no_default_venv_patterns: NO_DEFAULT_VENV_CLI = False,
+    use_default_venv_patterns: USE_DEFAULT_VENV_CLI = True,
     no_command: NO_COMMAND_CLI = False,
 ) -> None:
     """Command to change to parent directory of virtual environment."""
@@ -530,8 +509,52 @@ def shell_cd(
         venv_name=venv_name,
         workon_home=workon_home,
         venv_patterns=venv_patterns,
-        use_default_venv_patterns=not no_default_venv_patterns,
+        use_default_venv_patterns=use_default_venv_patterns,
         resolve=True,
     ).parent
 
     typer.echo(str(path) if no_command else f"cd {path}")
+
+
+@app_typer.command("install-ipykernels")
+@_add_verbose_logger()
+def install_ipykernels(
+    ctx: typer.Context,
+    display_format: Annotated[
+        str, typer.Option("--display-format", help="Format to use in display name")
+    ] = "Python [venv: {name}]",
+    no_user: Annotated[
+        bool,
+        typer.Option(
+            "--user/--no-user",
+            help="Default is to pass the ``--user`` options.  Use this to override.",
+        ),
+    ] = False,
+    resolve: RESOLVE_CLI = True,
+    workon_home: WORKON_HOME_CLI = WORKON_HOME_DEFAULT,
+    dry_run: DRY_RUN_CLI = False,
+    verbose: VERBOSE_CLI = 0,  # noqa: ARG001
+) -> None:
+    """Install ipykernels for all virtual environments unuder ``workon_home`` that contain ``ipykernel`` module."""
+    script = get_ipykernel_install_script_path()
+
+    for path in list_venv_paths(workon_home):
+        name = path.name
+        display_name = display_format.format(name=name)
+        command = uv_run(
+            path.resolve() if resolve else path,
+            "python",
+            script,
+            *(["--dry-run"] if dry_run else []),
+            "--",
+            *ctx.args,
+            "--name",
+            name,
+            "--display-name",
+            display_name,
+            *([] if no_user else ["--user"]),
+            dry_run=dry_run,
+        )
+
+        if dry_run:
+            typer.echo(command)
