@@ -113,7 +113,7 @@ def _complete_virtualenv_names(ctx: typer.Context, incomplete: str) -> Iterator[
 # where any path typed is considered 'complete'
 # for arguments (even if exists=True) and a space
 # is added to the end - this works around it.
-def _complete_path() -> list[str]:  # pragma: no cover
+def _complete_path() -> list[str]:
     return []
 
 
@@ -430,10 +430,12 @@ def run_with_virtualenv(
     """
     Run uv commands using using the named or specified virtual environment.
 
-    For example, use `symlink-venv uv-run -n my-env -- python ...` is
+    For example, use `uvw run -n my-env -- python ...` is
     translated to `uv run -p patt/to/my-env --no-project python ...`.
 
     If an option mirrors one of the command options (-n, etc), pass it after `--`.
+
+    Use `--dry-run` to echo the equivalent command to be run in the shell.
     """
     logger.info("params: %s", locals())
 
