@@ -21,6 +21,7 @@ from .core import (
     generate_shell_config,
     get_invalid_symlinks,
     get_ipykernel_install_script_path,
+    infer_virtualenv_name,
     infer_virtualenv_path_raise,
     list_venv_paths,
     select_option,
@@ -98,7 +99,7 @@ def _expand_user(x: Path) -> Path:
     return x.expanduser()
 
 
-# * Completions
+# * Completions ---------------------------------------------------------------
 @lru_cache
 def _all_virtualenv_names(workon_home: Path) -> list[str]:
     return [p.name for p in list_venv_paths(workon_home)]
@@ -114,7 +115,7 @@ def _complete_virtualenv_names(ctx: typer.Context, incomplete: str) -> Iterator[
 # where any path typed is considered 'complete'
 # for arguments (even if exists=True) and a space
 # is added to the end - this works around it.
-def _complete_path() -> list[str]:
+def _complete_path() -> list[str]:  # pragma: no cover
     return []
 
 
@@ -448,7 +449,7 @@ def run_with_virtualenv(
     )
 
     command = uv_run(path, *ctx.args, dry_run=dry_run)
-    if dry_run:
+    if dry_run:  # pragma: no branch
         typer.echo(command)
 
 
@@ -521,7 +522,14 @@ def shell_cd(
 def install_ipykernels(
     ctx: typer.Context,
     display_format: Annotated[
-        str, typer.Option("--display-format", help="Format to use in display name")
+        str,
+        typer.Option(
+            "--display-format",
+            help="""
+            Format to use in display name. Can contain ``name`` which is
+            inferred from the virtual environment location.
+            """,
+        ),
     ] = "Python [venv: {name}]",
     no_user: Annotated[
         bool,
@@ -534,12 +542,52 @@ def install_ipykernels(
     workon_home: WORKON_HOME_CLI = WORKON_HOME_DEFAULT,
     dry_run: DRY_RUN_CLI = False,
     verbose: VERBOSE_CLI = 0,  # noqa: ARG001
+    all_venvs: Annotated[
+        bool, typer.Option("--all", help="If passed, install for all environments")
+    ] = False,
+    venv_names: Annotated[
+        list[str] | None,
+        typer.Option(
+            "-n",
+            "--name",
+            help="Virtual environment names to install for.",
+            autocompletion=_complete_virtualenv_names,
+        ),
+    ] = None,
+    venv_paths: Annotated[
+        list[Path] | None,
+        typer.Option(
+            "-p",
+            "--path",
+            help="Virtual environment paths gto install for.",
+            autocompletion=_complete_path,
+        ),
+    ] = None,
+    venv_patterns: VENV_PATTERNS_CLI = None,
+    use_default_venv_patterns: USE_DEFAULT_VENV_CLI = True,
 ) -> None:
-    """Install ipykernels for all virtual environments unuder ``workon_home`` that contain ``ipykernel`` module."""
+    """Install ipykernels for virtual environment(s) that contain ``ipykernel`` module."""
     script = get_ipykernel_install_script_path()
 
-    for path in list_venv_paths(workon_home):
-        name = path.name
+    name_mapping: dict[str, Path] = {}
+    if all_venvs:
+        name_mapping.update({p.name: p for p in list_venv_paths(workon_home)})
+
+    if venv_names:
+        name_mapping.update(
+            {name: validate_is_virtualenv(workon_home / name) for name in venv_names}
+        )
+
+    if venv_paths:
+        venv_patterns = _get_venv_dir_names(
+            venv_patterns, use_default=use_default_venv_patterns
+        )
+
+        for p in venv_paths:
+            path = infer_virtualenv_path_raise(p, venv_patterns)
+            name_mapping[infer_virtualenv_name(path, venv_patterns)] = path
+
+    for name, path in name_mapping.items():
         display_name = display_format.format(name=name)
         command = uv_run(
             path.resolve() if resolve else path,

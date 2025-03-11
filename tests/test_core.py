@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from contextlib import nullcontext
 from functools import partial
+from pathlib import Path
+from subprocess import CalledProcessError
 from typing import TYPE_CHECKING
 
 import pytest
@@ -10,8 +12,10 @@ from uv_workon.core import (
     NoVirtualEnvError,
     VirtualEnvPathAndLink,
     generate_shell_config,
+    get_ipykernel_install_script_path,
     infer_virtualenv_path_raise,
     is_valid_virtualenv,
+    uv_run,
     validate_dir_exists,
     validate_is_virtualenv,
     validate_symlink,
@@ -19,7 +23,6 @@ from uv_workon.core import (
 )
 
 if TYPE_CHECKING:
-    from pathlib import Path
     from typing import Any
 
     from uv_workon._typing import VirtualEnvPattern
@@ -200,3 +203,24 @@ def test_validate_venv_patterns(
     venv_patterns: VirtualEnvPattern, expected: list[str]
 ) -> None:
     assert validate_venv_patterns(venv_patterns) == expected
+
+
+def test_uv_run_error() -> None:
+    from tempfile import TemporaryDirectory
+
+    args = ["python", "-c", "import sys; print(sys.executable)"]
+    with TemporaryDirectory() as e, pytest.raises(CalledProcessError):
+        _ = uv_run(Path(e), *args, dry_run=False)
+
+    import sys
+
+    _ = uv_run(Path(sys.executable), *args, dry_run=False)
+
+
+def test_get_ipykernel_install_script_path() -> None:
+    from importlib.resources import files
+
+    assert (
+        str(files("uv_workon").joinpath("scripts", "ipykernel_install_script.py"))
+        == get_ipykernel_install_script_path()
+    )

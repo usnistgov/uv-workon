@@ -361,8 +361,15 @@ def test_run(
 
     if dry:
         expected = f"VIRTUAL_ENV={path} UV_PROJECT_ENVIRONMENT={path} uv run -p {path} --no-project {shlex.join(args)}"
-
         assert expected == out.output.strip()
+
+
+def test_install_ipykernels(
+    click_app: Command,
+    clirunner: CliRunner,
+    workon_home_with_is_venv: Path,
+) -> None:
+    pass
 
 
 def test_shell_config(click_app: Command, clirunner: CliRunner) -> None:

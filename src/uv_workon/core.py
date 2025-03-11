@@ -225,7 +225,7 @@ def uv_run(
 
     logger.info("running args: %s", args)
     logger.info("command: %s", command)
-    if not dry_run:
+    if not dry_run:  # pragma: no cover
         import subprocess
 
         subprocess.run(
