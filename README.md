@@ -86,6 +86,13 @@ Now, from anywhere, you can use the virtual environment `my-project`:
 - Change to project directory with `uvw cd ...`
 - List available virtual environments with `uvw list`
 - Cleanup missing symlinks with `uvw clean`
+- Manage [`ipykernel`](https://github.com/ipython/ipykernel) with
+  `uvw kernels ...`
+  - Install kernels for linked virtual environments which have `ipykernel`
+    installed with `uvw kernels install ...`
+  - Remove kernels (including remove all missing/broken kernels) with
+    `uvw kernels remove ...`
+  - list installed kernels with `uvw kernels list ...`
 
 Currently `uvw` is setup to work with `bash` and `zsh` shells only.
 

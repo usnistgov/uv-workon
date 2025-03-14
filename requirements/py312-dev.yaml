@@ -14,6 +14,7 @@ dependencies:
   - attrs
   - ipykernel
   - ipython
+  - jupyter-client
   - mypy>=1.15.0
   - nbclient>=0.10.0
   - nox>=2024.4.15
@@ -21,6 +22,7 @@ dependencies:
   - pylint
   - pytest
   - pytest-cov
+  - pytest-mock>=3.14.0
   - pytest-sugar
   - pytest-xdist
   - simple-term-menu

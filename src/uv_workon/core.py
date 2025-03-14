@@ -190,7 +190,7 @@ def select_option(
     options: Sequence[str],
     title: str = "",
     usage: bool = True,
-) -> str:  # pragma: no cover
+) -> str:
     """Use selector"""
     from simple_term_menu import (  # pyright: ignore[reportMissingTypeStubs]
         TerminalMenu,
@@ -225,7 +225,7 @@ def uv_run(
 
     logger.info("running args: %s", args)
     logger.info("command: %s", command)
-    if not dry_run:  # pragma: no cover
+    if not dry_run:
         import subprocess
 
         subprocess.run(
@@ -267,10 +267,3 @@ def generate_shell_config() -> str:
     }}
 
     """)
-
-
-def get_ipykernel_install_script_path() -> str:
-    """Get the path to ipykernel install script"""
-    from importlib.resources import files
-
-    return str(files("uv_workon").joinpath("scripts", "ipykernel_install_script.py"))

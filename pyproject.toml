@@ -41,6 +41,12 @@ dependencies = [
     "typer",
     "typing-extensions; python_version<'3.11'",
 ]
+optional-dependencies.all = [
+    "uv-workon[jupyter]",
+]
+optional-dependencies.jupyter = [
+    "jupyter-client",
+]
 urls.Documentation = "https://pages.nist.gov/uv-workon/"
 urls.Homepage = "https://github.com/usnistgov/uv-workon"
 scripts.uvw = "uv_workon.cli:app_typer"
@@ -54,6 +60,7 @@ dev = [
     { include-group = "uvxrun" },
 ]
 test = [
+    { include-group = "optional" },
     { include-group = "test-extras" },
 ]
 docs = [
@@ -80,14 +87,15 @@ docs-live = [
 ]
 mypy = [ "mypy>=1.15.0" ]
 nbval = [ "nbval" ]
+optional = [ "uv-workon[all]" ]
 test-extras = [
     "pytest",
     "pytest-cov",
+    "pytest-mock>=3.14.0",
     "pytest-sugar",
     "pytest-xdist",
 ]
-test-notebook = [
-    { include-group = "nbval" },
+test-noopt = [
     { include-group = "test-extras" },
 ]
 typing = [

@@ -20,7 +20,6 @@ from .core import (
     VirtualEnvPathAndLink,
     generate_shell_config,
     get_invalid_symlinks,
-    get_ipykernel_install_script_path,
     infer_virtualenv_name,
     infer_virtualenv_path_raise,
     list_venv_paths,
@@ -83,7 +82,7 @@ def _select_virtualenv_path(
     elif venv_name:
         path = validate_is_virtualenv(workon_home / venv_name)
 
-    elif options := [p.name for p in list_venv_paths(workon_home)]:  # pragma: no cover
+    elif options := [p.name for p in list_venv_paths(workon_home)]:
         path = workon_home / select_option(options, title="venv")
     else:  # pragma: no cover
         typer.echo("No virtual environment found")
@@ -91,8 +90,36 @@ def _select_virtualenv_path(
 
     if resolve:
         path = path.resolve()
-
     return path
+
+
+def _get_venv_name_path_mapping(
+    include_workon_home: bool,
+    venv_names: Iterable[str] | None,
+    venv_paths: Iterable[Path] | None,
+    workon_home: Path,
+    venv_patterns: list[str] | None,
+    use_default_venv_patterns: bool,
+) -> dict[str, Path]:
+    name_mapping: dict[str, Path] = {}
+    if include_workon_home:
+        name_mapping.update({p.name: p for p in list_venv_paths(workon_home)})
+
+    if venv_names:
+        name_mapping.update(
+            {name: validate_is_virtualenv(workon_home / name) for name in venv_names}
+        )
+
+    if venv_paths:
+        venv_patterns = _get_venv_dir_names(
+            venv_patterns, use_default=use_default_venv_patterns
+        )
+
+        for p in venv_paths:
+            path = infer_virtualenv_path_raise(p, venv_patterns)
+            name_mapping[infer_virtualenv_name(path, venv_patterns)] = path
+
+    return name_mapping
 
 
 def _expand_user(x: Path) -> Path:
@@ -119,8 +146,17 @@ def _complete_path() -> list[str]:  # pragma: no cover
     return []
 
 
+def _complete_kernelspec_names(incomplete: str) -> Iterator[str]:
+    from .kernels import get_kernelspecs
+
+    valid_names = get_kernelspecs()
+    yield from (name for name in valid_names if name.startswith(incomplete))
+
+
 # * Main app ------------------------------------------------------------------
 app_typer = typer.Typer(no_args_is_help=True)
+app_kernels = typer.Typer(no_args_is_help=True, help="Jupyter kernel utilities")
+app_typer.add_typer(app_kernels, name="kernels")
 
 
 def version_callback(value: bool) -> None:
@@ -283,6 +319,15 @@ NO_COMMAND_CLI = Annotated[
         """,
     ),
 ]
+VENV_PATHS_CLI = Annotated[
+    list[Path] | None,
+    typer.Option(
+        "-p",
+        "--path",
+        help="Virtual environment paths.",
+        autocompletion=_complete_path,
+    ),
+]
 
 
 def _add_verbose_logger(
@@ -331,16 +376,16 @@ def _add_verbose_logger(
 @app_typer.command("link")
 @_add_verbose_logger()
 def link_virtualenvs(
-    workon_home: WORKON_HOME_CLI = WORKON_HOME_DEFAULT,
-    dry_run: DRY_RUN_CLI = False,
-    verbose: VERBOSE_CLI = None,
-    venv_patterns: VENV_PATTERNS_CLI = None,
-    use_default_venv_patterns: USE_DEFAULT_VENV_CLI = True,
-    yes: YES_CLI = False,
-    parents: PARENTS_CLI = None,
     paths: PATHS_CLI = None,
+    parents: PARENTS_CLI = None,
     link_names: LINK_NAMES_CLI = None,
     resolve: RESOLVE_CLI = False,
+    workon_home: WORKON_HOME_CLI = WORKON_HOME_DEFAULT,
+    venv_patterns: VENV_PATTERNS_CLI = None,
+    use_default_venv_patterns: USE_DEFAULT_VENV_CLI = True,
+    dry_run: DRY_RUN_CLI = False,
+    verbose: VERBOSE_CLI = None,
+    yes: YES_CLI = False,
 ) -> None:
     """Create symlink from paths to workon_home."""
     if not (input_paths := list(_get_input_paths(paths, parents))):
@@ -414,14 +459,14 @@ def clean_virtualenvs(
 @_add_verbose_logger()
 def run_with_virtualenv(
     ctx: typer.Context,
-    workon_home: WORKON_HOME_CLI = WORKON_HOME_DEFAULT,
-    dry_run: DRY_RUN_CLI = False,
-    verbose: VERBOSE_CLI = None,
     venv_name: VENV_NAME_CLI = None,
     venv_path: VENV_PATH_CLI = None,
+    resolve: RESOLVE_CLI = False,
+    workon_home: WORKON_HOME_CLI = WORKON_HOME_DEFAULT,
     venv_patterns: VENV_PATTERNS_CLI = None,
     use_default_venv_patterns: USE_DEFAULT_VENV_CLI = True,
-    resolve: RESOLVE_CLI = False,
+    dry_run: DRY_RUN_CLI = False,
+    verbose: VERBOSE_CLI = None,
 ) -> None:
     """
     Run uv commands using using the named or specified virtual environment.
@@ -468,13 +513,13 @@ def shell_config() -> None:
 
 @app_typer.command("activate")
 def shell_activate(
-    workon_home: WORKON_HOME_CLI = WORKON_HOME_DEFAULT,
     venv_name: VENV_NAME_CLI = None,
     venv_path: VENV_PATH_CLI = None,
-    venv_patterns: VENV_PATTERNS_CLI = None,
     resolve: RESOLVE_CLI = False,
-    use_default_venv_patterns: USE_DEFAULT_VENV_CLI = True,
     no_command: NO_COMMAND_CLI = False,
+    workon_home: WORKON_HOME_CLI = WORKON_HOME_DEFAULT,
+    venv_patterns: VENV_PATTERNS_CLI = None,
+    use_default_venv_patterns: USE_DEFAULT_VENV_CLI = True,
 ) -> None:
     """Use to activate virtual environments."""
     path = _select_virtualenv_path(
@@ -497,12 +542,12 @@ def shell_activate(
 
 @app_typer.command("cd")
 def shell_cd(
-    workon_home: WORKON_HOME_CLI = WORKON_HOME_DEFAULT,
     venv_name: VENV_NAME_CLI = None,
     venv_path: VENV_PATH_CLI = None,
+    no_command: NO_COMMAND_CLI = False,
+    workon_home: WORKON_HOME_CLI = WORKON_HOME_DEFAULT,
     venv_patterns: VENV_PATTERNS_CLI = None,
     use_default_venv_patterns: USE_DEFAULT_VENV_CLI = True,
-    no_command: NO_COMMAND_CLI = False,
 ) -> None:
     """Command to change to parent directory of virtual environment."""
     path = _select_virtualenv_path(
@@ -517,10 +562,26 @@ def shell_cd(
     typer.echo(str(path) if no_command else f"cd {path}")
 
 
-@app_typer.command("install-ipykernels")
+# * Working with ipykernels
+
+
+@app_kernels.command("install")
 @_add_verbose_logger()
 def install_ipykernels(
     ctx: typer.Context,
+    venv_names: Annotated[
+        list[str] | None,
+        typer.Option(
+            "-n",
+            "--name",
+            help="Virtual environment names to install for.",
+            autocompletion=_complete_virtualenv_names,
+        ),
+    ] = None,
+    venv_paths: VENV_PATHS_CLI = None,
+    all_venvs: Annotated[
+        bool, typer.Option("--all", help="If passed, install for all environments")
+    ] = False,
     display_format: Annotated[
         str,
         typer.Option(
@@ -540,69 +601,113 @@ def install_ipykernels(
     ] = False,
     resolve: RESOLVE_CLI = True,
     workon_home: WORKON_HOME_CLI = WORKON_HOME_DEFAULT,
-    dry_run: DRY_RUN_CLI = False,
-    verbose: VERBOSE_CLI = 0,  # noqa: ARG001
-    all_venvs: Annotated[
-        bool, typer.Option("--all", help="If passed, install for all environments")
-    ] = False,
-    venv_names: Annotated[
-        list[str] | None,
-        typer.Option(
-            "-n",
-            "--name",
-            help="Virtual environment names to install for.",
-            autocompletion=_complete_virtualenv_names,
-        ),
-    ] = None,
-    venv_paths: Annotated[
-        list[Path] | None,
-        typer.Option(
-            "-p",
-            "--path",
-            help="Virtual environment paths gto install for.",
-            autocompletion=_complete_path,
-        ),
-    ] = None,
     venv_patterns: VENV_PATTERNS_CLI = None,
     use_default_venv_patterns: USE_DEFAULT_VENV_CLI = True,
+    dry_run: DRY_RUN_CLI = False,
+    verbose: VERBOSE_CLI = 0,  # noqa: ARG001
+    yes: YES_CLI = False,
 ) -> None:
     """Install ipykernels for virtual environment(s) that contain ``ipykernel`` module."""
+    from .kernels import get_ipykernel_install_script_path, get_kernelspecs
+
     script = get_ipykernel_install_script_path()
+    kernelspecs = get_kernelspecs()
 
-    name_mapping: dict[str, Path] = {}
-    if all_venvs:
-        name_mapping.update({p.name: p for p in list_venv_paths(workon_home)})
+    for name, path in _get_venv_name_path_mapping(
+        all_venvs,
+        venv_names=venv_names,
+        venv_paths=venv_paths,
+        workon_home=workon_home,
+        venv_patterns=venv_patterns,
+        use_default_venv_patterns=use_default_venv_patterns,
+    ).items():
+        if yes or (name not in kernelspecs) or typer.confirm(f"Reinstall {name}?"):
+            display_name = display_format.format(name=name)
+            command = uv_run(
+                path.resolve() if resolve else path,
+                "python",
+                script,
+                *(["--dry-run"] if dry_run else []),
+                "--",
+                *ctx.args,
+                "--name",
+                name,
+                "--display-name",
+                display_name,
+                *([] if no_user else ["--user"]),
+                dry_run=dry_run,
+            )
 
-    if venv_names:
-        name_mapping.update(
-            {name: validate_is_virtualenv(workon_home / name) for name in venv_names}
+            if dry_run:
+                typer.echo(command)
+
+
+@app_kernels.command("remove")
+@_add_verbose_logger()
+def remove_kernels(
+    names: Annotated[
+        list[str] | None,
+        typer.Option("-n", "--name", autocompletion=_complete_kernelspec_names),
+    ] = None,
+    venv_paths: VENV_PATHS_CLI = None,
+    missing: Annotated[
+        bool, typer.Option("--missing", help="Remove missing specs.")
+    ] = False,
+    workon_home: WORKON_HOME_CLI = WORKON_HOME_DEFAULT,
+    venv_patterns: VENV_PATTERNS_CLI = None,
+    use_default_venv_patterns: USE_DEFAULT_VENV_CLI = True,
+    dry_run: DRY_RUN_CLI = False,
+    verbose: VERBOSE_CLI = 0,  # noqa: ARG001
+    yes: YES_CLI = False,
+) -> None:
+    """Remove installed kernels"""
+    from .kernels import (
+        get_broken_kernelspecs,
+        get_kernelspecs,
+        has_jupyter_client,
+        remove_kernelspecs,
+    )
+
+    has_jupyter_client()
+
+    to_remove = set(
+        _get_venv_name_path_mapping(
+            include_workon_home=False,
+            venv_names=None,
+            venv_paths=venv_paths,
+            workon_home=workon_home,
+            venv_patterns=venv_patterns,
+            use_default_venv_patterns=use_default_venv_patterns,
         )
+    )
+    if names is not None:
+        to_remove.update(set(names))
 
-    if venv_paths:
-        venv_patterns = _get_venv_dir_names(
-            venv_patterns, use_default=use_default_venv_patterns
-        )
+    if missing:
+        to_remove.update(set(get_broken_kernelspecs()))
 
-        for p in venv_paths:
-            path = infer_virtualenv_path_raise(p, venv_patterns)
-            name_mapping[infer_virtualenv_name(path, venv_patterns)] = path
+    to_remove = to_remove.intersection(get_kernelspecs())
 
-    for name, path in name_mapping.items():
-        display_name = display_format.format(name=name)
-        command = uv_run(
-            path.resolve() if resolve else path,
-            "python",
-            script,
-            *(["--dry-run"] if dry_run else []),
-            "--",
-            *ctx.args,
-            "--name",
-            name,
-            "--display-name",
-            display_name,
-            *([] if no_user else ["--user"]),
-            dry_run=dry_run,
-        )
+    to_remove_filtered = [
+        name for name in to_remove if yes or typer.confirm(f"Remove {name}")
+    ]
 
-        if dry_run:
-            typer.echo(command)
+    if not to_remove_filtered:
+        return
+
+    logger.info("remove kernspecs %s", to_remove_filtered)
+
+    if not dry_run:
+        remove_kernelspecs(to_remove_filtered)
+
+
+@app_kernels.command("list")
+def list_kernels() -> None:
+    """Interface to jupyter kernelspec list"""
+    from .kernels import has_jupyter_client
+
+    has_jupyter_client()
+
+    from jupyter_client.kernelspecapp import ListKernelSpecs
+
+    ListKernelSpecs().start()

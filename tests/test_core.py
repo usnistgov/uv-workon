@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+import os
 from contextlib import nullcontext
 from functools import partial
 from pathlib import Path
 from subprocess import CalledProcessError
 from typing import TYPE_CHECKING
+from unittest.mock import call
 
 import pytest
 
@@ -12,9 +14,9 @@ from uv_workon.core import (
     NoVirtualEnvError,
     VirtualEnvPathAndLink,
     generate_shell_config,
-    get_ipykernel_install_script_path,
     infer_virtualenv_path_raise,
     is_valid_virtualenv,
+    select_option,
     uv_run,
     validate_dir_exists,
     validate_is_virtualenv,
@@ -217,10 +219,38 @@ def test_uv_run_error() -> None:
     _ = uv_run(Path(sys.executable), *args, dry_run=False)
 
 
-def test_get_ipykernel_install_script_path() -> None:
-    from importlib.resources import files
+def test_uv_run(mock_subprocess_run: Any) -> None:
+    venv_path = Path.cwd().resolve()
+    args = ["python", "-c", "import sys"]
 
-    assert (
-        str(files("uv_workon").joinpath("scripts", "ipykernel_install_script.py"))
-        == get_ipykernel_install_script_path()
-    )
+    uv_run(venv_path, *args)
+
+    # pylint: disable=duplicate-code
+    assert mock_subprocess_run.mock_calls == [
+        call(
+            (
+                "uv",
+                "run",
+                "-p",
+                str(venv_path),
+                "--no-project",
+                *args,
+            ),
+            check=True,
+            env={
+                **os.environ,
+                "VIRTUAL_ENV": str(venv_path),
+                "UV_PROJECT_ENVIRONMENT": str(venv_path),
+            },
+        )
+    ]
+
+
+def test_select_option(mock_terminalmenu: Any) -> None:
+    options = ["a", "b"]
+    _ = select_option(options, usage=False)
+    assert mock_terminalmenu.mock_calls == [
+        call(options, title=None),
+        call().show(),
+        call().show().__index__(),
+    ]

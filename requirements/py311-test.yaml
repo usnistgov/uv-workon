@@ -12,8 +12,10 @@ channels:
 dependencies:
   - python=3.11
   - attrs
+  - jupyter-client
   - pytest
   - pytest-cov
+  - pytest-mock>=3.14.0
   - pytest-sugar
   - pytest-xdist
   - simple-term-menu

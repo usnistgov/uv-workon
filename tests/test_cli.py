@@ -5,8 +5,10 @@ from __future__ import annotations
 import os
 import shlex
 from contextlib import nullcontext
+from functools import partial
 from pathlib import Path
 from typing import TYPE_CHECKING, cast
+from unittest.mock import call
 
 import pytest
 
@@ -72,6 +74,44 @@ def test__get_input_paths(venvs_parent_path: Path) -> None:
     expected2.add(venvs_parent_path / "has_venv_0" / "venv")
 
     assert set(out) == expected2
+
+
+def test__select_venv_path(
+    venvs_parent_path: Path,
+    workon_home_with_is_venv: Path,
+    mock_terminalmenu: Any,
+) -> None:
+    from uv_workon.cli import (  # pylint: disable=import-private-name
+        _select_virtualenv_path,  # noqa: PLC2701
+    )
+
+    func = partial(
+        _select_virtualenv_path,
+        workon_home=workon_home_with_is_venv,
+        venv_patterns=None,
+        use_default_venv_patterns=True,
+    )
+
+    path = func(venv_path=None, venv_name="is_venv_0")
+    assert path == workon_home_with_is_venv / "is_venv_0"
+
+    path = func(venv_path=venvs_parent_path / "is_venv_0", venv_name=None)
+    assert path == venvs_parent_path / "is_venv_0"
+
+    path = func(venv_path=None, venv_name=None)
+
+    options = [p.name for p in workon_home_with_is_venv.glob("*")]
+    assert mock_terminalmenu.mock_calls == [
+        call(
+            options,
+            title="venv use arrows or j/k to move down/up, or / to limit by name",
+        ),
+        call().show(),
+        call().show().__index__(),
+    ]
+
+
+# def test__get_venv_name_path_mapping() -> None:
 
 
 def test_verbosity() -> None:
