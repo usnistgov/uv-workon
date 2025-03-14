@@ -4,14 +4,12 @@ import os
 import shutil
 from pathlib import Path
 from typing import TYPE_CHECKING
-from unittest.mock import patch
 
 import pytest
 from click.testing import CliRunner
 
 if TYPE_CHECKING:
     from collections.abc import Generator
-    from typing import Any
 
     from click import Command
 
@@ -100,15 +98,3 @@ def workon_home_with_is_venv(
     )
 
     return workon_home
-
-
-@pytest.fixture
-def mock_subprocess_run() -> Any:
-    with patch("subprocess.run") as mocked:
-        yield mocked
-
-
-@pytest.fixture
-def mock_terminalmenu() -> Any:
-    with patch("simple_term_menu.TerminalMenu", autospec=True) as mocked:
-        yield mocked

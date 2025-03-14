@@ -4,7 +4,6 @@ import sys
 from importlib.util import find_spec
 from pathlib import Path
 from typing import TYPE_CHECKING
-from unittest.mock import call, patch
 
 import pytest
 
@@ -12,6 +11,8 @@ from uv_workon import kernels
 
 if TYPE_CHECKING:
     from typing import Any
+
+    from pytest_mock import MockerFixture
 
 _has_jupyter_client = find_spec("jupyter_client") is not None
 
@@ -66,22 +67,6 @@ def dummy_kernelspec() -> dict[str, Any]:
     return out
 
 
-@pytest.fixture
-def mock_get_kernelspecs(dummy_kernelspec: dict[str, Any]) -> Any:
-    with patch(
-        "uv_workon.kernels.get_kernelspecs", return_value=dummy_kernelspec
-    ) as mocked:
-        yield mocked
-
-
-@pytest.fixture
-def mock_removekernelspec() -> Any:
-    with patch(
-        "jupyter_client.kernelspecapp.RemoveKernelSpec", autospec=True
-    ) as mocked:
-        yield mocked
-
-
 def test_get_ipykernel_install_script_path() -> None:
     from importlib.resources import files
 
@@ -109,18 +94,25 @@ def test_get_kernelspec() -> None:
 
 @skip_if_no_jupyter_client
 def test_get_broken_kernelspecs(
-    mock_get_kernelspecs: Any, dummy_kernelspec: dict[str, Any]
+    mocker: MockerFixture, dummy_kernelspec: dict[str, Any]
 ) -> None:
+    mock_get_kernelspecs = mocker.patch(
+        "uv_workon.kernels.get_kernelspecs", return_value=dummy_kernelspec
+    )
+
     assert kernels.get_broken_kernelspecs() == {
         k: v for k, v in dummy_kernelspec.items() if k != "good"
     }
-    assert mock_get_kernelspecs.mock_calls == [call()]
+    assert mock_get_kernelspecs.mock_calls == [mocker.call()]
 
 
 @skip_if_no_jupyter_client
-def test_remove_kernelspecs(mock_removekernelspec: Any) -> None:
+def test_remove_kernelspecs(mocker: MockerFixture) -> None:
+    mock_removekernelspec = mocker.patch(
+        "jupyter_client.kernelspecapp.RemoveKernelSpec", autospec=True
+    )
     kernels.remove_kernelspecs(["a", "b"])
     assert mock_removekernelspec.mock_calls == [
-        call(spec_names=["a", "b"], force=True),
-        call().start(),
+        mocker.call(spec_names=["a", "b"], force=True),
+        mocker.call().start(),
     ]

@@ -42,20 +42,6 @@ logger = logging.getLogger(__name__)
 
 
 # * Utils ---------------------------------------------------------------------
-def _get_venv_dir_names(
-    venv_patterns: list[str] | None, use_default: bool = True
-) -> list[str]:
-    if venv_patterns is None:
-        venv_patterns = []
-
-    if not (out := list({*venv_patterns, *((".venv", "venv") if use_default else ())})):
-        msg = (
-            "No venv_patterns specified.  Either pass venv_patterns or allow defaults."
-        )
-        raise ValueError(msg)
-    return out
-
-
 def _get_input_paths(
     paths: list[Path] | None, parents: list[Path] | None
 ) -> Iterable[Path]:
@@ -77,7 +63,7 @@ def _select_virtualenv_path(
     if venv_path:
         path = infer_virtualenv_path_raise(
             venv_path,
-            _get_venv_dir_names(venv_patterns, use_default=use_default_venv_patterns),
+            _get_venv_patterns(venv_patterns, use_default=use_default_venv_patterns),
         )
     elif venv_name:
         path = validate_is_virtualenv(workon_home / venv_name)
@@ -111,7 +97,7 @@ def _get_venv_name_path_mapping(
         )
 
     if venv_paths:
-        venv_patterns = _get_venv_dir_names(
+        venv_patterns = _get_venv_patterns(
             venv_patterns, use_default=use_default_venv_patterns
         )
 
@@ -122,8 +108,37 @@ def _get_venv_name_path_mapping(
     return name_mapping
 
 
+# * Callbacks -----------------------------------------------------------------
 def _expand_user(x: Path) -> Path:
     return x.expanduser()
+
+
+def _get_venv_patterns(
+    venv_patterns: list[str] | None, use_default: bool = True
+) -> list[str]:
+    if venv_patterns is None:
+        venv_patterns = []
+
+    if not (out := list({*venv_patterns, *((".venv", "venv") if use_default else ())})):
+        msg = (
+            "No venv_patterns specified.  Either pass venv_patterns or allow defaults."
+        )
+        raise ValueError(msg)
+    return out
+
+
+def _venv_patterns_callback(
+    ctx: typer.Context,
+    venv_patterns: list[str],
+) -> list[str]:
+    use_default = cast("bool", ctx.params.get("use_default_venv_patterns"))
+
+    if not (out := list({*venv_patterns, *((".venv", "venv") if use_default else ())})):
+        msg = (
+            "No venv_patterns specified.  Either pass venv_patterns or allow defaults."
+        )
+        raise ValueError(msg)
+    return out
 
 
 # * Completions ---------------------------------------------------------------
@@ -138,10 +153,9 @@ def _complete_virtualenv_names(ctx: typer.Context, incomplete: str) -> Iterator[
     yield from (name for name in valid_names if name.startswith(incomplete))
 
 
-# this is necessary because typer has a bug
-# where any path typed is considered 'complete'
-# for arguments (even if exists=True) and a space
-# is added to the end - this works around it.
+# this is necessary because typer has a bug where any path typed is considered
+# 'complete' for arguments (even if exists=True) and a space is added to the
+# end - this works around it.
 def _complete_path() -> list[str]:  # pragma: no cover
     return []
 
@@ -222,9 +236,11 @@ VENV_PATTERNS_CLI = Annotated[
         Default is to include virtual environment directories of form
         ``".venv"`` or ``"venv"``.  To exclude these defaults, pass ``--no-default-venv``.
         """,
+        envvar="UV_WORKON_VENV_PATTERNS",
+        # callback=_venv_patterns_callback,  # noqa: ERA001
     ),
 ]
-USE_DEFAULT_VENV_CLI = Annotated[
+USE_DEFAULT_VENV_PATTERNS_CLI = Annotated[
     bool,
     typer.Option(
         "--default-venv/--no-default-venv",
@@ -232,6 +248,7 @@ USE_DEFAULT_VENV_CLI = Annotated[
         Default is to include virtual environment patterns ``".venv"`` and ``"venv"``.
         Pass ``--no-default-venv`` to exclude these default values.
         """,
+        is_eager=True,
     ),
 ]
 RESOLVE_CLI = Annotated[
@@ -255,6 +272,7 @@ PATHS_CLI = Annotated[
         the name.
         """,
         autocompletion=_complete_path,
+        envvar="UV_WORKON_PATHS",
     ),
 ]
 LINK_NAMES_CLI = Annotated[
@@ -372,7 +390,17 @@ def _add_verbose_logger(
 
 
 # * Commands ------------------------------------------------------------------
-# NOTE: return locals() for testing purposes.
+@app_typer.command("test")
+def dummy(  # pylint: disable=dangerous-default-value
+    venv_patterns: VENV_PATTERNS_CLI = [],  # noqa: B006
+    paths: PATHS_CLI = None,
+    use_default_venv_patterns: USE_DEFAULT_VENV_PATTERNS_CLI = True,  # noqa: ARG001
+) -> None:
+    """Dummy function"""
+    typer.echo(f"{venv_patterns}")
+    typer.echo(f"{paths}")
+
+
 @app_typer.command("link")
 @_add_verbose_logger()
 def link_virtualenvs(
@@ -382,7 +410,7 @@ def link_virtualenvs(
     resolve: RESOLVE_CLI = False,
     workon_home: WORKON_HOME_CLI = WORKON_HOME_DEFAULT,
     venv_patterns: VENV_PATTERNS_CLI = None,
-    use_default_venv_patterns: USE_DEFAULT_VENV_CLI = True,
+    use_default_venv_patterns: USE_DEFAULT_VENV_PATTERNS_CLI = True,
     dry_run: DRY_RUN_CLI = False,
     verbose: VERBOSE_CLI = None,
     yes: YES_CLI = False,
@@ -392,7 +420,7 @@ def link_virtualenvs(
         with click.get_current_context() as ctx:
             typer.echo(ctx.get_help())
 
-    venv_patterns = _get_venv_dir_names(
+    venv_patterns = _get_venv_patterns(
         venv_patterns, use_default=use_default_venv_patterns
     )
     logger.debug("params: %s", locals())
@@ -461,10 +489,10 @@ def run_with_virtualenv(
     ctx: typer.Context,
     venv_name: VENV_NAME_CLI = None,
     venv_path: VENV_PATH_CLI = None,
-    resolve: RESOLVE_CLI = False,
+    resolve: RESOLVE_CLI = True,
     workon_home: WORKON_HOME_CLI = WORKON_HOME_DEFAULT,
     venv_patterns: VENV_PATTERNS_CLI = None,
-    use_default_venv_patterns: USE_DEFAULT_VENV_CLI = True,
+    use_default_venv_patterns: USE_DEFAULT_VENV_PATTERNS_CLI = True,
     dry_run: DRY_RUN_CLI = False,
     verbose: VERBOSE_CLI = None,
 ) -> None:
@@ -519,7 +547,7 @@ def shell_activate(
     no_command: NO_COMMAND_CLI = False,
     workon_home: WORKON_HOME_CLI = WORKON_HOME_DEFAULT,
     venv_patterns: VENV_PATTERNS_CLI = None,
-    use_default_venv_patterns: USE_DEFAULT_VENV_CLI = True,
+    use_default_venv_patterns: USE_DEFAULT_VENV_PATTERNS_CLI = True,
 ) -> None:
     """Use to activate virtual environments."""
     path = _select_virtualenv_path(
@@ -547,7 +575,7 @@ def shell_cd(
     no_command: NO_COMMAND_CLI = False,
     workon_home: WORKON_HOME_CLI = WORKON_HOME_DEFAULT,
     venv_patterns: VENV_PATTERNS_CLI = None,
-    use_default_venv_patterns: USE_DEFAULT_VENV_CLI = True,
+    use_default_venv_patterns: USE_DEFAULT_VENV_PATTERNS_CLI = True,
 ) -> None:
     """Command to change to parent directory of virtual environment."""
     path = _select_virtualenv_path(
@@ -602,7 +630,7 @@ def install_ipykernels(
     resolve: RESOLVE_CLI = True,
     workon_home: WORKON_HOME_CLI = WORKON_HOME_DEFAULT,
     venv_patterns: VENV_PATTERNS_CLI = None,
-    use_default_venv_patterns: USE_DEFAULT_VENV_CLI = True,
+    use_default_venv_patterns: USE_DEFAULT_VENV_PATTERNS_CLI = True,
     dry_run: DRY_RUN_CLI = False,
     verbose: VERBOSE_CLI = 0,  # noqa: ARG001
     yes: YES_CLI = False,
@@ -655,7 +683,7 @@ def remove_kernels(
     ] = False,
     workon_home: WORKON_HOME_CLI = WORKON_HOME_DEFAULT,
     venv_patterns: VENV_PATTERNS_CLI = None,
-    use_default_venv_patterns: USE_DEFAULT_VENV_CLI = True,
+    use_default_venv_patterns: USE_DEFAULT_VENV_PATTERNS_CLI = True,
     dry_run: DRY_RUN_CLI = False,
     verbose: VERBOSE_CLI = 0,  # noqa: ARG001
     yes: YES_CLI = False,

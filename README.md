@@ -81,9 +81,10 @@ Now, from anywhere, you can use the virtual environment `my-project`:
 
 - Link virtual environment to central location with `uv link`. These links are
   located at `WORKON_HOME` environment variable, defaulting to `~/.virtualenvs`.
-- Activate virtual environment with `uvw activate ...`
+- Activate virtual environment with `uvw activate ...` (requires shell
+  integration)
 - Run under virtual environment with `uvw run ...`
-- Change to project directory with `uvw cd ...`
+- Change to project directory with `uvw cd ...` (requires shell integration)
 - List available virtual environments with `uvw list`
 - Cleanup missing symlinks with `uvw clean`
 - Manage [`ipykernel`](https://github.com/ipython/ipykernel) with
@@ -93,8 +94,6 @@ Now, from anywhere, you can use the virtual environment `my-project`:
   - Remove kernels (including remove all missing/broken kernels) with
     `uvw kernels remove ...`
   - list installed kernels with `uvw kernels list ...`
-
-Currently `uvw` is setup to work with `bash` and `zsh` shells only.
 
 ## Status
 
@@ -121,7 +120,7 @@ Run the following to add autocompletion for `uvw`:
 uvw --install-completion
 ```
 
-### Shell interaction
+### Shell integration
 
 To use `uvw activate` and `uvw cd`, you must enable the shell configuration with
 `eval "$(uvw shell-config)", or add it to you config script with:
@@ -132,6 +131,9 @@ echo 'eval "$(uvw shell-config)"' >> ~/.zshrc
 # for bash
 echo 'eval "$(uvw shell-config)"' >> ~/.bashrc
 ```
+
+Currently `uvw` shell integration is setup to work with `bash` and `zsh` shells
+only.
 
 <!-- end-installation -->
 

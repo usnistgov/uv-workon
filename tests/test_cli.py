@@ -8,11 +8,12 @@ from contextlib import nullcontext
 from functools import partial
 from pathlib import Path
 from typing import TYPE_CHECKING, cast
-from unittest.mock import call
 
 import pytest
+import typer
 
 from uv_workon import cli
+from uv_workon.cli import WORKON_HOME_CLI, WORKON_HOME_DEFAULT
 from uv_workon.core import generate_shell_config
 
 if TYPE_CHECKING:
@@ -20,6 +21,7 @@ if TYPE_CHECKING:
 
     from click import Command
     from click.testing import CliRunner
+    from pytest_mock import MockerFixture
     from typer import Context
 
 
@@ -46,7 +48,7 @@ if TYPE_CHECKING:
 )
 def test__get_venv_dir_names(args: tuple[Any], expected: Any) -> None:
     with expected as e:
-        out = cli._get_venv_dir_names(*args)
+        out = cli._get_venv_patterns(*args)
         assert set(out) == e
 
 
@@ -79,12 +81,13 @@ def test__get_input_paths(venvs_parent_path: Path) -> None:
 def test__select_venv_path(
     venvs_parent_path: Path,
     workon_home_with_is_venv: Path,
-    mock_terminalmenu: Any,
+    mocker: MockerFixture,
 ) -> None:
     from uv_workon.cli import (  # pylint: disable=import-private-name
         _select_virtualenv_path,  # noqa: PLC2701
     )
 
+    mock_terminalmenu = mocker.patch("simple_term_menu.TerminalMenu", autospec=True)
     func = partial(
         _select_virtualenv_path,
         workon_home=workon_home_with_is_venv,
@@ -102,12 +105,12 @@ def test__select_venv_path(
 
     options = [p.name for p in workon_home_with_is_venv.glob("*")]
     assert mock_terminalmenu.mock_calls == [
-        call(
+        mocker.call(
             options,
             title="venv use arrows or j/k to move down/up, or / to limit by name",
         ),
-        call().show(),
-        call().show().__index__(),
+        mocker.call().show(),
+        mocker.call().show().__index__(),
     ]
 
 
@@ -244,6 +247,18 @@ def test_link_help(
     assert "Create symlink from paths" in out.output
 
 
+@pytest.fixture(scope="session")
+def workon_home_click_app() -> Command:
+    app = typer.Typer()
+
+    @app.command()
+    def dummy_workon_home(workon_home: WORKON_HOME_CLI = WORKON_HOME_DEFAULT) -> Path:  # pyright: ignore[reportUnusedFunction]
+        typer.echo(str(workon_home))
+        return workon_home
+
+    return typer.main.get_command(app)
+
+
 @pytest.mark.parametrize(
     ("cli_val", "environment_val", "expected"),
     [
@@ -255,18 +270,16 @@ def test_link_help(
     ],
 )
 def test_workon_home(
-    click_app: Command,
+    workon_home_click_app: Command,
     clirunner: CliRunner,
     environment_val: str | None,
     cli_val: str | None,
     expected: Path,
-    caplog: pytest.LogCaptureFixture,
 ) -> None:
     env = {"WORKON_HOME": environment_val} if environment_val else {}
     opts = [] if cli_val is None else ["--workon-home", cli_val]
-    clirunner.invoke(click_app, ["list", "-vv", *opts], env=env)
-
-    assert f"'workon_home': {Path(expected).expanduser()!r}" in caplog.text
+    out = clirunner.invoke(workon_home_click_app, opts, env=env)
+    assert str(Path(expected).expanduser()) == out.output.strip()
 
 
 def test_list(
@@ -395,7 +408,7 @@ def test_run(
             *opts,
             *args,
             *(["--dry-run"] if dry else []),
-            *(["--resolve"] if resolve else []),
+            *([] if resolve else ["--no-resolve"]),
         ],
     )
 

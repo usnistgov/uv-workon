@@ -6,7 +6,6 @@ from functools import partial
 from pathlib import Path
 from subprocess import CalledProcessError
 from typing import TYPE_CHECKING
-from unittest.mock import call
 
 import pytest
 
@@ -26,6 +25,8 @@ from uv_workon.core import (
 
 if TYPE_CHECKING:
     from typing import Any
+
+    from pytest_mock import MockerFixture
 
     from uv_workon._typing import VirtualEnvPattern
 
@@ -219,7 +220,9 @@ def test_uv_run_error() -> None:
     _ = uv_run(Path(sys.executable), *args, dry_run=False)
 
 
-def test_uv_run(mock_subprocess_run: Any) -> None:
+def test_uv_run(mocker: MockerFixture) -> None:
+    mock_subprocess_run = mocker.patch("subprocess.run")
+
     venv_path = Path.cwd().resolve()
     args = ["python", "-c", "import sys"]
 
@@ -227,7 +230,7 @@ def test_uv_run(mock_subprocess_run: Any) -> None:
 
     # pylint: disable=duplicate-code
     assert mock_subprocess_run.mock_calls == [
-        call(
+        mocker.call(
             (
                 "uv",
                 "run",
@@ -246,11 +249,12 @@ def test_uv_run(mock_subprocess_run: Any) -> None:
     ]
 
 
-def test_select_option(mock_terminalmenu: Any) -> None:
+def test_select_option(mocker: MockerFixture) -> None:
+    mock_terminalmenu = mocker.patch("simple_term_menu.TerminalMenu", autospec=True)
     options = ["a", "b"]
     _ = select_option(options, usage=False)
     assert mock_terminalmenu.mock_calls == [
-        call(options, title=None),
-        call().show(),
-        call().show().__index__(),
+        mocker.call(options, title=None),
+        mocker.call().show(),
+        mocker.call().show().__index__(),
     ]
