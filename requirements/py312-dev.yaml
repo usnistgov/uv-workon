@@ -11,10 +11,10 @@ channels:
   - conda-forge
 dependencies:
   - python=3.12
-  - attrs
+  - attrs>=25.3.0
   - ipykernel
   - ipython
-  - jupyter-client
+  - jupyter-client>=8.6.3
   - mypy>=1.15.0
   - nbclient>=0.10.0
   - nox>=2024.4.15
@@ -25,8 +25,8 @@ dependencies:
   - pytest-mock>=3.14.0
   - pytest-sugar
   - pytest-xdist
-  - simple-term-menu
-  - typer
+  - simple-term-menu>=1.6.6
+  - typer>=0.15.2
   - pip
   - pip:
       - pytest-accept

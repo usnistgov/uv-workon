@@ -1876,6 +1876,7 @@ name = "uv-workon"
 source = { editable = "." }
 dependencies = [
     { name = "attrs" },
+    { name = "jupyter-client" },
     { name = "simple-term-menu" },
     { name = "typer" },
     { name = "typing-extensions", marker = "python_full_version < '3.11'" },
@@ -1983,12 +1984,13 @@ uvxrun = [
 
 [package.metadata]
 requires-dist = [
-    { name = "attrs" },
-    { name = "jupyter-client", marker = "extra == 'all'" },
-    { name = "jupyter-client", marker = "extra == 'jupyter'" },
-    { name = "simple-term-menu" },
-    { name = "typer" },
-    { name = "typing-extensions", marker = "python_full_version < '3.11'" },
+    { name = "attrs", specifier = ">=25.3.0" },
+    { name = "jupyter-client", marker = "extra == 'all'", specifier = ">=8.6.3" },
+    { name = "jupyter-client", marker = "extra == 'jupyter'", specifier = ">=8.6.3" },
+    { name = "jupyter-client", extras = ["jupyter"], specifier = ">=8.6.3" },
+    { name = "simple-term-menu", specifier = ">=1.6.6" },
+    { name = "typer", specifier = ">=0.15.2" },
+    { name = "typing-extensions", marker = "python_full_version < '3.11'", specifier = ">=4.12.2" },
 ]
 provides-extras = ["all", "jupyter"]
 
