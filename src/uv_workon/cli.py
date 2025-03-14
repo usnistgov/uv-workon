@@ -1,5 +1,5 @@
 """
-Console script (:mod:`~uv_workon.cli`
+Console script (:mod:`~uv_workon.cli`)
 ======================================
 """
 
@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import itertools
 import logging
+import sys
 from collections.abc import Iterator  # noqa: TC003
 from functools import lru_cache, wraps
 from inspect import signature
@@ -20,11 +21,14 @@ from .core import (
     VirtualEnvPathAndLink,
     generate_shell_config,
     get_invalid_symlinks,
+    get_virtualenv_paths,
+    uv_run,
+)
+from .kernels import complete_kernelspec_names
+from .utils import select_option
+from .validate import (
     infer_virtualenv_name,
     infer_virtualenv_path_raise,
-    list_venv_paths,
-    select_option,
-    uv_run,
     validate_is_virtualenv,
 )
 
@@ -56,19 +60,18 @@ def _select_virtualenv_path(
     venv_path: Path | None,
     venv_name: str | None,
     workon_home: Path,
-    venv_patterns: list[str] | None,
-    use_default_venv_patterns: bool = False,
+    venv_patterns: list[str],
     resolve: bool = False,
 ) -> Path:
     if venv_path:
         path = infer_virtualenv_path_raise(
             venv_path,
-            _get_venv_patterns(venv_patterns, use_default=use_default_venv_patterns),
+            venv_patterns,
         )
     elif venv_name:
         path = validate_is_virtualenv(workon_home / venv_name)
 
-    elif options := [p.name for p in list_venv_paths(workon_home)]:
+    elif options := [p.name for p in get_virtualenv_paths(workon_home)]:
         path = workon_home / select_option(options, title="venv")
     else:  # pragma: no cover
         typer.echo("No virtual environment found")
@@ -84,12 +87,11 @@ def _get_venv_name_path_mapping(
     venv_names: Iterable[str] | None,
     venv_paths: Iterable[Path] | None,
     workon_home: Path,
-    venv_patterns: list[str] | None,
-    use_default_venv_patterns: bool,
+    venv_patterns: list[str],
 ) -> dict[str, Path]:
     name_mapping: dict[str, Path] = {}
     if include_workon_home:
-        name_mapping.update({p.name: p for p in list_venv_paths(workon_home)})
+        name_mapping.update({p.name: p for p in get_virtualenv_paths(workon_home)})
 
     if venv_names:
         name_mapping.update(
@@ -97,10 +99,6 @@ def _get_venv_name_path_mapping(
         )
 
     if venv_paths:
-        venv_patterns = _get_venv_patterns(
-            venv_patterns, use_default=use_default_venv_patterns
-        )
-
         for p in venv_paths:
             path = infer_virtualenv_path_raise(p, venv_patterns)
             name_mapping[infer_virtualenv_name(path, venv_patterns)] = path
@@ -108,43 +106,64 @@ def _get_venv_name_path_mapping(
     return name_mapping
 
 
+def _add_verbose_logger(
+    verbose_arg: str = "verbose",
+) -> Callable[[Callable[..., R]], Callable[..., R]]:
+    """Decorator factory to add logger and set logger level based on verbosity argument value."""
+
+    def decorator(func: Callable[..., R]) -> Callable[..., R]:
+        bind = signature(func).bind
+
+        @wraps(func)
+        def wrapped(*args: Any, **kwargs: Any) -> R:
+            params = bind(*args, **kwargs)
+            params.apply_defaults()
+
+            if (verbosity := cast("int | None", params.arguments[verbose_arg])) is None:
+                # leave where it is:
+                pass
+            else:
+                if verbosity < 0:  # pragma: no cover
+                    level = logging.ERROR
+                elif not verbosity:  # pragma: no cover
+                    level = logging.WARNING
+                elif verbosity == 1:
+                    level = logging.INFO
+                else:  # pragma: no cover
+                    level = logging.DEBUG
+
+                for _logger in map(logging.getLogger, logging.root.manager.loggerDict):  # pylint: disable=no-member
+                    _logger.setLevel(level)
+
+            # add error logger to function call
+            try:
+                return func(*args, **kwargs)
+            except Exception:  # pragma: no cover
+                logger.exception("found error")
+                raise
+
+        return wrapped
+
+    return decorator
+
+
 # * Callbacks -----------------------------------------------------------------
-def _expand_user(x: Path) -> Path:
+def _callback_expand_user(x: Path) -> Path:
     return x.expanduser()
 
 
-def _get_venv_patterns(
-    venv_patterns: list[str] | None, use_default: bool = True
-) -> list[str]:
-    if venv_patterns is None:
-        venv_patterns = []
-
-    if not (out := list({*venv_patterns, *((".venv", "venv") if use_default else ())})):
-        msg = (
-            "No venv_patterns specified.  Either pass venv_patterns or allow defaults."
-        )
-        raise ValueError(msg)
-    return out
-
-
-def _venv_patterns_callback(
+def _callback_venv_patterns(
     ctx: typer.Context,
     venv_patterns: list[str],
 ) -> list[str]:
     use_default = cast("bool", ctx.params.get("use_default_venv_patterns"))
-
-    if not (out := list({*venv_patterns, *((".venv", "venv") if use_default else ())})):
-        msg = (
-            "No venv_patterns specified.  Either pass venv_patterns or allow defaults."
-        )
-        raise ValueError(msg)
-    return out
+    return list({*venv_patterns, *((".venv", "venv") if use_default else ())})
 
 
 # * Completions ---------------------------------------------------------------
 @lru_cache
 def _all_virtualenv_names(workon_home: Path) -> list[str]:
-    return [p.name for p in list_venv_paths(workon_home)]
+    return [p.name for p in get_virtualenv_paths(workon_home)]
 
 
 def _complete_virtualenv_names(ctx: typer.Context, incomplete: str) -> Iterator[str]:
@@ -156,15 +175,8 @@ def _complete_virtualenv_names(ctx: typer.Context, incomplete: str) -> Iterator[
 # this is necessary because typer has a bug where any path typed is considered
 # 'complete' for arguments (even if exists=True) and a space is added to the
 # end - this works around it.
-def _complete_path() -> list[str]:  # pragma: no cover
+def _complete_path() -> list[str]:
     return []
-
-
-def _complete_kernelspec_names(incomplete: str) -> Iterator[str]:
-    from .kernels import get_kernelspecs
-
-    valid_names = get_kernelspecs()
-    yield from (name for name in valid_names if name.startswith(incomplete))
 
 
 # * Main app ------------------------------------------------------------------
@@ -184,7 +196,7 @@ def version_callback(value: bool) -> None:
 
 @app_typer.callback()
 def main(
-    version: bool = typer.Option(  # noqa: ARG001
+    version: bool = typer.Option(
         None, "--version", "-v", callback=version_callback, is_eager=True
     ),
 ) -> None:
@@ -194,7 +206,6 @@ def main(
 
 # * Options -------------------------------------------------------------------
 
-WORKON_HOME_DEFAULT = Path("~/.virtualenvs")
 WORKON_HOME_CLI = Annotated[
     Path,
     typer.Option(
@@ -206,9 +217,11 @@ WORKON_HOME_CLI = Annotated[
         variable, then ``~/.virtualenvs`` directory.
         """,
         envvar="WORKON_HOME",
-        callback=_expand_user,
+        callback=_callback_expand_user,
         is_eager=True,  # needed for autocompletion
         autocompletion=_complete_path,
+        default_factory=lambda: Path.home() / ".virtualenvs",
+        show_default=False,
     ),
 ]
 DRY_RUN_CLI = Annotated[
@@ -228,7 +241,7 @@ VERBOSE_CLI = Annotated[
     ),
 ]
 VENV_PATTERNS_CLI = Annotated[
-    list[str] | None,
+    list[str],
     typer.Option(
         "--venv",
         help="""
@@ -237,7 +250,9 @@ VENV_PATTERNS_CLI = Annotated[
         ``".venv"`` or ``"venv"``.  To exclude these defaults, pass ``--no-default-venv``.
         """,
         envvar="UV_WORKON_VENV_PATTERNS",
-        # callback=_venv_patterns_callback,  # noqa: ERA001
+        callback=_callback_venv_patterns,
+        default_factory=list,
+        show_default=False,
     ),
 ]
 USE_DEFAULT_VENV_PATTERNS_CLI = Annotated[
@@ -292,10 +307,10 @@ PARENTS_CLI = Annotated[
     typer.Option(
         "--parent",
         help="""
-    Parent of directories to check for ``venv_pattern`` directories
-    containing virtual environments. Using ``uv-workon --parent a/path``
-    is roughly equivalent to using ``uv-workon a/path/*``
-    """,
+        Parent of directories to check for ``venv_pattern`` directories
+        containing virtual environments. Using ``uv-workon --parent a/path``
+        is roughly equivalent to using ``uv-workon a/path/*``
+        """,
         autocompletion=_complete_path,
     ),
 ]
@@ -348,68 +363,17 @@ VENV_PATHS_CLI = Annotated[
 ]
 
 
-def _add_verbose_logger(
-    verbose_arg: str = "verbose",
-) -> Callable[[Callable[..., R]], Callable[..., R]]:
-    """Decorator factory to add logger and set logger level based on verbosity argument value."""
-
-    def decorator(func: Callable[..., R]) -> Callable[..., R]:
-        bind = signature(func).bind
-
-        @wraps(func)
-        def wrapped(*args: Any, **kwargs: Any) -> R:
-            params = bind(*args, **kwargs)
-            params.apply_defaults()
-
-            if (verbosity := cast("int | None", params.arguments[verbose_arg])) is None:
-                # leave where it is:
-                pass
-            else:
-                if verbosity < 0:  # pragma: no cover
-                    level = logging.ERROR
-                elif not verbosity:  # pragma: no cover
-                    level = logging.WARNING
-                elif verbosity == 1:
-                    level = logging.INFO
-                else:  # pragma: no cover
-                    level = logging.DEBUG
-
-                for _logger in map(logging.getLogger, logging.root.manager.loggerDict):  # pylint: disable=no-member
-                    _logger.setLevel(level)
-
-            # add error logger to function call
-            try:
-                return func(*args, **kwargs)
-            except Exception:  # pragma: no cover
-                logger.exception("found error")
-                raise
-
-        return wrapped
-
-    return decorator
-
-
 # * Commands ------------------------------------------------------------------
-@app_typer.command("test")
-def dummy(  # pylint: disable=dangerous-default-value
-    venv_patterns: VENV_PATTERNS_CLI = [],  # noqa: B006
-    paths: PATHS_CLI = None,
-    use_default_venv_patterns: USE_DEFAULT_VENV_PATTERNS_CLI = True,  # noqa: ARG001
-) -> None:
-    """Dummy function"""
-    typer.echo(f"{venv_patterns}")
-    typer.echo(f"{paths}")
-
-
 @app_typer.command("link")
 @_add_verbose_logger()
 def link_virtualenvs(
+    *,
     paths: PATHS_CLI = None,
     parents: PARENTS_CLI = None,
     link_names: LINK_NAMES_CLI = None,
     resolve: RESOLVE_CLI = False,
-    workon_home: WORKON_HOME_CLI = WORKON_HOME_DEFAULT,
-    venv_patterns: VENV_PATTERNS_CLI = None,
+    workon_home: WORKON_HOME_CLI,
+    venv_patterns: VENV_PATTERNS_CLI,
     use_default_venv_patterns: USE_DEFAULT_VENV_PATTERNS_CLI = True,
     dry_run: DRY_RUN_CLI = False,
     verbose: VERBOSE_CLI = None,
@@ -419,10 +383,8 @@ def link_virtualenvs(
     if not (input_paths := list(_get_input_paths(paths, parents))):
         with click.get_current_context() as ctx:
             typer.echo(ctx.get_help())
+            sys.exit(2)
 
-    venv_patterns = _get_venv_patterns(
-        venv_patterns, use_default=use_default_venv_patterns
-    )
     logger.debug("params: %s", locals())
 
     objs = list(
@@ -446,11 +408,12 @@ def link_virtualenvs(
 @app_typer.command("list")
 @_add_verbose_logger()
 def list_virtualenvs(
-    workon_home: WORKON_HOME_CLI = WORKON_HOME_DEFAULT,
+    *,
+    workon_home: WORKON_HOME_CLI,
     verbose: VERBOSE_CLI = None,
 ) -> None:
     """List available central virtual environments"""
-    venv_paths = list_venv_paths(workon_home)
+    venv_paths = get_virtualenv_paths(workon_home)
     logger.debug("params: %s", locals())
 
     for p in sorted(venv_paths, key=lambda x: x.name):
@@ -460,7 +423,8 @@ def list_virtualenvs(
 @app_typer.command("clean")
 @_add_verbose_logger()
 def clean_virtualenvs(
-    workon_home: WORKON_HOME_CLI = WORKON_HOME_DEFAULT,
+    *,
+    workon_home: WORKON_HOME_CLI,
     dry_run: DRY_RUN_CLI = False,
     verbose: VERBOSE_CLI = None,
     yes: bool = False,
@@ -486,12 +450,13 @@ def clean_virtualenvs(
 )
 @_add_verbose_logger()
 def run_with_virtualenv(
+    *,
     ctx: typer.Context,
     venv_name: VENV_NAME_CLI = None,
     venv_path: VENV_PATH_CLI = None,
     resolve: RESOLVE_CLI = True,
-    workon_home: WORKON_HOME_CLI = WORKON_HOME_DEFAULT,
-    venv_patterns: VENV_PATTERNS_CLI = None,
+    workon_home: WORKON_HOME_CLI,
+    venv_patterns: VENV_PATTERNS_CLI,
     use_default_venv_patterns: USE_DEFAULT_VENV_PATTERNS_CLI = True,
     dry_run: DRY_RUN_CLI = False,
     verbose: VERBOSE_CLI = None,
@@ -510,14 +475,13 @@ def run_with_virtualenv(
 
     if not ctx.args:
         typer.echo(ctx.get_help())
-        return
+        sys.exit(2)
 
     path = _select_virtualenv_path(
         venv_path=venv_path,
         venv_name=venv_name,
         workon_home=workon_home,
         venv_patterns=venv_patterns,
-        use_default_venv_patterns=use_default_venv_patterns,
         resolve=resolve,
     )
 
@@ -541,12 +505,13 @@ def shell_config() -> None:
 
 @app_typer.command("activate")
 def shell_activate(
+    *,
     venv_name: VENV_NAME_CLI = None,
     venv_path: VENV_PATH_CLI = None,
     resolve: RESOLVE_CLI = False,
     no_command: NO_COMMAND_CLI = False,
-    workon_home: WORKON_HOME_CLI = WORKON_HOME_DEFAULT,
-    venv_patterns: VENV_PATTERNS_CLI = None,
+    workon_home: WORKON_HOME_CLI,
+    venv_patterns: VENV_PATTERNS_CLI,
     use_default_venv_patterns: USE_DEFAULT_VENV_PATTERNS_CLI = True,
 ) -> None:
     """Use to activate virtual environments."""
@@ -555,7 +520,6 @@ def shell_activate(
         venv_name=venv_name,
         workon_home=workon_home,
         venv_patterns=venv_patterns,
-        use_default_venv_patterns=use_default_venv_patterns,
         resolve=resolve,
     )
 
@@ -570,11 +534,12 @@ def shell_activate(
 
 @app_typer.command("cd")
 def shell_cd(
+    *,
     venv_name: VENV_NAME_CLI = None,
     venv_path: VENV_PATH_CLI = None,
     no_command: NO_COMMAND_CLI = False,
-    workon_home: WORKON_HOME_CLI = WORKON_HOME_DEFAULT,
-    venv_patterns: VENV_PATTERNS_CLI = None,
+    workon_home: WORKON_HOME_CLI,
+    venv_patterns: VENV_PATTERNS_CLI,
     use_default_venv_patterns: USE_DEFAULT_VENV_PATTERNS_CLI = True,
 ) -> None:
     """Command to change to parent directory of virtual environment."""
@@ -583,7 +548,6 @@ def shell_cd(
         venv_name=venv_name,
         workon_home=workon_home,
         venv_patterns=venv_patterns,
-        use_default_venv_patterns=use_default_venv_patterns,
         resolve=True,
     ).parent
 
@@ -597,6 +561,7 @@ def shell_cd(
 @_add_verbose_logger()
 def install_ipykernels(
     ctx: typer.Context,
+    *,
     venv_names: Annotated[
         list[str] | None,
         typer.Option(
@@ -628,11 +593,11 @@ def install_ipykernels(
         ),
     ] = False,
     resolve: RESOLVE_CLI = True,
-    workon_home: WORKON_HOME_CLI = WORKON_HOME_DEFAULT,
-    venv_patterns: VENV_PATTERNS_CLI = None,
+    workon_home: WORKON_HOME_CLI,
+    venv_patterns: VENV_PATTERNS_CLI,
     use_default_venv_patterns: USE_DEFAULT_VENV_PATTERNS_CLI = True,
     dry_run: DRY_RUN_CLI = False,
-    verbose: VERBOSE_CLI = 0,  # noqa: ARG001
+    verbose: VERBOSE_CLI = 0,
     yes: YES_CLI = False,
 ) -> None:
     """Install ipykernels for virtual environment(s) that contain ``ipykernel`` module."""
@@ -647,7 +612,6 @@ def install_ipykernels(
         venv_paths=venv_paths,
         workon_home=workon_home,
         venv_patterns=venv_patterns,
-        use_default_venv_patterns=use_default_venv_patterns,
     ).items():
         if yes or (name not in kernelspecs) or typer.confirm(f"Reinstall {name}?"):
             display_name = display_format.format(name=name)
@@ -673,19 +637,20 @@ def install_ipykernels(
 @app_kernels.command("remove")
 @_add_verbose_logger()
 def remove_kernels(
+    *,
     names: Annotated[
         list[str] | None,
-        typer.Option("-n", "--name", autocompletion=_complete_kernelspec_names),
+        typer.Option("-n", "--name", autocompletion=complete_kernelspec_names),
     ] = None,
     venv_paths: VENV_PATHS_CLI = None,
     missing: Annotated[
         bool, typer.Option("--missing", help="Remove missing specs.")
     ] = False,
-    workon_home: WORKON_HOME_CLI = WORKON_HOME_DEFAULT,
-    venv_patterns: VENV_PATTERNS_CLI = None,
+    workon_home: WORKON_HOME_CLI,
+    venv_patterns: VENV_PATTERNS_CLI,
     use_default_venv_patterns: USE_DEFAULT_VENV_PATTERNS_CLI = True,
     dry_run: DRY_RUN_CLI = False,
-    verbose: VERBOSE_CLI = 0,  # noqa: ARG001
+    verbose: VERBOSE_CLI = 0,
     yes: YES_CLI = False,
 ) -> None:
     """Remove installed kernels"""
@@ -705,7 +670,6 @@ def remove_kernels(
             venv_paths=venv_paths,
             workon_home=workon_home,
             venv_patterns=venv_patterns,
-            use_default_venv_patterns=use_default_venv_patterns,
         )
     )
     if names is not None:

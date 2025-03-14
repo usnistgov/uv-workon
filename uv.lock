@@ -1876,7 +1876,6 @@ name = "uv-workon"
 source = { editable = "." }
 dependencies = [
     { name = "attrs" },
-    { name = "jupyter-client" },
     { name = "simple-term-menu" },
     { name = "typer" },
     { name = "typing-extensions", marker = "python_full_version < '3.11'" },
@@ -1974,9 +1973,12 @@ test-noopt = [
     { name = "pytest-xdist" },
 ]
 typing = [
+    { name = "ipykernel" },
     { name = "packaging" },
     { name = "pylint" },
     { name = "pytest" },
+    { name = "pytest-mock" },
+    { name = "uv-workon", extra = ["all"] },
 ]
 uvxrun = [
     { name = "packaging" },
@@ -1987,7 +1989,6 @@ requires-dist = [
     { name = "attrs", specifier = ">=25.3.0" },
     { name = "jupyter-client", marker = "extra == 'all'", specifier = ">=8.6.3" },
     { name = "jupyter-client", marker = "extra == 'jupyter'", specifier = ">=8.6.3" },
-    { name = "jupyter-client", extras = ["jupyter"], specifier = ">=8.6.3" },
     { name = "simple-term-menu", specifier = ">=1.6.6" },
     { name = "typer", specifier = ">=0.15.2" },
     { name = "typing-extensions", marker = "python_full_version < '3.11'", specifier = ">=4.12.2" },
@@ -2007,6 +2008,7 @@ dev = [
     { name = "pytest" },
     { name = "pytest-accept" },
     { name = "pytest-cov" },
+    { name = "pytest-mock" },
     { name = "pytest-mock", specifier = ">=3.14.0" },
     { name = "pytest-sugar" },
     { name = "pytest-xdist" },
@@ -2066,9 +2068,12 @@ test-noopt = [
     { name = "pytest-xdist" },
 ]
 typing = [
+    { name = "ipykernel" },
     { name = "packaging" },
     { name = "pylint" },
     { name = "pytest" },
+    { name = "pytest-mock" },
+    { name = "uv-workon", extras = ["all"] },
 ]
 uvxrun = [{ name = "packaging" }]
 

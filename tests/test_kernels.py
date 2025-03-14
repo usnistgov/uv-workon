@@ -71,7 +71,11 @@ def test_get_ipykernel_install_script_path() -> None:
     from importlib.resources import files
 
     assert (
-        str(files("uv_workon").joinpath("scripts", "ipykernel_install_script.py"))
+        str(
+            files("uv_workon")
+            .joinpath("scripts")
+            .joinpath("ipykernel_install_script.py")
+        )
         == kernels.get_ipykernel_install_script_path()
     )
 
@@ -104,6 +108,23 @@ def test_get_broken_kernelspecs(
         k: v for k, v in dummy_kernelspec.items() if k != "good"
     }
     assert mock_get_kernelspecs.mock_calls == [mocker.call()]
+
+
+@skip_if_no_jupyter_client
+def test_complete_kernelspec_names(
+    mocker: MockerFixture, dummy_kernelspec: dict[str, Any]
+) -> None:
+    mocked = mocker.patch(
+        "uv_workon.kernels.get_kernelspecs", return_value=dummy_kernelspec
+    )
+
+    names = ["dummy0", "dummy1", "good"]
+
+    assert list(kernels.complete_kernelspec_names("")) == names
+    assert list(kernels.complete_kernelspec_names("d")) == names[:-1]
+    assert list(kernels.complete_kernelspec_names("g")) == names[-1:]
+
+    assert mocked.mock_calls == [mocker.call()] * 3
 
 
 @skip_if_no_jupyter_client

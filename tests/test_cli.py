@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import os
 import shlex
-from contextlib import nullcontext
 from functools import partial
 from pathlib import Path
 from typing import TYPE_CHECKING, cast
@@ -13,7 +12,6 @@ import pytest
 import typer
 
 from uv_workon import cli
-from uv_workon.cli import WORKON_HOME_CLI, WORKON_HOME_DEFAULT
 from uv_workon.core import generate_shell_config
 
 if TYPE_CHECKING:
@@ -25,33 +23,7 @@ if TYPE_CHECKING:
     from typer import Context
 
 
-@pytest.mark.parametrize(
-    ("args", "expected"),
-    [  # pyright: ignore[reportUnknownArgumentType]
-        (
-            ([], True),
-            nullcontext({".venv", "venv"}),
-        ),
-        (
-            (["hello"], True),
-            nullcontext({".venv", "venv", "hello"}),
-        ),
-        (
-            (["hello"], False),
-            nullcontext({"hello"}),
-        ),
-        (
-            ([], False),
-            pytest.raises(ValueError, match=r"No venv.*"),
-        ),
-    ],
-)
-def test__get_venv_dir_names(args: tuple[Any], expected: Any) -> None:
-    with expected as e:
-        out = cli._get_venv_patterns(*args)
-        assert set(out) == e
-
-
+# * Callbacks
 def test__get_input_paths(venvs_parent_path: Path) -> None:
     paths = list(venvs_parent_path.glob("has_dotvenv_*/.venv"))
     out = list(cli._get_input_paths(paths, parents=[]))
@@ -83,16 +55,11 @@ def test__select_venv_path(
     workon_home_with_is_venv: Path,
     mocker: MockerFixture,
 ) -> None:
-    from uv_workon.cli import (  # pylint: disable=import-private-name
-        _select_virtualenv_path,  # noqa: PLC2701
-    )
-
     mock_terminalmenu = mocker.patch("simple_term_menu.TerminalMenu", autospec=True)
     func = partial(
-        _select_virtualenv_path,
+        cli._select_virtualenv_path,
         workon_home=workon_home_with_is_venv,
-        venv_patterns=None,
-        use_default_venv_patterns=True,
+        venv_patterns=[".venv", "venv"],
     )
 
     path = func(venv_path=None, venv_name="is_venv_0")
@@ -114,25 +81,144 @@ def test__select_venv_path(
     ]
 
 
-# def test__get_venv_name_path_mapping() -> None:
+def test__get_venv_name_path_mapping(
+    venvs_parent_path: Path,
+    workon_home_with_is_venv: Path,
+) -> None:
+    func = partial(
+        cli._get_venv_name_path_mapping,
+        workon_home=workon_home_with_is_venv,
+        venv_patterns=[".venv", "venv"],
+    )
+
+    mapping = func(True, None, None)
+
+    expected = {
+        name: workon_home_with_is_venv / name
+        for name in (f"is_venv_{i}" for i in range(3))
+    }
+    assert mapping == expected
+
+    mapping = func(False, ["is_venv_0"], [venvs_parent_path / "has_dotvenv_0"])
+    assert mapping == {
+        "is_venv_0": workon_home_with_is_venv / "is_venv_0",
+        "has_dotvenv_0": venvs_parent_path / "has_dotvenv_0" / ".venv",
+    }
 
 
-def test_verbosity() -> None:
+def test__add_verbose_logger() -> None:
     import logging
 
-    cli.list_virtualenvs(verbose=-1)
+    func = partial(cli.list_virtualenvs, workon_home=Path.home() / ".virtualenvs")
+
+    func(verbose=-1)
     assert cli.logger.level == logging.ERROR
 
-    cli.list_virtualenvs(verbose=0)
+    func(verbose=0)
     assert cli.logger.level == logging.WARNING
 
-    cli.list_virtualenvs(verbose=1)
+    func(verbose=1)
     assert cli.logger.level == logging.INFO
 
-    cli.list_virtualenvs(verbose=2)
+    func(verbose=2)
     assert cli.logger.level == logging.DEBUG
 
 
+# * Callbacks/defaults
+@pytest.fixture(scope="session")
+def workon_home_click_app() -> Command:
+    app = typer.Typer()
+
+    @app.command()
+    def dummy(workon_home: cli.WORKON_HOME_CLI) -> Path:  # pyright: ignore[reportUnusedFunction]
+        typer.echo(str(workon_home))
+        return workon_home
+
+    return typer.main.get_command(app)
+
+
+@pytest.mark.parametrize(
+    ("cli_val", "environment_val", "expected"),
+    [
+        ("~/hello", None, "~/hello"),
+        (None, "~/there", "~/there"),
+        (None, None, "~/.virtualenvs"),
+        ("~/a", "~/b", "~/a"),
+        ("a/b", None, "a/b"),
+    ],
+)
+def test_workon_home_option(
+    workon_home_click_app: Command,
+    clirunner: CliRunner,
+    environment_val: str | None,
+    cli_val: str | None,
+    expected: Path,
+) -> None:
+    env = {"WORKON_HOME": environment_val} if environment_val else {}
+    opts = [] if cli_val is None else ["--workon-home", cli_val]
+    out = clirunner.invoke(workon_home_click_app, opts, env=env)
+    assert not out.exit_code
+    assert str(Path(expected).expanduser()) == out.output.strip()
+
+
+@pytest.fixture(scope="session")
+def venv_patterns_app() -> Command:
+    app = typer.Typer()
+
+    @app.command()
+    def dummy(  # pyright: ignore[reportUnusedFunction]
+        *,
+        venv_patterns: cli.VENV_PATTERNS_CLI,
+        use_default_venv_patterns: cli.USE_DEFAULT_VENV_PATTERNS_CLI = True,  # noqa: ARG001
+    ) -> None:
+        assert isinstance(venv_patterns, list)
+        typer.echo(str(sorted(venv_patterns)))
+
+    return typer.main.get_command(app)
+
+
+@pytest.mark.parametrize(
+    ("environment_val", "venv_patterns", "use_default", "expected"),
+    [  # pyright: ignore[reportUnknownArgumentType]
+        (None, [], True, {".venv", "venv"}),
+        (None, ["hello"], True, {"hello", ".venv", "venv"}),
+        (None, ["hello", "there"], True, {"hello", "there", ".venv", "venv"}),
+        ("a", [], True, {"a", ".venv", "venv"}),
+        ("a b", [], True, {"a", "b", ".venv", "venv"}),
+        ("a b", ["hello"], True, {"hello", ".venv", "venv"}),
+        (None, [], False, {}),
+        (None, ["hello"], False, {"hello"}),
+        ("a", [], False, {"a"}),
+    ],
+)
+def test_venv_patterns_option(
+    venv_patterns_app: Command,
+    clirunner: CliRunner,
+    environment_val: str | None,
+    venv_patterns: list[str],
+    use_default: bool,
+    expected: set[str],
+) -> None:
+    env = {"UV_WORKON_VENV_PATTERNS": environment_val} if environment_val else {}
+    out = clirunner.invoke(
+        venv_patterns_app,
+        [
+            *[f"--venv={x}" for x in venv_patterns],
+            ("--default-venv" if use_default else "--no-default-venv"),
+        ],
+        env=env,
+    )
+
+    assert not out.exit_code
+    assert str(sorted(expected)) == out.output.strip()
+
+
+# * Completion
+def test__complete_path() -> None:
+    assert cli._complete_path() == []  # pylint: disable=use-implicit-booleaness-not-comparison
+
+
+# * Version
 def test_version(
     click_app: Command,
     clirunner: CliRunner,
@@ -147,6 +233,7 @@ def test_version(
     assert f"uv-workon, version {__version__}" in out.output
 
 
+# * Commands
 @pytest.mark.parametrize(
     ("pattern", "parts"),
     [
@@ -245,41 +332,6 @@ def test_link_help(
     out = clirunner.invoke(click_app, ["link"])
 
     assert "Create symlink from paths" in out.output
-
-
-@pytest.fixture(scope="session")
-def workon_home_click_app() -> Command:
-    app = typer.Typer()
-
-    @app.command()
-    def dummy_workon_home(workon_home: WORKON_HOME_CLI = WORKON_HOME_DEFAULT) -> Path:  # pyright: ignore[reportUnusedFunction]
-        typer.echo(str(workon_home))
-        return workon_home
-
-    return typer.main.get_command(app)
-
-
-@pytest.mark.parametrize(
-    ("cli_val", "environment_val", "expected"),
-    [
-        ("~/hello", None, "~/hello"),
-        (None, "~/there", "~/there"),
-        (None, None, "~/.virtualenvs"),
-        ("~/a", "~/b", "~/a"),
-        ("a/b", None, "a/b"),
-    ],
-)
-def test_workon_home(
-    workon_home_click_app: Command,
-    clirunner: CliRunner,
-    environment_val: str | None,
-    cli_val: str | None,
-    expected: Path,
-) -> None:
-    env = {"WORKON_HOME": environment_val} if environment_val else {}
-    opts = [] if cli_val is None else ["--workon-home", cli_val]
-    out = clirunner.invoke(workon_home_click_app, opts, env=env)
-    assert str(Path(expected).expanduser()) == out.output.strip()
 
 
 def test_list(

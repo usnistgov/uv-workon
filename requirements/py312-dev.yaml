@@ -22,6 +22,7 @@ dependencies:
   - pylint
   - pytest
   - pytest-cov
+  - pytest-mock
   - pytest-mock>=3.14.0
   - pytest-sugar
   - pytest-xdist

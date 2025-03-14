@@ -6,6 +6,7 @@ Working with ipykernel (:mod:`~uv_workon.kernels`)
 from __future__ import annotations
 
 import logging
+from collections.abc import Iterator  # noqa: TC003
 from functools import lru_cache
 from importlib.util import find_spec
 from pathlib import Path
@@ -29,7 +30,9 @@ def get_ipykernel_install_script_path() -> str:
     """Get the path to ipykernel install script"""
     from importlib.resources import files
 
-    return str(files("uv_workon").joinpath("scripts", "ipykernel_install_script.py"))
+    return str(
+        files("uv_workon").joinpath("scripts").joinpath("ipykernel_install_script.py")
+    )
 
 
 @lru_cache
@@ -60,3 +63,9 @@ def remove_kernelspecs(names: list[str]) -> None:
     from jupyter_client.kernelspecapp import RemoveKernelSpec
 
     RemoveKernelSpec(spec_names=names, force=True).start()
+
+
+def complete_kernelspec_names(incomplete: str) -> Iterator[str]:
+    """Complete possible kernel specs"""
+    valid_names = get_kernelspecs()
+    yield from (name for name in valid_names if name.startswith(incomplete))
