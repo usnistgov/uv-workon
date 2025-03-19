@@ -57,6 +57,7 @@ KERNEL_BASE = "uv_workon"
 
 ROOT = Path(__file__).parent
 
+nox.needs_version = ">=2024.10.9"
 nox.options.reuse_existing_virtualenvs = True
 nox.options.sessions = ["lint", "typing", "test-all"]
 nox.options.default_venv_backend = "uv"
@@ -405,6 +406,7 @@ def test_all(session: Session) -> None:
     session.notify("coverage-erase")
     for py in PYTHON_ALL_VERSIONS:
         session.notify(f"test-{py}")
+    session.notify("test-noopt")
     session.notify("coverage")
 
 
@@ -600,6 +602,25 @@ def test(
 
 nox.session(**ALL_KWS)(test)
 nox.session(name="test-conda", **CONDA_ALL_KWS)(test)
+
+
+@nox.session(name="test-noopt", **DEFAULT_KWS)
+@add_opts
+def test_noopt(
+    session: Session,
+    opts: SessionParams,
+) -> None:
+    """Test environments with conda installs."""
+    install_dependencies(session, name="test-noopt", opts=opts)
+    install_package(session, editable=False, update=True)
+
+    _test(
+        session=session,
+        run=opts.test_run,
+        test_no_pytest=opts.test_no_pytest,
+        test_options=opts.test_options,
+        no_cov=opts.no_cov,
+    )
 
 
 @nox.session(name="test-notebook", **DEFAULT_KWS)

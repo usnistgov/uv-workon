@@ -26,6 +26,7 @@ unfixable = [
     "ERA",
     "PLR6104",
     "T",       # NOTE: remove this option when ready to go to new annotation style (needs python >= 3.10)
+    "B006",    # Disable because need default value of [] in for callbacks
 ]
 ignore = [
     "ANN401",  # - Any ok sometimes
@@ -100,4 +101,8 @@ pylint.max-public-methods = 30
     "DOC402",
 ]
 "tests/**/*.py" = [ "T201", "SLF001" ]
-"src/**/cli.py" = [ "T201" ]
+"src/**/cli.py" = [
+    "T201",
+    "ARG001", # with callbacks and decorators, there are unused parameters...
+]
+"src/**/scripts/*.py" = [ "INP001" ]

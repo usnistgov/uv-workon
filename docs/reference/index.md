@@ -19,6 +19,8 @@ Modules
 
    cli
    core
+   validate
+   utils
 
 
 ```

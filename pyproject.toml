@@ -36,10 +36,16 @@ dynamic = [
     "version",
 ]
 dependencies = [
-    "attrs",
-    "simple-term-menu",
-    "typer",
-    "typing-extensions; python_version<'3.11'",
+    "attrs>=25.3.0",
+    "simple-term-menu>=1.6.6",
+    "typer>=0.15.2",
+    "typing-extensions>=4.12.2; python_full_version<'3.11'",
+]
+optional-dependencies.all = [
+    "uv-workon[jupyter]",
+]
+optional-dependencies.jupyter = [
+    "jupyter-client>=8.6.3",
 ]
 urls.Documentation = "https://pages.nist.gov/uv-workon/"
 urls.Homepage = "https://github.com/usnistgov/uv-workon"
@@ -54,6 +60,7 @@ dev = [
     { include-group = "uvxrun" },
 ]
 test = [
+    { include-group = "optional" },
     { include-group = "test-extras" },
 ]
 docs = [
@@ -71,7 +78,7 @@ dev-extras = [
     "ipykernel",
     "ipython",
     "nbclient>=0.10.0",
-    "nox>=2024.4.15",
+    "nox>=2024.10.9",
     "pytest-accept",
 ]
 docs-live = [
@@ -80,19 +87,23 @@ docs-live = [
 ]
 mypy = [ "mypy>=1.15.0" ]
 nbval = [ "nbval" ]
+optional = [ "uv-workon[all]" ]
 test-extras = [
     "pytest",
     "pytest-cov",
+    "pytest-mock>=3.14.0",
     "pytest-sugar",
     "pytest-xdist",
 ]
-test-notebook = [
-    { include-group = "nbval" },
+test-noopt = [
     { include-group = "test-extras" },
 ]
 typing = [
+    "ipykernel",
     "pylint",
     "pytest",
+    "pytest-mock",
+    { include-group = "optional" },
     { include-group = "uvxrun" },
 ]
 # Anything needed to run tools/uvxrun.py
@@ -285,7 +296,7 @@ style = "requirements"
 managed = true
 default-groups = [ "dev" ]
 fork-strategy = "requires-python"
-required-version = ">=0.5.21"
+required-version = ">=0.6.5"
 
 [tool.uv.pip]
 annotation-style = "line"

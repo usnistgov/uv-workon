@@ -13,6 +13,7 @@ dependencies:
   - python=3.13
   - pytest
   - pytest-cov
+  - pytest-mock>=3.14.0
   - pytest-sugar
   - pytest-xdist
   - pip
