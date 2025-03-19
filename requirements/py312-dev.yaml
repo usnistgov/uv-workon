@@ -17,7 +17,7 @@ dependencies:
   - jupyter-client>=8.6.3
   - mypy>=1.15.0
   - nbclient>=0.10.0
-  - nox>=2024.4.15
+  - nox>=2024.10.9
   - packaging
   - pylint
   - pytest

@@ -2002,7 +2002,7 @@ dev = [
     { name = "ipython" },
     { name = "mypy", specifier = ">=1.15.0" },
     { name = "nbclient", specifier = ">=0.10.0" },
-    { name = "nox", specifier = ">=2024.4.15" },
+    { name = "nox", specifier = ">=2024.10.9" },
     { name = "packaging" },
     { name = "pylint" },
     { name = "pytest" },
@@ -2018,7 +2018,7 @@ dev-extras = [
     { name = "ipykernel" },
     { name = "ipython" },
     { name = "nbclient", specifier = ">=0.10.0" },
-    { name = "nox", specifier = ">=2024.4.15" },
+    { name = "nox", specifier = ">=2024.10.9" },
     { name = "pytest-accept" },
 ]
 docs = [
