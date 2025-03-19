@@ -19,6 +19,7 @@ Uncomment the section that is right (remove the HTML comment wrapper).
   - remove - remove jupyer kernels
   - list - list jupyter kernels This adds functionality to easy transition from
     nb_conda_kernels to using uv to manage virtual environment.
+- Added tests to have full coverage.
 
 <!--
 ### Changed
