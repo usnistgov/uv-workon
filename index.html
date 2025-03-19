@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>uv-workon &#8212; uv-workon 0.2.0 documentation</title>
+    <title>uv-workon &#8212; uv-workon 0.3.0 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=7f7c277e"></script>
+    <script src="_static/documentation_options.js?v=83a61292"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -56,7 +56,7 @@
     <link rel="next" title="Installation" href="installation.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-    <meta name="docbuild:last-update" content="2025-03-10"/>
+    <meta name="docbuild:last-update" content="2025-03-19"/>
   </head>
   
   
@@ -144,7 +144,7 @@
   
   
   
-    <p class="title logo__title">uv-workon 0.2.0 documentation</p>
+    <p class="title logo__title">uv-workon 0.3.0 documentation</p>
   
 </a></div>
         <div class="sidebar-primary-item">
@@ -182,12 +182,16 @@
 
 
 
+
+
+
 <li class="toctree-l2"><a class="reference internal" href="reference/generated/uv_workon.core.html">Core functionality (<code class="xref py py-mod docutils literal notranslate"><span class="pre">core</span></code>)</a></li>
 
 
 
 
 
+<li class="toctree-l2"><a class="reference internal" href="reference/generated/uv_workon.validate.html">Validation/inference (<code class="xref py py-mod docutils literal notranslate"><span class="pre">validate</span></code>)</a></li>
 
 
 
@@ -196,6 +200,8 @@
 
 
 
+
+<li class="toctree-l2"><a class="reference internal" href="reference/generated/uv_workon.utils.html">Utilities (<code class="xref py py-mod docutils literal notranslate"><span class="pre">utils</span></code>)</a></li>
 
 </ul>
 </details></li>
@@ -449,8 +455,8 @@ projects, dependencies, virtual environment creation, and much more, all while
 being blazingly fast. One of the central ideas of <a class="reference external" href="https://docs.astral.sh/uv/">uv</a> is that the old method of
 activating virtual environments should be replace with <code class="docutils literal notranslate"><span class="pre">uv</span> <span class="pre">run</span> <span class="pre">...</span></code> and letting
 <a class="reference external" href="https://docs.astral.sh/uv/">uv</a> figure out the rest. We fully agree with this workflow, but it does run
-counter to how many have used python virtual environments day to day data work.
-For example, many have historically used tools like <a class="reference external" href="https://github.com/conda/conda"><code class="docutils literal notranslate"><span class="pre">conda</span></code></a> or
+counter to how many have used python virtual environments day to day for data
+work. For example, many have historically used tools like <a class="reference external" href="https://github.com/conda/conda"><code class="docutils literal notranslate"><span class="pre">conda</span></code></a> or
 <a class="reference external" href="https://virtualenvwrapper.readthedocs.io/en/latest/"><code class="docutils literal notranslate"><span class="pre">virtualenvwrapper</span></code></a> to manage centrally located python
 environments, that can be reused for multiple tasks. While we discorage using
 “mega” environments (i.e., sticking every dependency you’ll ever need in a
@@ -476,15 +482,25 @@ uv inside a project. <code class="docutils literal notranslate"><span class="pre
 <section id="features">
 <h2>Features<a class="headerlink" href="#features" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p>Link virtual environment to central location with <code class="docutils literal notranslate"><span class="pre">uv</span> <span class="pre">link</span></code>. These links are
+<li><p>Link virtual environment to central location with <code class="docutils literal notranslate"><span class="pre">uvw</span> <span class="pre">link</span></code>. These links are
 located at <code class="docutils literal notranslate"><span class="pre">WORKON_HOME</span></code> environment variable, defaulting to <code class="docutils literal notranslate"><span class="pre">~/.virtualenvs</span></code>.</p></li>
-<li><p>Activate virtual environment with <code class="docutils literal notranslate"><span class="pre">uvw</span> <span class="pre">activate</span> <span class="pre">...</span></code></p></li>
+<li><p>Activate virtual environment with <code class="docutils literal notranslate"><span class="pre">uvw</span> <span class="pre">activate</span> <span class="pre">...</span></code> (requires shell
+integration)</p></li>
 <li><p>Run under virtual environment with <code class="docutils literal notranslate"><span class="pre">uvw</span> <span class="pre">run</span> <span class="pre">...</span></code></p></li>
-<li><p>Change to project directory with <code class="docutils literal notranslate"><span class="pre">uvw</span> <span class="pre">cd</span> <span class="pre">...</span></code></p></li>
+<li><p>Change to project directory with <code class="docutils literal notranslate"><span class="pre">uvw</span> <span class="pre">cd</span> <span class="pre">...</span></code> (requires shell integration)</p></li>
 <li><p>List available virtual environments with <code class="docutils literal notranslate"><span class="pre">uvw</span> <span class="pre">list</span></code></p></li>
 <li><p>Cleanup missing symlinks with <code class="docutils literal notranslate"><span class="pre">uvw</span> <span class="pre">clean</span></code></p></li>
+<li><p>Manage <a class="reference external" href="https://github.com/ipython/ipykernel"><code class="docutils literal notranslate"><span class="pre">ipykernel</span></code></a> with
+<code class="docutils literal notranslate"><span class="pre">uvw</span> <span class="pre">kernels</span> <span class="pre">...</span></code></p>
+<ul>
+<li><p>Install kernels for linked virtual environments which have <code class="docutils literal notranslate"><span class="pre">ipykernel</span></code>
+installed with <code class="docutils literal notranslate"><span class="pre">uvw</span> <span class="pre">kernels</span> <span class="pre">install</span> <span class="pre">...</span></code></p></li>
+<li><p>Remove kernels (including remove all missing/broken kernels) with
+<code class="docutils literal notranslate"><span class="pre">uvw</span> <span class="pre">kernels</span> <span class="pre">remove</span> <span class="pre">...</span></code></p></li>
+<li><p>list installed kernels with <code class="docutils literal notranslate"><span class="pre">uvw</span> <span class="pre">kernels</span> <span class="pre">list</span> <span class="pre">...</span></code></p></li>
 </ul>
-<p>Currently <code class="docutils literal notranslate"><span class="pre">uvw</span></code> is setup to work with <code class="docutils literal notranslate"><span class="pre">bash</span></code> and <code class="docutils literal notranslate"><span class="pre">zsh</span></code> shells only.</p>
+</li>
+</ul>
 </section>
 <section id="status">
 <h2>Status<a class="headerlink" href="#status" title="Link to this heading">#</a></h2>
@@ -576,7 +592,7 @@ By William P. Krekelberg
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on 2025-03-10.
+  Last updated on 2025-03-19.
   <br/>
 </p>
   </div>

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Console script (cli) &#8212; uv-workon 0.2.0 documentation</title>
+    <title>Console script (cli) &#8212; uv-workon 0.3.0 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../_static/documentation_options.js?v=7f7c277e"></script>
+    <script src="../../_static/documentation_options.js?v=83a61292"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -57,7 +57,7 @@
     <link rel="prev" title="Command line interface" href="../cli.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-    <meta name="docbuild:last-update" content="2025-03-10"/>
+    <meta name="docbuild:last-update" content="2025-03-19"/>
   </head>
   
   
@@ -143,7 +143,7 @@
   
   
   
-    <p class="title logo__title">uv-workon 0.2.0 documentation</p>
+    <p class="title logo__title">uv-workon 0.3.0 documentation</p>
   
 </a></div>
         <div class="sidebar-primary-item">
@@ -181,12 +181,16 @@
 
 
 
+
+
+
 <li class="toctree-l2"><a class="reference internal" href="uv_workon.core.html">Core functionality (<code class="xref py py-mod docutils literal notranslate"><span class="pre">core</span></code>)</a></li>
 
 
 
 
 
+<li class="toctree-l2"><a class="reference internal" href="uv_workon.validate.html">Validation/inference (<code class="xref py py-mod docutils literal notranslate"><span class="pre">validate</span></code>)</a></li>
 
 
 
@@ -195,6 +199,8 @@
 
 
 
+
+<li class="toctree-l2"><a class="reference internal" href="uv_workon.utils.html">Utilities (<code class="xref py py-mod docutils literal notranslate"><span class="pre">utils</span></code>)</a></li>
 
 </ul>
 </details></li>
@@ -412,6 +418,9 @@ document.write(`
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#uv_workon.cli.shell_config"><code class="docutils literal notranslate"><span class="pre">shell_config()</span></code></a></li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#uv_workon.cli.shell_activate"><code class="docutils literal notranslate"><span class="pre">shell_activate()</span></code></a></li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#uv_workon.cli.shell_cd"><code class="docutils literal notranslate"><span class="pre">shell_cd()</span></code></a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#uv_workon.cli.install_ipykernels"><code class="docutils literal notranslate"><span class="pre">install_ipykernels()</span></code></a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#uv_workon.cli.remove_kernels"><code class="docutils literal notranslate"><span class="pre">remove_kernels()</span></code></a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#uv_workon.cli.list_kernels"><code class="docutils literal notranslate"><span class="pre">list_kernels()</span></code></a></li>
 </ul>
 
             </nav>
@@ -436,87 +445,119 @@ document.write(`
 <tr class="row-even"><td><p><a class="reference internal" href="#uv_workon.cli.main" title="uv_workon.cli.main"><code class="xref py py-obj docutils literal notranslate"><span class="pre">main</span></code></a>([version])</p></td>
 <td><p>Manage uv virtual environments from central location.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#uv_workon.cli.link_virtualenvs" title="uv_workon.cli.link_virtualenvs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">link_virtualenvs</span></code></a>([workon_home, dry_run, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#uv_workon.cli.link_virtualenvs" title="uv_workon.cli.link_virtualenvs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">link_virtualenvs</span></code></a>(*[, paths, parents, ...])</p></td>
 <td><p>Create symlink from paths to workon_home.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#uv_workon.cli.list_virtualenvs" title="uv_workon.cli.list_virtualenvs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list_virtualenvs</span></code></a>([workon_home, verbose])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#uv_workon.cli.list_virtualenvs" title="uv_workon.cli.list_virtualenvs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list_virtualenvs</span></code></a>(*, workon_home[, verbose])</p></td>
 <td><p>List available central virtual environments</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#uv_workon.cli.clean_virtualenvs" title="uv_workon.cli.clean_virtualenvs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clean_virtualenvs</span></code></a>([workon_home, dry_run, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#uv_workon.cli.clean_virtualenvs" title="uv_workon.cli.clean_virtualenvs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clean_virtualenvs</span></code></a>(*, workon_home[, dry_run, ...])</p></td>
 <td><p>Remove missing broken virtual environment symlinks.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#uv_workon.cli.run_with_virtualenv" title="uv_workon.cli.run_with_virtualenv"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run_with_virtualenv</span></code></a>(ctx[, workon_home, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#uv_workon.cli.run_with_virtualenv" title="uv_workon.cli.run_with_virtualenv"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run_with_virtualenv</span></code></a>(*, ctx[, venv_name, ...])</p></td>
 <td><p>Run uv commands using using the named or specified virtual environment.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#uv_workon.cli.shell_config" title="uv_workon.cli.shell_config"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shell_config</span></code></a>()</p></td>
-<td><p>Use with <cite>eval &quot;$(uv-workon shell-config)&quot;</cite>.</p></td>
+<td><p>Use with <code class="docutils literal notranslate"><span class="pre">eval</span> <span class="pre">&quot;$(uv-workon</span> <span class="pre">shell-config)&quot;</span></code>.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#uv_workon.cli.shell_activate" title="uv_workon.cli.shell_activate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shell_activate</span></code></a>([workon_home, venv_name, ...])</p></td>
-<td><p>Use to activate virtual environments.`</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#uv_workon.cli.shell_activate" title="uv_workon.cli.shell_activate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shell_activate</span></code></a>(*[, venv_name, venv_path, ...])</p></td>
+<td><p>Use to activate virtual environments.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#uv_workon.cli.shell_cd" title="uv_workon.cli.shell_cd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shell_cd</span></code></a>([workon_home, venv_name, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#uv_workon.cli.shell_cd" title="uv_workon.cli.shell_cd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shell_cd</span></code></a>(*[, venv_name, venv_path, ...])</p></td>
 <td><p>Command to change to parent directory of virtual environment.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#uv_workon.cli.install_ipykernels" title="uv_workon.cli.install_ipykernels"><code class="xref py py-obj docutils literal notranslate"><span class="pre">install_ipykernels</span></code></a>(ctx, *[, venv_names, ...])</p></td>
+<td><p>Install ipykernels for virtual environment(s) that contain <code class="docutils literal notranslate"><span class="pre">ipykernel</span></code> module.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#uv_workon.cli.remove_kernels" title="uv_workon.cli.remove_kernels"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove_kernels</span></code></a>(*[, names, venv_paths, ...])</p></td>
+<td><p>Remove installed kernels</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#uv_workon.cli.list_kernels" title="uv_workon.cli.list_kernels"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list_kernels</span></code></a>()</p></td>
+<td><p>List installed kernels.</p></td>
 </tr>
 </tbody>
 </table>
 </div>
 <dl class="py function">
 <dt class="sig sig-object py" id="uv_workon.cli.version_callback">
-<span class="sig-prename descclassname"><span class="pre">uv_workon.cli.</span></span><span class="sig-name descname"><span class="pre">version_callback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/usnistgov/uv-workon/blob/main/src/uv_workon/cli.py#L124-L130"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uv_workon.cli.version_callback" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">uv_workon.cli.</span></span><span class="sig-name descname"><span class="pre">version_callback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/usnistgov/uv-workon/blob/main/src/uv_workon/cli.py#L166-L172"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uv_workon.cli.version_callback" title="Link to this definition">#</a></dt>
 <dd><p>Versioning call back.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="uv_workon.cli.main">
-<span class="sig-prename descclassname"><span class="pre">uv_workon.cli.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">version=&lt;typer.models.OptionInfo</span> <span class="pre">object&gt;</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/usnistgov/uv-workon/blob/main/src/uv_workon/cli.py#L133-L140"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uv_workon.cli.main" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">uv_workon.cli.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">version=&lt;typer.models.OptionInfo</span> <span class="pre">object&gt;</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/usnistgov/uv-workon/blob/main/src/uv_workon/cli.py#L175-L182"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uv_workon.cli.main" title="Link to this definition">#</a></dt>
 <dd><p>Manage uv virtual environments from central location.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="uv_workon.cli.link_virtualenvs">
-<span class="sig-prename descclassname"><span class="pre">uv_workon.cli.</span></span><span class="sig-name descname"><span class="pre">link_virtualenvs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">workon_home</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">PosixPath('~/.virtualenvs')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dry_run</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">venv_patterns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_default_venv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parents</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">paths</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">link_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolve</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/usnistgov/uv-workon/blob/main/src/uv_workon/cli.py#L337-L374"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uv_workon.cli.link_virtualenvs" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">uv_workon.cli.</span></span><span class="sig-name descname"><span class="pre">link_virtualenvs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">paths</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parents</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">link_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolve</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">workon_home</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">venv_patterns</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_default_venv_patterns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dry_run</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/usnistgov/uv-workon/blob/main/src/uv_workon/cli.py#L356-L393"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uv_workon.cli.link_virtualenvs" title="Link to this definition">#</a></dt>
 <dd><p>Create symlink from paths to workon_home.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="uv_workon.cli.list_virtualenvs">
-<span class="sig-prename descclassname"><span class="pre">uv_workon.cli.</span></span><span class="sig-name descname"><span class="pre">list_virtualenvs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">workon_home</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">PosixPath('~/.virtualenvs')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/usnistgov/uv-workon/blob/main/src/uv_workon/cli.py#L377-L388"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uv_workon.cli.list_virtualenvs" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">uv_workon.cli.</span></span><span class="sig-name descname"><span class="pre">list_virtualenvs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">workon_home</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/usnistgov/uv-workon/blob/main/src/uv_workon/cli.py#L396-L407"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uv_workon.cli.list_virtualenvs" title="Link to this definition">#</a></dt>
 <dd><p>List available central virtual environments</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="uv_workon.cli.clean_virtualenvs">
-<span class="sig-prename descclassname"><span class="pre">uv_workon.cli.</span></span><span class="sig-name descname"><span class="pre">clean_virtualenvs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">workon_home</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">PosixPath('~/.virtualenvs')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dry_run</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/usnistgov/uv-workon/blob/main/src/uv_workon/cli.py#L391-L408"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uv_workon.cli.clean_virtualenvs" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">uv_workon.cli.</span></span><span class="sig-name descname"><span class="pre">clean_virtualenvs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">workon_home</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dry_run</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/usnistgov/uv-workon/blob/main/src/uv_workon/cli.py#L410-L427"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uv_workon.cli.clean_virtualenvs" title="Link to this definition">#</a></dt>
 <dd><p>Remove missing broken virtual environment symlinks.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="uv_workon.cli.run_with_virtualenv">
-<span class="sig-prename descclassname"><span class="pre">uv_workon.cli.</span></span><span class="sig-name descname"><span class="pre">run_with_virtualenv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">workon_home</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">PosixPath('~/.virtualenvs')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dry_run</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">venv_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">venv_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">venv_patterns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_default_venv_patterns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolve</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/usnistgov/uv-workon/blob/main/src/uv_workon/cli.py#L411-L471"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uv_workon.cli.run_with_virtualenv" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">uv_workon.cli.</span></span><span class="sig-name descname"><span class="pre">run_with_virtualenv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">venv_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">venv_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolve</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">workon_home</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">venv_patterns</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_default_venv_patterns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dry_run</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/usnistgov/uv-workon/blob/main/src/uv_workon/cli.py#L430-L478"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uv_workon.cli.run_with_virtualenv" title="Link to this definition">#</a></dt>
 <dd><p>Run uv commands using using the named or specified virtual environment.</p>
-<p>For example, use <cite>symlink-venv uv-run -n my-env – python …</cite> is
-translated to <cite>uv run -p patt/to/my-env –no-project python …</cite>.</p>
-<p>If an option mirrors one of the command options (-n, etc), pass it after <cite>–</cite>.</p>
+<p>For example, use <code class="docutils literal notranslate"><span class="pre">uvw</span> <span class="pre">run</span> <span class="pre">-n</span> <span class="pre">my-env</span> <span class="pre">--</span> <span class="pre">python</span> <span class="pre">...</span></code> is
+translated to <code class="docutils literal notranslate"><span class="pre">uv</span> <span class="pre">run</span> <span class="pre">-p</span> <span class="pre">patt/to/my-env</span> <span class="pre">--no-project</span> <span class="pre">python</span> <span class="pre">...</span></code>.
+If an option mirrors one of the command options (-n, etc), pass it after <code class="docutils literal notranslate"><span class="pre">--</span></code>.
+Use <code class="docutils literal notranslate"><span class="pre">--dry-run</span></code> to echo the equivalent command to be run in the shell.</p>
+<p>Under the hood, this uses <code class="docutils literal notranslate"><span class="pre">uv</span> <span class="pre">run</span></code> with the environment variables
+<code class="docutils literal notranslate"><span class="pre">VIRTUAL_ENV</span></code> and <code class="docutils literal notranslate"><span class="pre">UV_PROJECT_ENVIRONMENT</span></code> and the option <code class="docutils literal notranslate"><span class="pre">-p</span></code> all
+set to the path of the virtual environment, and with the option
+<code class="docutils literal notranslate"><span class="pre">--no-project</span></code>.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="uv_workon.cli.shell_config">
-<span class="sig-prename descclassname"><span class="pre">uv_workon.cli.</span></span><span class="sig-name descname"><span class="pre">shell_config</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/usnistgov/uv-workon/blob/main/src/uv_workon/cli.py#L475-L484"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uv_workon.cli.shell_config" title="Link to this definition">#</a></dt>
-<dd><p>Use with <cite>eval “$(uv-workon shell-config)”</cite>.</p>
-<p>This will add the subcommand <cite>uvw activate</cite> and <cite>uvw cd</cite> to the shell.  Without
-running shell config, <cite>activate</cite> and <cite>cd</cite> will just print the command to screen.</p>
+<span class="sig-prename descclassname"><span class="pre">uv_workon.cli.</span></span><span class="sig-name descname"><span class="pre">shell_config</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/usnistgov/uv-workon/blob/main/src/uv_workon/cli.py#L482-L491"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uv_workon.cli.shell_config" title="Link to this definition">#</a></dt>
+<dd><p>Use with <code class="docutils literal notranslate"><span class="pre">eval</span> <span class="pre">&quot;$(uv-workon</span> <span class="pre">shell-config)&quot;</span></code>.</p>
+<p>This will add the subcommand <code class="docutils literal notranslate"><span class="pre">uvw</span> <span class="pre">activate</span></code> and <code class="docutils literal notranslate"><span class="pre">uvw</span> <span class="pre">cd</span></code> to the shell.  Without
+running shell config, <code class="docutils literal notranslate"><span class="pre">activate</span></code> and <code class="docutils literal notranslate"><span class="pre">cd</span></code> will just print the command to screen.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="uv_workon.cli.shell_activate">
-<span class="sig-prename descclassname"><span class="pre">uv_workon.cli.</span></span><span class="sig-name descname"><span class="pre">shell_activate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">workon_home</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">PosixPath('~/.virtualenvs')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">venv_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">venv_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">venv_patterns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolve</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_default_venv_patterns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_command</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/usnistgov/uv-workon/blob/main/src/uv_workon/cli.py#L487-L513"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uv_workon.cli.shell_activate" title="Link to this definition">#</a></dt>
-<dd><p>Use to activate virtual environments.`</p>
+<span class="sig-prename descclassname"><span class="pre">uv_workon.cli.</span></span><span class="sig-name descname"><span class="pre">shell_activate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">venv_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">venv_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolve</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_command</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">workon_home</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">venv_patterns</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_default_venv_patterns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/usnistgov/uv-workon/blob/main/src/uv_workon/cli.py#L494-L520"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uv_workon.cli.shell_activate" title="Link to this definition">#</a></dt>
+<dd><p>Use to activate virtual environments.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="uv_workon.cli.shell_cd">
-<span class="sig-prename descclassname"><span class="pre">uv_workon.cli.</span></span><span class="sig-name descname"><span class="pre">shell_cd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">workon_home</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">PosixPath('~/.virtualenvs')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">venv_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">venv_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">venv_patterns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_default_venv_patterns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_command</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/usnistgov/uv-workon/blob/main/src/uv_workon/cli.py#L516-L535"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uv_workon.cli.shell_cd" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">uv_workon.cli.</span></span><span class="sig-name descname"><span class="pre">shell_cd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">venv_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">venv_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_command</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">workon_home</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">venv_patterns</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_default_venv_patterns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/usnistgov/uv-workon/blob/main/src/uv_workon/cli.py#L523-L542"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uv_workon.cli.shell_cd" title="Link to this definition">#</a></dt>
 <dd><p>Command to change to parent directory of virtual environment.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="uv_workon.cli.install_ipykernels">
+<span class="sig-prename descclassname"><span class="pre">uv_workon.cli.</span></span><span class="sig-name descname"><span class="pre">install_ipykernels</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">venv_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">venv_paths</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">all_venvs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">display_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Python</span> <span class="pre">[venv:</span> <span class="pre">{name}]'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">no_user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolve</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">workon_home</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">venv_patterns</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_default_venv_patterns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dry_run</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/usnistgov/uv-workon/blob/main/src/uv_workon/cli.py#L546-L611"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uv_workon.cli.install_ipykernels" title="Link to this definition">#</a></dt>
+<dd><p>Install ipykernels for virtual environment(s) that contain <code class="docutils literal notranslate"><span class="pre">ipykernel</span></code> module.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="uv_workon.cli.remove_kernels">
+<span class="sig-prename descclassname"><span class="pre">uv_workon.cli.</span></span><span class="sig-name descname"><span class="pre">remove_kernels</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">venv_paths</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">missing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">workon_home</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">venv_patterns</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_default_venv_patterns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dry_run</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/usnistgov/uv-workon/blob/main/src/uv_workon/cli.py#L614-L673"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uv_workon.cli.remove_kernels" title="Link to this definition">#</a></dt>
+<dd><p>Remove installed kernels</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="uv_workon.cli.list_kernels">
+<span class="sig-prename descclassname"><span class="pre">uv_workon.cli.</span></span><span class="sig-name descname"><span class="pre">list_kernels</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/usnistgov/uv-workon/blob/main/src/uv_workon/cli.py#L676-L685"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uv_workon.cli.list_kernels" title="Link to this definition">#</a></dt>
+<dd><p>List installed kernels.  Interface to jupyter kernelspec list.</p>
 </dd></dl>
 
 
@@ -575,6 +616,9 @@ running shell config, <cite>activate</cite> and <cite>cd</cite> will just print 
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#uv_workon.cli.shell_config"><code class="docutils literal notranslate"><span class="pre">shell_config()</span></code></a></li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#uv_workon.cli.shell_activate"><code class="docutils literal notranslate"><span class="pre">shell_activate()</span></code></a></li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#uv_workon.cli.shell_cd"><code class="docutils literal notranslate"><span class="pre">shell_cd()</span></code></a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#uv_workon.cli.install_ipykernels"><code class="docutils literal notranslate"><span class="pre">install_ipykernels()</span></code></a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#uv_workon.cli.remove_kernels"><code class="docutils literal notranslate"><span class="pre">remove_kernels()</span></code></a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#uv_workon.cli.list_kernels"><code class="docutils literal notranslate"><span class="pre">list_kernels()</span></code></a></li>
 </ul>
 
   </nav></div>
@@ -609,7 +653,7 @@ By William P. Krekelberg
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on 2025-03-10.
+  Last updated on 2025-03-19.
   <br/>
 </p>
   </div>

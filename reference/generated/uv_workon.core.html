@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Core functionality (core) &#8212; uv-workon 0.2.0 documentation</title>
+    <title>Core functionality (core) &#8212; uv-workon 0.3.0 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../../_static/documentation_options.js?v=7f7c277e"></script>
+    <script src="../../_static/documentation_options.js?v=83a61292"></script>
     <script src="../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -53,11 +53,11 @@
     <script async="async" id="_fed_au_ua_tag" type="text/javascript" src="https://dap.digitalgov.gov/Universal-Federated-Analytics-Min.js?agency=NIST&subagency=github&pua=UA-66610693-1&yt=true&exts=ppsx,pps,f90,sch,rtf,wrl,txz,m1v,xlsm,msi,xsd,f,tif,eps,mpg,xml,pl,xlt,c"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="License" href="../../license.html" />
+    <link rel="next" title="Validation/inference (validate)" href="uv_workon.validate.html" />
     <link rel="prev" title="Console script (cli)" href="uv_workon.cli.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-    <meta name="docbuild:last-update" content="2025-03-10"/>
+    <meta name="docbuild:last-update" content="2025-03-19"/>
   </head>
   
   
@@ -143,7 +143,7 @@
   
   
   
-    <p class="title logo__title">uv-workon 0.2.0 documentation</p>
+    <p class="title logo__title">uv-workon 0.3.0 documentation</p>
   
 </a></div>
         <div class="sidebar-primary-item">
@@ -181,12 +181,16 @@
 
 
 
+
+
+
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">Core functionality (<code class="xref py py-mod docutils literal notranslate"><span class="pre">core</span></code>)</a></li>
 
 
 
 
 
+<li class="toctree-l2"><a class="reference internal" href="uv_workon.validate.html">Validation/inference (<code class="xref py py-mod docutils literal notranslate"><span class="pre">validate</span></code>)</a></li>
 
 
 
@@ -195,6 +199,8 @@
 
 
 
+
+<li class="toctree-l2"><a class="reference internal" href="uv_workon.utils.html">Utilities (<code class="xref py py-mod docutils literal notranslate"><span class="pre">utils</span></code>)</a></li>
 
 </ul>
 </details></li>
@@ -403,23 +409,14 @@ document.write(`
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Core functionality (<code class="xref py py-mod docutils literal notranslate"><span class="pre">core</span></code>)</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#uv_workon.core.NoVirtualEnvError"><code class="docutils literal notranslate"><span class="pre">NoVirtualEnvError</span></code></a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#uv_workon.core.validate_venv_patterns"><code class="docutils literal notranslate"><span class="pre">validate_venv_patterns()</span></code></a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#uv_workon.core.is_valid_virtualenv"><code class="docutils literal notranslate"><span class="pre">is_valid_virtualenv()</span></code></a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#uv_workon.core.validate_is_virtualenv"><code class="docutils literal notranslate"><span class="pre">validate_is_virtualenv()</span></code></a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#uv_workon.core.validate_dir_exists"><code class="docutils literal notranslate"><span class="pre">validate_dir_exists()</span></code></a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#uv_workon.core.validate_symlink"><code class="docutils literal notranslate"><span class="pre">validate_symlink()</span></code></a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#uv_workon.core.infer_virtualenv_name"><code class="docutils literal notranslate"><span class="pre">infer_virtualenv_name()</span></code></a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#uv_workon.core.infer_virtualenv_path"><code class="docutils literal notranslate"><span class="pre">infer_virtualenv_path()</span></code></a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#uv_workon.core.infer_virtualenv_path_raise"><code class="docutils literal notranslate"><span class="pre">infer_virtualenv_path_raise()</span></code></a></li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#uv_workon.core.VirtualEnvPathAndLink"><code class="docutils literal notranslate"><span class="pre">VirtualEnvPathAndLink</span></code></a><ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#uv_workon.core.VirtualEnvPathAndLink.create_symlink"><code class="docutils literal notranslate"><span class="pre">VirtualEnvPathAndLink.create_symlink()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#uv_workon.core.VirtualEnvPathAndLink.from_paths_and_workon"><code class="docutils literal notranslate"><span class="pre">VirtualEnvPathAndLink.from_paths_and_workon()</span></code></a></li>
 </ul>
 </li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#uv_workon.core.get_invalid_symlinks"><code class="docutils literal notranslate"><span class="pre">get_invalid_symlinks()</span></code></a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#uv_workon.core.list_venv_paths"><code class="docutils literal notranslate"><span class="pre">list_venv_paths()</span></code></a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#uv_workon.core.select_option"><code class="docutils literal notranslate"><span class="pre">select_option()</span></code></a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#uv_workon.core.get_virtualenv_paths"><code class="docutils literal notranslate"><span class="pre">get_virtualenv_paths()</span></code></a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#uv_workon.core.uv_run"><code class="docutils literal notranslate"><span class="pre">uv_run()</span></code></a></li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#uv_workon.core.generate_shell_config"><code class="docutils literal notranslate"><span class="pre">generate_shell_config()</span></code></a></li>
 </ul>
 
@@ -436,57 +433,6 @@ document.write(`
   <section id="core-functionality-core">
 <span id="module-uv_workon.core"></span><h1>Core functionality (<a class="reference internal" href="#module-uv_workon.core" title="uv_workon.core"><code class="xref py py-mod docutils literal notranslate"><span class="pre">core</span></code></a>)<a class="headerlink" href="#core-functionality-core" title="Link to this heading">#</a></h1>
 </section>
-<p><strong>Exceptions:</strong></p>
-<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#uv_workon.core.NoVirtualEnvError" title="uv_workon.core.NoVirtualEnvError"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NoVirtualEnvError</span></code></a></p></td>
-<td><p>Error to raise if no virtual environment found.</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<p><strong>Functions:</strong></p>
-<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#uv_workon.core.validate_venv_patterns" title="uv_workon.core.validate_venv_patterns"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_venv_patterns</span></code></a>(venv_patterns)</p></td>
-<td><p>Validate venv patterns.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#uv_workon.core.is_valid_virtualenv" title="uv_workon.core.is_valid_virtualenv"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_valid_virtualenv</span></code></a>(path)</p></td>
-<td><p>Check if path is a valid venv</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#uv_workon.core.validate_is_virtualenv" title="uv_workon.core.validate_is_virtualenv"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_is_virtualenv</span></code></a>(path)</p></td>
-<td><p>Validate is a virtual environment path</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#uv_workon.core.validate_dir_exists" title="uv_workon.core.validate_dir_exists"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_dir_exists</span></code></a>(path)</p></td>
-<td><p>Validate that path is a directory.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#uv_workon.core.validate_symlink" title="uv_workon.core.validate_symlink"><code class="xref py py-obj docutils literal notranslate"><span class="pre">validate_symlink</span></code></a>(path)</p></td>
-<td><p>If path exists, assert it is a symlink</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#uv_workon.core.infer_virtualenv_name" title="uv_workon.core.infer_virtualenv_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">infer_virtualenv_name</span></code></a>(path, venv_patterns)</p></td>
-<td><p>Infer a virtual environment name from path.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#uv_workon.core.infer_virtualenv_path" title="uv_workon.core.infer_virtualenv_path"><code class="xref py py-obj docutils literal notranslate"><span class="pre">infer_virtualenv_path</span></code></a>(path, venv_patterns)</p></td>
-<td><p>Find a virtual env by pattern and return None if not found.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#uv_workon.core.infer_virtualenv_path_raise" title="uv_workon.core.infer_virtualenv_path_raise"><code class="xref py py-obj docutils literal notranslate"><span class="pre">infer_virtualenv_path_raise</span></code></a>(path, venv_patterns)</p></td>
-<td><p>Find a virtual env by pattern and raise if not found.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#uv_workon.core.get_invalid_symlinks" title="uv_workon.core.get_invalid_symlinks"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_invalid_symlinks</span></code></a>(workon_home)</p></td>
-<td><p>Get Iterable of paths to invalid symlinks.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#uv_workon.core.list_venv_paths" title="uv_workon.core.list_venv_paths"><code class="xref py py-obj docutils literal notranslate"><span class="pre">list_venv_paths</span></code></a>(workon_home)</p></td>
-<td><p>Get list of venvs by name</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#uv_workon.core.select_option" title="uv_workon.core.select_option"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select_option</span></code></a>(options[, title, usage])</p></td>
-<td><p>Use selector</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#uv_workon.core.generate_shell_config" title="uv_workon.core.generate_shell_config"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate_shell_config</span></code></a>()</p></td>
-<td><p>Generate bash/zsh file for shell config.</p></td>
-</tr>
-</tbody>
-</table>
-</div>
 <p><strong>Classes:</strong></p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
@@ -496,64 +442,27 @@ document.write(`
 </tbody>
 </table>
 </div>
-<dl class="py exception">
-<dt class="sig sig-object py" id="uv_workon.core.NoVirtualEnvError">
-<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">uv_workon.core.</span></span><span class="sig-name descname"><span class="pre">NoVirtualEnvError</span></span><a class="reference external" href="https://github.com/usnistgov/uv-workon/blob/main/src/uv_workon/core.py#L24-L25"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uv_workon.core.NoVirtualEnvError" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ValueError</span></code></a></p>
-<p>Error to raise if no virtual environment found.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="uv_workon.core.validate_venv_patterns">
-<span class="sig-prename descclassname"><span class="pre">uv_workon.core.</span></span><span class="sig-name descname"><span class="pre">validate_venv_patterns</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">venv_patterns</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/usnistgov/uv-workon/blob/main/src/uv_workon/core.py#L30-L42"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uv_workon.core.validate_venv_patterns" title="Link to this definition">#</a></dt>
-<dd><p>Validate venv patterns.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="uv_workon.core.is_valid_virtualenv">
-<span class="sig-prename descclassname"><span class="pre">uv_workon.core.</span></span><span class="sig-name descname"><span class="pre">is_valid_virtualenv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/usnistgov/uv-workon/blob/main/src/uv_workon/core.py#L45-L47"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uv_workon.core.is_valid_virtualenv" title="Link to this definition">#</a></dt>
-<dd><p>Check if path is a valid venv</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="uv_workon.core.validate_is_virtualenv">
-<span class="sig-prename descclassname"><span class="pre">uv_workon.core.</span></span><span class="sig-name descname"><span class="pre">validate_is_virtualenv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/usnistgov/uv-workon/blob/main/src/uv_workon/core.py#L50-L56"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uv_workon.core.validate_is_virtualenv" title="Link to this definition">#</a></dt>
-<dd><p>Validate is a virtual environment path</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="uv_workon.core.validate_dir_exists">
-<span class="sig-prename descclassname"><span class="pre">uv_workon.core.</span></span><span class="sig-name descname"><span class="pre">validate_dir_exists</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/usnistgov/uv-workon/blob/main/src/uv_workon/core.py#L59-L65"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uv_workon.core.validate_dir_exists" title="Link to this definition">#</a></dt>
-<dd><p>Validate that path is a directory.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="uv_workon.core.validate_symlink">
-<span class="sig-prename descclassname"><span class="pre">uv_workon.core.</span></span><span class="sig-name descname"><span class="pre">validate_symlink</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/usnistgov/uv-workon/blob/main/src/uv_workon/core.py#L68-L74"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uv_workon.core.validate_symlink" title="Link to this definition">#</a></dt>
-<dd><p>If path exists, assert it is a symlink</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="uv_workon.core.infer_virtualenv_name">
-<span class="sig-prename descclassname"><span class="pre">uv_workon.core.</span></span><span class="sig-name descname"><span class="pre">infer_virtualenv_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">venv_patterns</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/usnistgov/uv-workon/blob/main/src/uv_workon/core.py#L78-L83"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uv_workon.core.infer_virtualenv_name" title="Link to this definition">#</a></dt>
-<dd><p>Infer a virtual environment name from path.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="uv_workon.core.infer_virtualenv_path">
-<span class="sig-prename descclassname"><span class="pre">uv_workon.core.</span></span><span class="sig-name descname"><span class="pre">infer_virtualenv_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">venv_patterns</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/usnistgov/uv-workon/blob/main/src/uv_workon/core.py#L86-L96"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uv_workon.core.infer_virtualenv_path" title="Link to this definition">#</a></dt>
-<dd><p>Find a virtual env by pattern and return None if not found.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="uv_workon.core.infer_virtualenv_path_raise">
-<span class="sig-prename descclassname"><span class="pre">uv_workon.core.</span></span><span class="sig-name descname"><span class="pre">infer_virtualenv_path_raise</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">venv_patterns</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/usnistgov/uv-workon/blob/main/src/uv_workon/core.py#L99-L106"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uv_workon.core.infer_virtualenv_path_raise" title="Link to this definition">#</a></dt>
-<dd><p>Find a virtual env by pattern and raise if not found.</p>
-</dd></dl>
-
+<p><strong>Functions:</strong></p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#uv_workon.core.get_invalid_symlinks" title="uv_workon.core.get_invalid_symlinks"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_invalid_symlinks</span></code></a>(workon_home)</p></td>
+<td><p>Get iterator of paths to invalid symlinks under a given path</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#uv_workon.core.get_virtualenv_paths" title="uv_workon.core.get_virtualenv_paths"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_virtualenv_paths</span></code></a>(workon_home)</p></td>
+<td><p>Get iterator of virtual environment paths under a given path.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#uv_workon.core.uv_run" title="uv_workon.core.uv_run"><code class="xref py py-obj docutils literal notranslate"><span class="pre">uv_run</span></code></a>(venv_path, *args[, dry_run])</p></td>
+<td><p>Construct and run command under uv</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#uv_workon.core.generate_shell_config" title="uv_workon.core.generate_shell_config"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate_shell_config</span></code></a>()</p></td>
+<td><p>Generate bash/zsh file for shell config.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
 <dl class="py class">
 <dt class="sig sig-object py" id="uv_workon.core.VirtualEnvPathAndLink">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">uv_workon.core.</span></span><span class="sig-name descname"><span class="pre">VirtualEnvPathAndLink</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">link</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/usnistgov/uv-workon/blob/main/src/uv_workon/core.py#L118-L172"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uv_workon.core.VirtualEnvPathAndLink" title="Link to this definition">#</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">uv_workon.core.</span></span><span class="sig-name descname"><span class="pre">VirtualEnvPathAndLink</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">link</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/usnistgov/uv-workon/blob/main/src/uv_workon/core.py#L41-L95"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uv_workon.core.VirtualEnvPathAndLink" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Class to handle virtual environment with link</p>
 <p><strong>Methods:</strong></p>
@@ -570,13 +479,13 @@ document.write(`
 </div>
 <dl class="py method">
 <dt class="sig sig-object py" id="uv_workon.core.VirtualEnvPathAndLink.create_symlink">
-<span class="sig-name descname"><span class="pre">create_symlink</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resolve</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dry_run</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/usnistgov/uv-workon/blob/main/src/uv_workon/core.py#L125-L139"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uv_workon.core.VirtualEnvPathAndLink.create_symlink" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">create_symlink</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resolve</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dry_run</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/usnistgov/uv-workon/blob/main/src/uv_workon/core.py#L48-L62"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uv_workon.core.VirtualEnvPathAndLink.create_symlink" title="Link to this definition">#</a></dt>
 <dd><p>Create the symlink.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="uv_workon.core.VirtualEnvPathAndLink.from_paths_and_workon">
-<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_paths_and_workon</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">paths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">workon_home</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">venv_patterns</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/usnistgov/uv-workon/blob/main/src/uv_workon/core.py#L141-L172"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uv_workon.core.VirtualEnvPathAndLink.from_paths_and_workon" title="Link to this definition">#</a></dt>
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_paths_and_workon</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">paths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">workon_home</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">venv_patterns</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/usnistgov/uv-workon/blob/main/src/uv_workon/core.py#L64-L95"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uv_workon.core.VirtualEnvPathAndLink.from_paths_and_workon" title="Link to this definition">#</a></dt>
 <dd><p>Get iterable of objects from paths</p>
 </dd></dl>
 
@@ -584,25 +493,25 @@ document.write(`
 
 <dl class="py function">
 <dt class="sig sig-object py" id="uv_workon.core.get_invalid_symlinks">
-<span class="sig-prename descclassname"><span class="pre">uv_workon.core.</span></span><span class="sig-name descname"><span class="pre">get_invalid_symlinks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">workon_home</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/usnistgov/uv-workon/blob/main/src/uv_workon/core.py#L175-L179"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uv_workon.core.get_invalid_symlinks" title="Link to this definition">#</a></dt>
-<dd><p>Get Iterable of paths to invalid symlinks.</p>
+<span class="sig-prename descclassname"><span class="pre">uv_workon.core.</span></span><span class="sig-name descname"><span class="pre">get_invalid_symlinks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">workon_home</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/usnistgov/uv-workon/blob/main/src/uv_workon/core.py#L98-L102"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uv_workon.core.get_invalid_symlinks" title="Link to this definition">#</a></dt>
+<dd><p>Get iterator of paths to invalid symlinks under a given path</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="uv_workon.core.list_venv_paths">
-<span class="sig-prename descclassname"><span class="pre">uv_workon.core.</span></span><span class="sig-name descname"><span class="pre">list_venv_paths</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">workon_home</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/usnistgov/uv-workon/blob/main/src/uv_workon/core.py#L182-L186"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uv_workon.core.list_venv_paths" title="Link to this definition">#</a></dt>
-<dd><p>Get list of venvs by name</p>
+<dt class="sig sig-object py" id="uv_workon.core.get_virtualenv_paths">
+<span class="sig-prename descclassname"><span class="pre">uv_workon.core.</span></span><span class="sig-name descname"><span class="pre">get_virtualenv_paths</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">workon_home</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/usnistgov/uv-workon/blob/main/src/uv_workon/core.py#L105-L109"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uv_workon.core.get_virtualenv_paths" title="Link to this definition">#</a></dt>
+<dd><p>Get iterator of virtual environment paths under a given path.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="uv_workon.core.select_option">
-<span class="sig-prename descclassname"><span class="pre">uv_workon.core.</span></span><span class="sig-name descname"><span class="pre">select_option</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">options</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">usage</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/usnistgov/uv-workon/blob/main/src/uv_workon/core.py#L189-L210"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uv_workon.core.select_option" title="Link to this definition">#</a></dt>
-<dd><p>Use selector</p>
+<dt class="sig sig-object py" id="uv_workon.core.uv_run">
+<span class="sig-prename descclassname"><span class="pre">uv_workon.core.</span></span><span class="sig-name descname"><span class="pre">uv_run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">venv_path</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dry_run</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/usnistgov/uv-workon/blob/main/src/uv_workon/core.py#L112-L139"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uv_workon.core.uv_run" title="Link to this definition">#</a></dt>
+<dd><p>Construct and run command under uv</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="uv_workon.core.generate_shell_config">
-<span class="sig-prename descclassname"><span class="pre">uv_workon.core.</span></span><span class="sig-name descname"><span class="pre">generate_shell_config</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/usnistgov/uv-workon/blob/main/src/uv_workon/core.py#L213-L239"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uv_workon.core.generate_shell_config" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">uv_workon.core.</span></span><span class="sig-name descname"><span class="pre">generate_shell_config</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/usnistgov/uv-workon/blob/main/src/uv_workon/core.py#L142-L168"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#uv_workon.core.generate_shell_config" title="Link to this definition">#</a></dt>
 <dd><p>Generate bash/zsh file for shell config.</p>
 </dd></dl>
 
@@ -628,11 +537,11 @@ document.write(`
       </div>
     </a>
     <a class="right-next"
-       href="../../license.html"
+       href="uv_workon.validate.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">License</p>
+        <p class="prev-next-title">Validation/inference (<code class="xref py py-mod docutils literal notranslate"><span class="pre">validate</span></code>)</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -653,23 +562,14 @@ document.write(`
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Core functionality (<code class="xref py py-mod docutils literal notranslate"><span class="pre">core</span></code>)</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#uv_workon.core.NoVirtualEnvError"><code class="docutils literal notranslate"><span class="pre">NoVirtualEnvError</span></code></a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#uv_workon.core.validate_venv_patterns"><code class="docutils literal notranslate"><span class="pre">validate_venv_patterns()</span></code></a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#uv_workon.core.is_valid_virtualenv"><code class="docutils literal notranslate"><span class="pre">is_valid_virtualenv()</span></code></a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#uv_workon.core.validate_is_virtualenv"><code class="docutils literal notranslate"><span class="pre">validate_is_virtualenv()</span></code></a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#uv_workon.core.validate_dir_exists"><code class="docutils literal notranslate"><span class="pre">validate_dir_exists()</span></code></a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#uv_workon.core.validate_symlink"><code class="docutils literal notranslate"><span class="pre">validate_symlink()</span></code></a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#uv_workon.core.infer_virtualenv_name"><code class="docutils literal notranslate"><span class="pre">infer_virtualenv_name()</span></code></a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#uv_workon.core.infer_virtualenv_path"><code class="docutils literal notranslate"><span class="pre">infer_virtualenv_path()</span></code></a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#uv_workon.core.infer_virtualenv_path_raise"><code class="docutils literal notranslate"><span class="pre">infer_virtualenv_path_raise()</span></code></a></li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#uv_workon.core.VirtualEnvPathAndLink"><code class="docutils literal notranslate"><span class="pre">VirtualEnvPathAndLink</span></code></a><ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#uv_workon.core.VirtualEnvPathAndLink.create_symlink"><code class="docutils literal notranslate"><span class="pre">VirtualEnvPathAndLink.create_symlink()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#uv_workon.core.VirtualEnvPathAndLink.from_paths_and_workon"><code class="docutils literal notranslate"><span class="pre">VirtualEnvPathAndLink.from_paths_and_workon()</span></code></a></li>
 </ul>
 </li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#uv_workon.core.get_invalid_symlinks"><code class="docutils literal notranslate"><span class="pre">get_invalid_symlinks()</span></code></a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#uv_workon.core.list_venv_paths"><code class="docutils literal notranslate"><span class="pre">list_venv_paths()</span></code></a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#uv_workon.core.select_option"><code class="docutils literal notranslate"><span class="pre">select_option()</span></code></a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#uv_workon.core.get_virtualenv_paths"><code class="docutils literal notranslate"><span class="pre">get_virtualenv_paths()</span></code></a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#uv_workon.core.uv_run"><code class="docutils literal notranslate"><span class="pre">uv_run()</span></code></a></li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#uv_workon.core.generate_shell_config"><code class="docutils literal notranslate"><span class="pre">generate_shell_config()</span></code></a></li>
 </ul>
 
@@ -705,7 +605,7 @@ By William P. Krekelberg
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on 2025-03-10.
+  Last updated on 2025-03-19.
   <br/>
 </p>
   </div>

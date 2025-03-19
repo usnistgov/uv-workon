@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Index &#8212; uv-workon 0.2.0 documentation</title>
+    <title>Index &#8212; uv-workon 0.3.0 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=7f7c277e"></script>
+    <script src="_static/documentation_options.js?v=83a61292"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -54,7 +54,7 @@
     <link rel="search" title="Search" href="search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-    <meta name="docbuild:last-update" content="2025-03-10"/>
+    <meta name="docbuild:last-update" content="2025-03-19"/>
   </head>
   
   
@@ -140,7 +140,7 @@
   
   
   
-    <p class="title logo__title">uv-workon 0.2.0 documentation</p>
+    <p class="title logo__title">uv-workon 0.3.0 documentation</p>
   
 </a></div>
         <div class="sidebar-primary-item">
@@ -178,12 +178,16 @@
 
 
 
+
+
+
 <li class="toctree-l2"><a class="reference internal" href="reference/generated/uv_workon.core.html">Core functionality (<code class="xref py py-mod docutils literal notranslate"><span class="pre">core</span></code>)</a></li>
 
 
 
 
 
+<li class="toctree-l2"><a class="reference internal" href="reference/generated/uv_workon.validate.html">Validation/inference (<code class="xref py py-mod docutils literal notranslate"><span class="pre">validate</span></code>)</a></li>
 
 
 
@@ -192,6 +196,8 @@
 
 
 
+
+<li class="toctree-l2"><a class="reference internal" href="reference/generated/uv_workon.utils.html">Utilities (<code class="xref py py-mod docutils literal notranslate"><span class="pre">utils</span></code>)</a></li>
 
 </ul>
 </details></li>
@@ -376,10 +382,54 @@ document.write(`
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li>
+    --all
+
+      <ul>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-install-all">uvw-kernels-install command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --command
+
+      <ul>
+        <li><a href="reference/cli.html#cmdoption-uvw-activate-command">uvw-activate command line option</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-cd-command">uvw-cd command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --default-venv
+
+      <ul>
+        <li><a href="reference/cli.html#cmdoption-uvw-activate-default-venv">uvw-activate command line option</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-cd-default-venv">uvw-cd command line option</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-install-default-venv">uvw-kernels-install command line option</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-remove-default-venv">uvw-kernels-remove command line option</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-link-default-venv">uvw-link command line option</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-run-default-venv">uvw-run command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --display-format
+
+      <ul>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-install-display-format">uvw-kernels-install command line option</a>
+</li>
+      </ul></li>
+      <li>
     --dry-run
 
       <ul>
         <li><a href="reference/cli.html#cmdoption-uvw-clean-dry-run">uvw-clean command line option</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-install-dry-run">uvw-kernels-install command line option</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-remove-dry-run">uvw-kernels-remove command line option</a>
 </li>
         <li><a href="reference/cli.html#cmdoption-uvw-link-dry-run">uvw-link command line option</a>
 </li>
@@ -401,6 +451,13 @@ document.write(`
 </li>
       </ul></li>
       <li>
+    --missing
+
+      <ul>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-remove-missing">uvw-kernels-remove command line option</a>
+</li>
+      </ul></li>
+      <li>
     --name
 
       <ul>
@@ -408,29 +465,83 @@ document.write(`
 </li>
         <li><a href="reference/cli.html#cmdoption-uvw-cd-n">uvw-cd command line option</a>
 </li>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-install-n">uvw-kernels-install command line option</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-remove-n">uvw-kernels-remove command line option</a>
+</li>
         <li><a href="reference/cli.html#cmdoption-uvw-run-n">uvw-run command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --no
+
+      <ul>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-install-yes">uvw-kernels-install command line option</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-remove-yes">uvw-kernels-remove command line option</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-link-yes">uvw-link command line option</a>
 </li>
       </ul></li>
       <li>
     --no-command
 
       <ul>
-        <li><a href="reference/cli.html#cmdoption-uvw-activate-no-command">uvw-activate command line option</a>
+        <li><a href="reference/cli.html#cmdoption-uvw-activate-command">uvw-activate command line option</a>
 </li>
-        <li><a href="reference/cli.html#cmdoption-uvw-cd-no-command">uvw-cd command line option</a>
+        <li><a href="reference/cli.html#cmdoption-uvw-cd-command">uvw-cd command line option</a>
 </li>
       </ul></li>
       <li>
     --no-default-venv
 
       <ul>
-        <li><a href="reference/cli.html#cmdoption-uvw-activate-no-default-venv">uvw-activate command line option</a>
+        <li><a href="reference/cli.html#cmdoption-uvw-activate-default-venv">uvw-activate command line option</a>
 </li>
-        <li><a href="reference/cli.html#cmdoption-uvw-cd-no-default-venv">uvw-cd command line option</a>
+        <li><a href="reference/cli.html#cmdoption-uvw-cd-default-venv">uvw-cd command line option</a>
 </li>
-        <li><a href="reference/cli.html#cmdoption-uvw-link-no-default-venv">uvw-link command line option</a>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-install-default-venv">uvw-kernels-install command line option</a>
 </li>
-        <li><a href="reference/cli.html#cmdoption-uvw-run-no-default-venv">uvw-run command line option</a>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-remove-default-venv">uvw-kernels-remove command line option</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-link-default-venv">uvw-link command line option</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-run-default-venv">uvw-run command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --no-dry-run
+
+      <ul>
+        <li><a href="reference/cli.html#cmdoption-uvw-clean-dry-run">uvw-clean command line option</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-install-dry-run">uvw-kernels-install command line option</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-remove-dry-run">uvw-kernels-remove command line option</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-link-dry-run">uvw-link command line option</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-run-dry-run">uvw-run command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --no-resolve
+
+      <ul>
+        <li><a href="reference/cli.html#cmdoption-uvw-activate-resolve">uvw-activate command line option</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-install-resolve">uvw-kernels-install command line option</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-link-resolve">uvw-link command line option</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-run-resolve">uvw-run command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --no-user
+
+      <ul>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-install-user">uvw-kernels-install command line option</a>
 </li>
       </ul></li>
       <li>
@@ -455,14 +566,22 @@ document.write(`
 </li>
         <li><a href="reference/cli.html#cmdoption-uvw-cd-p">uvw-cd command line option</a>
 </li>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-install-p">uvw-kernels-install command line option</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-remove-p">uvw-kernels-remove command line option</a>
+</li>
         <li><a href="reference/cli.html#cmdoption-uvw-run-p">uvw-run command line option</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     --resolve
 
       <ul>
         <li><a href="reference/cli.html#cmdoption-uvw-activate-resolve">uvw-activate command line option</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-install-resolve">uvw-kernels-install command line option</a>
 </li>
         <li><a href="reference/cli.html#cmdoption-uvw-link-resolve">uvw-link command line option</a>
 </li>
@@ -477,6 +596,13 @@ document.write(`
 </li>
       </ul></li>
       <li>
+    --user
+
+      <ul>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-install-user">uvw-kernels-install command line option</a>
+</li>
+      </ul></li>
+      <li>
     --venv
 
       <ul>
@@ -484,18 +610,24 @@ document.write(`
 </li>
         <li><a href="reference/cli.html#cmdoption-uvw-cd-venv">uvw-cd command line option</a>
 </li>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-install-venv">uvw-kernels-install command line option</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-remove-venv">uvw-kernels-remove command line option</a>
+</li>
         <li><a href="reference/cli.html#cmdoption-uvw-link-venv">uvw-link command line option</a>
 </li>
         <li><a href="reference/cli.html#cmdoption-uvw-run-venv">uvw-run command line option</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     --verbose
 
       <ul>
         <li><a href="reference/cli.html#cmdoption-uvw-clean-v">uvw-clean command line option</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-install-v">uvw-kernels-install command line option</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-remove-v">uvw-kernels-remove command line option</a>
 </li>
         <li><a href="reference/cli.html#cmdoption-uvw-link-v">uvw-link command line option</a>
 </li>
@@ -521,6 +653,10 @@ document.write(`
 </li>
         <li><a href="reference/cli.html#cmdoption-uvw-clean-o">uvw-clean command line option</a>
 </li>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-install-o">uvw-kernels-install command line option</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-remove-o">uvw-kernels-remove command line option</a>
+</li>
         <li><a href="reference/cli.html#cmdoption-uvw-link-o">uvw-link command line option</a>
 </li>
         <li><a href="reference/cli.html#cmdoption-uvw-list-o">uvw-list command line option</a>
@@ -534,6 +670,10 @@ document.write(`
       <ul>
         <li><a href="reference/cli.html#cmdoption-uvw-clean-yes">uvw-clean command line option</a>
 </li>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-install-yes">uvw-kernels-install command line option</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-remove-yes">uvw-kernels-remove command line option</a>
+</li>
         <li><a href="reference/cli.html#cmdoption-uvw-link-yes">uvw-link command line option</a>
 </li>
       </ul></li>
@@ -544,6 +684,10 @@ document.write(`
         <li><a href="reference/cli.html#cmdoption-uvw-activate-n">uvw-activate command line option</a>
 </li>
         <li><a href="reference/cli.html#cmdoption-uvw-cd-n">uvw-cd command line option</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-install-n">uvw-kernels-install command line option</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-remove-n">uvw-kernels-remove command line option</a>
 </li>
         <li><a href="reference/cli.html#cmdoption-uvw-run-n">uvw-run command line option</a>
 </li>
@@ -557,6 +701,10 @@ document.write(`
         <li><a href="reference/cli.html#cmdoption-uvw-cd-o">uvw-cd command line option</a>
 </li>
         <li><a href="reference/cli.html#cmdoption-uvw-clean-o">uvw-clean command line option</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-install-o">uvw-kernels-install command line option</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-remove-o">uvw-kernels-remove command line option</a>
 </li>
         <li><a href="reference/cli.html#cmdoption-uvw-link-o">uvw-link command line option</a>
 </li>
@@ -573,6 +721,10 @@ document.write(`
 </li>
         <li><a href="reference/cli.html#cmdoption-uvw-cd-p">uvw-cd command line option</a>
 </li>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-install-p">uvw-kernels-install command line option</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-remove-p">uvw-kernels-remove command line option</a>
+</li>
         <li><a href="reference/cli.html#cmdoption-uvw-run-p">uvw-run command line option</a>
 </li>
       </ul></li>
@@ -583,6 +735,10 @@ document.write(`
         <li><a href="reference/cli.html#cmdoption-uvw-v">uvw command line option</a>
 </li>
         <li><a href="reference/cli.html#cmdoption-uvw-clean-v">uvw-clean command line option</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-install-v">uvw-kernels-install command line option</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-remove-v">uvw-kernels-remove command line option</a>
 </li>
         <li><a href="reference/cli.html#cmdoption-uvw-link-v">uvw-link command line option</a>
 </li>
@@ -623,21 +779,25 @@ document.write(`
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/generated/uv_workon.core.html#uv_workon.core.get_invalid_symlinks">get_invalid_symlinks() (in module uv_workon.core)</a>
 </li>
+      <li><a href="reference/generated/uv_workon.core.html#uv_workon.core.get_virtualenv_paths">get_virtualenv_paths() (in module uv_workon.core)</a>
+</li>
   </ul></td>
 </tr></table>
 
 <h2 id="I">I</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="reference/generated/uv_workon.core.html#uv_workon.core.infer_virtualenv_name">infer_virtualenv_name() (in module uv_workon.core)</a>
+      <li><a href="reference/generated/uv_workon.validate.html#uv_workon.validate.infer_virtualenv_name">infer_virtualenv_name() (in module uv_workon.validate)</a>
 </li>
-      <li><a href="reference/generated/uv_workon.core.html#uv_workon.core.infer_virtualenv_path">infer_virtualenv_path() (in module uv_workon.core)</a>
+      <li><a href="reference/generated/uv_workon.validate.html#uv_workon.validate.infer_virtualenv_path">infer_virtualenv_path() (in module uv_workon.validate)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="reference/generated/uv_workon.core.html#uv_workon.core.infer_virtualenv_path_raise">infer_virtualenv_path_raise() (in module uv_workon.core)</a>
+      <li><a href="reference/generated/uv_workon.validate.html#uv_workon.validate.infer_virtualenv_path_raise">infer_virtualenv_path_raise() (in module uv_workon.validate)</a>
 </li>
-      <li><a href="reference/generated/uv_workon.core.html#uv_workon.core.is_valid_virtualenv">is_valid_virtualenv() (in module uv_workon.core)</a>
+      <li><a href="reference/generated/uv_workon.cli.html#uv_workon.cli.install_ipykernels">install_ipykernels() (in module uv_workon.cli)</a>
+</li>
+      <li><a href="reference/generated/uv_workon.validate.html#uv_workon.validate.is_valid_virtualenv">is_valid_virtualenv() (in module uv_workon.validate)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -649,7 +809,7 @@ document.write(`
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="reference/generated/uv_workon.core.html#uv_workon.core.list_venv_paths">list_venv_paths() (in module uv_workon.core)</a>
+      <li><a href="reference/generated/uv_workon.cli.html#uv_workon.cli.list_kernels">list_kernels() (in module uv_workon.cli)</a>
 </li>
       <li><a href="reference/generated/uv_workon.cli.html#uv_workon.cli.list_virtualenvs">list_virtualenvs() (in module uv_workon.cli)</a>
 </li>
@@ -669,6 +829,10 @@ document.write(`
 </li>
         <li><a href="reference/generated/uv_workon.core.html#module-uv_workon.core">uv_workon.core</a>
 </li>
+        <li><a href="reference/generated/uv_workon.utils.html#module-uv_workon.utils">uv_workon.utils</a>
+</li>
+        <li><a href="reference/generated/uv_workon.validate.html#module-uv_workon.validate">uv_workon.validate</a>
+</li>
       </ul></li>
   </ul></td>
 </tr></table>
@@ -676,7 +840,7 @@ document.write(`
 <h2 id="N">N</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="reference/generated/uv_workon.core.html#uv_workon.core.NoVirtualEnvError">NoVirtualEnvError</a>
+      <li><a href="reference/generated/uv_workon.validate.html#uv_workon.validate.NoVirtualEnvError">NoVirtualEnvError</a>
 </li>
   </ul></td>
 </tr></table>
@@ -697,6 +861,10 @@ document.write(`
 <h2 id="R">R</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/generated/uv_workon.cli.html#uv_workon.cli.remove_kernels">remove_kernels() (in module uv_workon.cli)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/generated/uv_workon.cli.html#uv_workon.cli.run_with_virtualenv">run_with_virtualenv() (in module uv_workon.cli)</a>
 </li>
   </ul></td>
@@ -705,7 +873,7 @@ document.write(`
 <h2 id="S">S</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="reference/generated/uv_workon.core.html#uv_workon.core.select_option">select_option() (in module uv_workon.core)</a>
+      <li><a href="reference/generated/uv_workon.utils.html#uv_workon.utils.select_option">select_option() (in module uv_workon.utils)</a>
 </li>
       <li><a href="reference/generated/uv_workon.cli.html#uv_workon.cli.shell_activate">shell_activate() (in module uv_workon.cli)</a>
 </li>
@@ -721,6 +889,8 @@ document.write(`
 <h2 id="U">U</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/generated/uv_workon.core.html#uv_workon.core.uv_run">uv_run() (in module uv_workon.core)</a>
+</li>
       <li>
     uv_workon.cli
 
@@ -733,6 +903,20 @@ document.write(`
 
       <ul>
         <li><a href="reference/generated/uv_workon.core.html#module-uv_workon.core">module</a>
+</li>
+      </ul></li>
+      <li>
+    uv_workon.utils
+
+      <ul>
+        <li><a href="reference/generated/uv_workon.utils.html#module-uv_workon.utils">module</a>
+</li>
+      </ul></li>
+      <li>
+    uv_workon.validate
+
+      <ul>
+        <li><a href="reference/generated/uv_workon.validate.html#module-uv_workon.validate">module</a>
 </li>
       </ul></li>
       <li>
@@ -752,11 +936,17 @@ document.write(`
     uvw-activate command line option
 
       <ul>
+        <li><a href="reference/cli.html#cmdoption-uvw-activate-command">--command</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-activate-default-venv">--default-venv</a>
+</li>
         <li><a href="reference/cli.html#cmdoption-uvw-activate-n">--name</a>
 </li>
-        <li><a href="reference/cli.html#cmdoption-uvw-activate-no-command">--no-command</a>
+        <li><a href="reference/cli.html#cmdoption-uvw-activate-command">--no-command</a>
 </li>
-        <li><a href="reference/cli.html#cmdoption-uvw-activate-no-default-venv">--no-default-venv</a>
+        <li><a href="reference/cli.html#cmdoption-uvw-activate-default-venv">--no-default-venv</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-activate-resolve">--no-resolve</a>
 </li>
         <li><a href="reference/cli.html#cmdoption-uvw-activate-p">--path</a>
 </li>
@@ -777,11 +967,15 @@ document.write(`
     uvw-cd command line option
 
       <ul>
+        <li><a href="reference/cli.html#cmdoption-uvw-cd-command">--command</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-cd-default-venv">--default-venv</a>
+</li>
         <li><a href="reference/cli.html#cmdoption-uvw-cd-n">--name</a>
 </li>
-        <li><a href="reference/cli.html#cmdoption-uvw-cd-no-command">--no-command</a>
+        <li><a href="reference/cli.html#cmdoption-uvw-cd-command">--no-command</a>
 </li>
-        <li><a href="reference/cli.html#cmdoption-uvw-cd-no-default-venv">--no-default-venv</a>
+        <li><a href="reference/cli.html#cmdoption-uvw-cd-default-venv">--no-default-venv</a>
 </li>
         <li><a href="reference/cli.html#cmdoption-uvw-cd-p">--path</a>
 </li>
@@ -802,6 +996,8 @@ document.write(`
       <ul>
         <li><a href="reference/cli.html#cmdoption-uvw-clean-dry-run">--dry-run</a>
 </li>
+        <li><a href="reference/cli.html#cmdoption-uvw-clean-dry-run">--no-dry-run</a>
+</li>
         <li><a href="reference/cli.html#cmdoption-uvw-clean-yes">--no-yes</a>
 </li>
         <li><a href="reference/cli.html#cmdoption-uvw-clean-v">--verbose</a>
@@ -815,17 +1011,109 @@ document.write(`
         <li><a href="reference/cli.html#cmdoption-uvw-clean-v">-v</a>
 </li>
       </ul></li>
+      <li>
+    uvw-kernels-install command line option
+
+      <ul>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-install-all">--all</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-install-default-venv">--default-venv</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-install-display-format">--display-format</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-install-dry-run">--dry-run</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-install-n">--name</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-install-yes">--no</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-install-default-venv">--no-default-venv</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-install-dry-run">--no-dry-run</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-install-resolve">--no-resolve</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-install-user">--no-user</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-install-p">--path</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-install-resolve">--resolve</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-install-user">--user</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-install-venv">--venv</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-install-v">--verbose</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-install-o">--workon-home</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-install-yes">--yes</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-install-n">-n</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-install-o">-o</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-install-p">-p</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-install-v">-v</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    uvw-kernels-remove command line option
+
+      <ul>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-remove-default-venv">--default-venv</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-remove-dry-run">--dry-run</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-remove-missing">--missing</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-remove-n">--name</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-remove-yes">--no</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-remove-default-venv">--no-default-venv</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-remove-dry-run">--no-dry-run</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-remove-p">--path</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-remove-venv">--venv</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-remove-v">--verbose</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-remove-o">--workon-home</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-remove-yes">--yes</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-remove-n">-n</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-remove-o">-o</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-remove-p">-p</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-kernels-remove-v">-v</a>
+</li>
+      </ul></li>
       <li>
     uvw-link command line option
 
       <ul>
+        <li><a href="reference/cli.html#cmdoption-uvw-link-default-venv">--default-venv</a>
+</li>
         <li><a href="reference/cli.html#cmdoption-uvw-link-dry-run">--dry-run</a>
 </li>
         <li><a href="reference/cli.html#cmdoption-uvw-link-link-name">--link-name</a>
 </li>
-        <li><a href="reference/cli.html#cmdoption-uvw-link-no-default-venv">--no-default-venv</a>
+        <li><a href="reference/cli.html#cmdoption-uvw-link-yes">--no</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-link-default-venv">--no-default-venv</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-link-dry-run">--no-dry-run</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-link-resolve">--no-resolve</a>
 </li>
         <li><a href="reference/cli.html#cmdoption-uvw-link-parent">--parent</a>
 </li>
@@ -863,11 +1151,17 @@ document.write(`
     uvw-run command line option
 
       <ul>
+        <li><a href="reference/cli.html#cmdoption-uvw-run-default-venv">--default-venv</a>
+</li>
         <li><a href="reference/cli.html#cmdoption-uvw-run-dry-run">--dry-run</a>
 </li>
         <li><a href="reference/cli.html#cmdoption-uvw-run-n">--name</a>
 </li>
-        <li><a href="reference/cli.html#cmdoption-uvw-run-no-default-venv">--no-default-venv</a>
+        <li><a href="reference/cli.html#cmdoption-uvw-run-default-venv">--no-default-venv</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-run-dry-run">--no-dry-run</a>
+</li>
+        <li><a href="reference/cli.html#cmdoption-uvw-run-resolve">--no-resolve</a>
 </li>
         <li><a href="reference/cli.html#cmdoption-uvw-run-p">--path</a>
 </li>
@@ -894,15 +1188,15 @@ document.write(`
 <h2 id="V">V</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="reference/generated/uv_workon.core.html#uv_workon.core.validate_dir_exists">validate_dir_exists() (in module uv_workon.core)</a>
+      <li><a href="reference/generated/uv_workon.validate.html#uv_workon.validate.validate_dir_exists">validate_dir_exists() (in module uv_workon.validate)</a>
 </li>
-      <li><a href="reference/generated/uv_workon.core.html#uv_workon.core.validate_is_virtualenv">validate_is_virtualenv() (in module uv_workon.core)</a>
+      <li><a href="reference/generated/uv_workon.validate.html#uv_workon.validate.validate_is_virtualenv">validate_is_virtualenv() (in module uv_workon.validate)</a>
 </li>
-      <li><a href="reference/generated/uv_workon.core.html#uv_workon.core.validate_symlink">validate_symlink() (in module uv_workon.core)</a>
+      <li><a href="reference/generated/uv_workon.validate.html#uv_workon.validate.validate_symlink">validate_symlink() (in module uv_workon.validate)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="reference/generated/uv_workon.core.html#uv_workon.core.validate_venv_patterns">validate_venv_patterns() (in module uv_workon.core)</a>
+      <li><a href="reference/generated/uv_workon.validate.html#uv_workon.validate.validate_venv_patterns">validate_venv_patterns() (in module uv_workon.validate)</a>
 </li>
       <li><a href="reference/generated/uv_workon.cli.html#uv_workon.cli.version_callback">version_callback() (in module uv_workon.cli)</a>
 </li>
@@ -958,7 +1252,7 @@ By William P. Krekelberg
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on 2025-03-10.
+  Last updated on 2025-03-19.
   <br/>
 </p>
   </div>
