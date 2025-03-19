@@ -9,10 +9,9 @@ import itertools
 import logging
 import sys
 from collections.abc import Iterator  # noqa: TC003
-from functools import lru_cache, wraps
-from inspect import signature
+from functools import lru_cache
 from pathlib import Path
-from typing import TYPE_CHECKING, Annotated, Any, cast
+from typing import TYPE_CHECKING, Annotated, cast
 
 import click
 import typer
@@ -33,7 +32,7 @@ from .validate import (
 )
 
 if TYPE_CHECKING:
-    from collections.abc import Callable, Iterable
+    from collections.abc import Iterable
     from typing import TypeVar
 
     R = TypeVar("R")
@@ -106,47 +105,6 @@ def _get_venv_name_path_mapping(
     return name_mapping
 
 
-def _add_verbose_logger(
-    verbose_arg: str = "verbose",
-) -> Callable[[Callable[..., R]], Callable[..., R]]:
-    """Decorator factory to add logger and set logger level based on verbosity argument value."""
-
-    def decorator(func: Callable[..., R]) -> Callable[..., R]:
-        bind = signature(func).bind
-
-        @wraps(func)
-        def wrapped(*args: Any, **kwargs: Any) -> R:
-            params = bind(*args, **kwargs)
-            params.apply_defaults()
-
-            if (verbosity := cast("int | None", params.arguments[verbose_arg])) is None:
-                # leave where it is:
-                pass
-            else:
-                if verbosity < 0:  # pragma: no cover
-                    level = logging.ERROR
-                elif not verbosity:  # pragma: no cover
-                    level = logging.WARNING
-                elif verbosity == 1:
-                    level = logging.INFO
-                else:  # pragma: no cover
-                    level = logging.DEBUG
-
-                for _logger in map(logging.getLogger, logging.root.manager.loggerDict):  # pylint: disable=no-member
-                    _logger.setLevel(level)
-
-            # add error logger to function call
-            try:
-                return func(*args, **kwargs)
-            except Exception:  # pragma: no cover
-                logger.exception("found error")
-                raise
-
-        return wrapped
-
-    return decorator
-
-
 # * Callbacks -----------------------------------------------------------------
 def _callback_expand_user(x: Path) -> Path:
     return x.expanduser()
@@ -158,6 +116,26 @@ def _callback_venv_patterns(
 ) -> list[str]:
     use_default = cast("bool", ctx.params.get("use_default_venv_patterns"))
     return list({*venv_patterns, *((".venv", "venv") if use_default else ())})
+
+
+def _callback_verbose(
+    verbose: int | None,
+) -> int | None:
+    if verbose is None:
+        return verbose
+
+    if verbose < 0:  # pragma: no cover
+        level = logging.ERROR
+    elif not verbose:  # pragma: no cover
+        level = logging.WARNING
+    elif verbose == 1:
+        level = logging.INFO
+    else:  # pragma: no cover
+        level = logging.DEBUG
+
+    for _logger in map(logging.getLogger, logging.root.manager.loggerDict):  # pylint: disable=no-member
+        _logger.setLevel(level)
+    return None
 
 
 # * Completions ---------------------------------------------------------------
@@ -205,7 +183,6 @@ def main(
 
 
 # * Options -------------------------------------------------------------------
-
 WORKON_HOME_CLI = Annotated[
     Path,
     typer.Option(
@@ -238,6 +215,7 @@ VERBOSE_CLI = Annotated[
         "-v",
         help="Set verbosity level.  Can specify multiple times",
         count=True,
+        callback=_callback_verbose,
     ),
 ]
 VENV_PATTERNS_CLI = Annotated[
@@ -352,6 +330,16 @@ NO_COMMAND_CLI = Annotated[
         """,
     ),
 ]
+# Multiple names/paths
+VENV_NAMES_CLI = Annotated[
+    list[str] | None,
+    typer.Option(
+        "-n",
+        "--name",
+        help="Virtual environment names.",
+        autocompletion=_complete_virtualenv_names,
+    ),
+]
 VENV_PATHS_CLI = Annotated[
     list[Path] | None,
     typer.Option(
@@ -364,8 +352,8 @@ VENV_PATHS_CLI = Annotated[
 
 
 # * Commands ------------------------------------------------------------------
+# ** Links
 @app_typer.command("link")
-@_add_verbose_logger()
 def link_virtualenvs(
     *,
     paths: PATHS_CLI = None,
@@ -406,7 +394,6 @@ def link_virtualenvs(
 
 
 @app_typer.command("list")
-@_add_verbose_logger()
 def list_virtualenvs(
     *,
     workon_home: WORKON_HOME_CLI,
@@ -421,7 +408,6 @@ def list_virtualenvs(
 
 
 @app_typer.command("clean")
-@_add_verbose_logger()
 def clean_virtualenvs(
     *,
     workon_home: WORKON_HOME_CLI,
@@ -448,7 +434,6 @@ def clean_virtualenvs(
         "ignore_unknown_options": True,
     },
 )
-@_add_verbose_logger()
 def run_with_virtualenv(
     *,
     ctx: typer.Context,
@@ -466,10 +451,13 @@ def run_with_virtualenv(
 
     For example, use ``uvw run -n my-env -- python ...`` is
     translated to ``uv run -p patt/to/my-env --no-project python ...``.
-
     If an option mirrors one of the command options (-n, etc), pass it after ``--``.
-
     Use ``--dry-run`` to echo the equivalent command to be run in the shell.
+
+    Under the hood, this uses ``uv run`` with the environment variables
+    ``VIRTUAL_ENV`` and ``UV_PROJECT_ENVIRONMENT`` and the option ``-p`` all
+    set to the path of the virtual environment, and with the option
+    ``--no-project``.
     """
     logger.info("params: %s", locals())
 
@@ -490,7 +478,7 @@ def run_with_virtualenv(
         typer.echo(command)
 
 
-# * Shell commands
+# ** Shell commands
 @app_typer.command("shell-config")
 def shell_config() -> None:
     """
@@ -554,23 +542,12 @@ def shell_cd(
     typer.echo(str(path) if no_command else f"cd {path}")
 
 
-# * Working with ipykernels
-
-
+# ** Kernels
 @app_kernels.command("install")
-@_add_verbose_logger()
 def install_ipykernels(
     ctx: typer.Context,
     *,
-    venv_names: Annotated[
-        list[str] | None,
-        typer.Option(
-            "-n",
-            "--name",
-            help="Virtual environment names to install for.",
-            autocompletion=_complete_virtualenv_names,
-        ),
-    ] = None,
+    venv_names: VENV_NAMES_CLI = None,
     venv_paths: VENV_PATHS_CLI = None,
     all_venvs: Annotated[
         bool, typer.Option("--all", help="If passed, install for all environments")
@@ -597,7 +574,7 @@ def install_ipykernels(
     venv_patterns: VENV_PATTERNS_CLI,
     use_default_venv_patterns: USE_DEFAULT_VENV_PATTERNS_CLI = True,
     dry_run: DRY_RUN_CLI = False,
-    verbose: VERBOSE_CLI = 0,
+    verbose: VERBOSE_CLI = None,
     yes: YES_CLI = False,
 ) -> None:
     """Install ipykernels for virtual environment(s) that contain ``ipykernel`` module."""
@@ -635,22 +612,27 @@ def install_ipykernels(
 
 
 @app_kernels.command("remove")
-@_add_verbose_logger()
 def remove_kernels(
     *,
     names: Annotated[
         list[str] | None,
-        typer.Option("-n", "--name", autocompletion=complete_kernelspec_names),
+        typer.Option(
+            "-n",
+            "--name",
+            help="Kernel names to remove",
+            autocompletion=complete_kernelspec_names,
+        ),
     ] = None,
     venv_paths: VENV_PATHS_CLI = None,
     missing: Annotated[
-        bool, typer.Option("--missing", help="Remove missing specs.")
+        bool,
+        typer.Option("--missing", help="Remove kernelspecs that are missing/broken."),
     ] = False,
     workon_home: WORKON_HOME_CLI,
     venv_patterns: VENV_PATTERNS_CLI,
     use_default_venv_patterns: USE_DEFAULT_VENV_PATTERNS_CLI = True,
     dry_run: DRY_RUN_CLI = False,
-    verbose: VERBOSE_CLI = 0,
+    verbose: VERBOSE_CLI = None,
     yes: YES_CLI = False,
 ) -> None:
     """Remove installed kernels"""
@@ -680,14 +662,12 @@ def remove_kernels(
 
     to_remove = to_remove.intersection(get_kernelspecs())
 
-    to_remove_filtered = [
+    to_remove_filtered = sorted(
         name for name in to_remove if yes or typer.confirm(f"Remove {name}")
-    ]
+    )
 
     if not to_remove_filtered:
         return
-
-    logger.info("remove kernspecs %s", to_remove_filtered)
 
     if not dry_run:
         remove_kernelspecs(to_remove_filtered)
@@ -695,7 +675,7 @@ def remove_kernels(
 
 @app_kernels.command("list")
 def list_kernels() -> None:
-    """Interface to jupyter kernelspec list"""
+    """List installed kernels.  Interface to jupyter kernelspec list."""
     from .kernels import has_jupyter_client
 
     has_jupyter_client()

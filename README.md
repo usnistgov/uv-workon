@@ -112,6 +112,14 @@ It is recommended to install with [`uv`](https://docs.astral.sh/uv/):
 uv tool install uv-workon
 ```
 
+To include the ability to manage
+[`ipykernel`](https://github.com/ipython/ipykernel), include the `jupyter`
+extra:
+
+```bash
+uv tool install "uv-workon[jupyter]"
+```
+
 ### Add autocompletion
 
 Run the following to add autocompletion for `uvw`:

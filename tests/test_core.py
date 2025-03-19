@@ -116,7 +116,7 @@ def test_uv_run_error() -> None:
 
 
 def test_uv_run(mocker: MockerFixture) -> None:
-    mock_subprocess_run = mocker.patch("subprocess.run")
+    mock_subprocess_run = mocker.patch("subprocess.run", autospec=True)
 
     venv_path = Path.cwd().resolve()
     args = ["python", "-c", "import sys"]

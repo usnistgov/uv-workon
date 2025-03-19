@@ -13,6 +13,7 @@ import typer
 
 from uv_workon import cli
 from uv_workon.core import generate_shell_config
+from uv_workon.kernels import get_ipykernel_install_script_path
 
 from .test_kernels import skip_if_no_jupyter_client
 
@@ -111,7 +112,7 @@ def test__get_venv_name_path_mapping(
 def test__add_verbose_logger() -> None:
     import logging
 
-    func = partial(cli.list_virtualenvs, workon_home=Path.home() / ".virtualenvs")
+    func = cli._callback_verbose
 
     func(verbose=-1)
     assert cli.logger.level == logging.ERROR
@@ -123,6 +124,10 @@ def test__add_verbose_logger() -> None:
     assert cli.logger.level == logging.INFO
 
     func(verbose=2)
+    assert cli.logger.level == logging.DEBUG
+
+    # no change with None
+    func(verbose=None)
     assert cli.logger.level == logging.DEBUG
 
 
@@ -596,3 +601,129 @@ def test_install_ipykernels(
         "ipykernel_install_script.py --dry-run -- --name has_dotvenv_0 --display-name 'Python [venv: has_dotvenv_0]' --user"
         in out.output
     )
+
+
+@skip_if_no_jupyter_client
+@pytest.mark.parametrize("yes", [True, False])
+def test_install_ipykernels_replace(
+    click_app: Command,
+    clirunner: CliRunner,
+    workon_home_with_is_venv: Path,
+    venvs_parent_path: Path,
+    dummy_kernelspec_with_replace: dict[str, Any],
+    mocker: MockerFixture,
+    yes: bool,
+) -> None:
+    mocker.patch(
+        "uv_workon.kernels.get_kernelspecs",
+        autospec=True,
+        return_value=dummy_kernelspec_with_replace,
+    )
+    mocker.patch("typer.confirm", autospec=True, return_value=False)
+    mocked_uv_run = mocker.patch("uv_workon.cli.uv_run", autospec=True)
+
+    out = clirunner.invoke(
+        click_app,
+        [
+            "kernels",
+            "install",
+            "--workon-home",
+            str(workon_home_with_is_venv),
+            "-p",
+            str(venvs_parent_path / "is_venv_0"),
+            *(["--yes"] if yes else []),
+        ],
+    )
+
+    assert not out.exit_code
+
+    if yes:
+        assert mocked_uv_run.mock_calls == [
+            mocker.call(
+                (venvs_parent_path / "is_venv_0").resolve(),
+                "python",
+                get_ipykernel_install_script_path(),
+                "--",
+                "--name",
+                "is_venv_0",
+                "--display-name",
+                "Python [venv: is_venv_0]",
+                "--user",
+                dry_run=False,
+            )
+        ]
+
+    else:
+        assert mocked_uv_run.mock_calls == []
+
+
+@skip_if_no_jupyter_client
+@pytest.mark.parametrize("yes", [True, False])
+@pytest.mark.parametrize(
+    ("args", "expected"),
+    [
+        (("-n", "dummy0"), ["dummy0"]),
+        (("-n", "dummy0", "--dry-run"), []),
+        (("-n", "something"), []),
+        (("--missing",), ["dummy0", "dummy1"]),
+    ],
+)
+def test_remove_ipykernels(
+    click_app: Command,
+    clirunner: CliRunner,
+    workon_home_with_is_venv: Path,
+    mocker: MockerFixture,
+    dummy_kernelspec: dict[str, Any],
+    yes: bool,
+    args: tuple[str],
+    expected: list[str],
+) -> None:
+    mocker.patch(
+        "uv_workon.kernels.get_kernelspecs",
+        autospec=True,
+        return_value=dummy_kernelspec,
+    )
+    mocker.patch(
+        "typer.confirm",
+        return_value=False,
+    )
+
+    mocked_remove_kernelspecs = mocker.patch("uv_workon.kernels.remove_kernelspecs")
+
+    out = clirunner.invoke(
+        click_app,
+        [
+            "kernels",
+            "remove",
+            "--workon-home",
+            str(workon_home_with_is_venv),
+            *args,
+            *(["--yes"] if yes else []),
+        ],
+    )
+
+    assert not out.exit_code
+
+    if yes and expected:
+        assert mocked_remove_kernelspecs.mock_calls == [mocker.call(expected)]
+    else:
+        assert mocked_remove_kernelspecs.mock_calls == []
+
+
+@skip_if_no_jupyter_client
+def test_list_kernels(
+    click_app: Command,
+    clirunner: CliRunner,
+    mocker: MockerFixture,
+) -> None:
+    mocked = mocker.patch("jupyter_client.kernelspecapp.ListKernelSpecs")
+
+    clirunner.invoke(
+        click_app,
+        [
+            "kernels",
+            "list",
+        ],
+    )
+
+    assert mocked.mock_calls == [mocker.call(), mocker.call().start()]

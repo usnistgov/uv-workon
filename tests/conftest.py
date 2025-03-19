@@ -150,9 +150,38 @@ def dummy_kernelspec() -> dict[str, Any]:
 
 
 @pytest.fixture
+def dummy_kernelspec_with_replace(dummy_kernelspec: dict[str, Any]) -> dict[str, Any]:
+    p = Path.cwd().resolve()
+    name = "is_venv_0"
+    return {
+        name: {
+            "resource_dir": str(p / name),
+            "spec": {
+                "argv": [
+                    str(p / name / "bin" / "python"),
+                    "-Xfrozen_modules=off",
+                    "-m",
+                    "ipykernel_launcher",
+                    "-f",
+                    "{connection_file}",
+                ],
+                "env": {},
+                "display_name": "Python [venv: dummy0]",
+                "language": "python",
+                "interrupt_mode": "signal",
+                "metadata": {"debugger": True},
+            },
+        },
+        **dummy_kernelspec,
+    }
+
+
+@pytest.fixture
 def mocked_get_kernelspec(
     mocker: MockerFixture, dummy_kernelspec: dict[str, Any]
 ) -> Any:
     return mocker.patch(
-        "uv_workon.kernels.get_kernelspecs", return_value=dummy_kernelspec
+        "uv_workon.kernels.get_kernelspecs",
+        autospec=True,
+        return_value=dummy_kernelspec,
     )
