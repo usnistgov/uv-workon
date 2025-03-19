@@ -1964,6 +1964,7 @@ test-extras = [
     { name = "pytest-mock" },
     { name = "pytest-sugar" },
     { name = "pytest-xdist" },
+    { name = "uv-workon", extra = ["all"] },
 ]
 test-noopt = [
     { name = "pytest" },
@@ -2059,6 +2060,7 @@ test-extras = [
     { name = "pytest-mock", specifier = ">=3.14.0" },
     { name = "pytest-sugar" },
     { name = "pytest-xdist" },
+    { name = "uv-workon", extras = ["all"] },
 ]
 test-noopt = [
     { name = "pytest" },

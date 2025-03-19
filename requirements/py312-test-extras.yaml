@@ -11,6 +11,7 @@ channels:
   - conda-forge
 dependencies:
   - python=3.12
+  - jupyter-client>=8.6.3
   - pytest
   - pytest-cov
   - pytest-mock>=3.14.0

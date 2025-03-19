@@ -60,7 +60,6 @@ dev = [
     { include-group = "uvxrun" },
 ]
 test = [
-    { include-group = "optional" },
     { include-group = "test-extras" },
 ]
 docs = [
@@ -89,14 +88,15 @@ mypy = [ "mypy>=1.15.0" ]
 nbval = [ "nbval" ]
 optional = [ "uv-workon[all]" ]
 test-extras = [
+    { include-group = "optional" },
+    { include-group = "test-noopt" },
+]
+test-noopt = [
     "pytest",
     "pytest-cov",
     "pytest-mock>=3.14.0",
     "pytest-sugar",
     "pytest-xdist",
-]
-test-noopt = [
-    { include-group = "test-extras" },
 ]
 typing = [
     "ipykernel",
