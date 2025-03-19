@@ -12,8 +12,17 @@ from typing import TYPE_CHECKING
 
 import attrs
 
+from .validate import (
+    infer_virtualenv_name,
+    infer_virtualenv_path,
+    is_valid_virtualenv,
+    validate_dir_exists,
+    validate_symlink,
+    validate_venv_patterns,
+)
+
 if TYPE_CHECKING:
-    from collections.abc import Iterable, Sequence
+    from collections.abc import Iterable, Iterator
 
     from ._typing import PathLike, VirtualEnvPattern
     from ._typing_compat import Self
@@ -21,92 +30,6 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class NoVirtualEnvError(ValueError):
-    """Error to raise if no virtual environment found."""
-
-
-# * Utilities -----------------------------------------------------------------
-# ** Validate
-def validate_venv_patterns(venv_patterns: VirtualEnvPattern) -> list[str]:
-    """Validate venv patterns."""
-    # fast exit for most likely cas
-    if isinstance(venv_patterns, list):
-        return venv_patterns
-
-    if venv_patterns is None:
-        return []
-
-    if isinstance(venv_patterns, str):
-        return [venv_patterns]
-
-    return list(venv_patterns)
-
-
-def is_valid_virtualenv(path: Path) -> bool:
-    """Check if path is a valid venv"""
-    return path.is_dir() and (path / "pyvenv.cfg").exists()
-
-
-def validate_is_virtualenv(path: PathLike) -> Path:
-    """Validate is a virtual environment path"""
-    path = Path(path)
-    if not is_valid_virtualenv(path):
-        msg = f"{path} is not a valid virtual environment"
-        raise NoVirtualEnvError(msg)
-    return path
-
-
-def validate_dir_exists(path: PathLike) -> Path:
-    """Validate that path is a directory."""
-    path = Path(path)
-    if not path.is_dir():
-        msg = f"{path} is not a directory."
-        raise ValueError(msg)
-    return path
-
-
-def validate_symlink(path: PathLike) -> Path:
-    """If path exists, assert it is a symlink"""
-    path = Path(path)
-    if path.exists() and not path.is_symlink():
-        msg = f"{path} exists and is not a symlink"
-        raise ValueError(msg)
-    return path
-
-
-# ** Infer
-def infer_virtualenv_name(path: Path, venv_patterns: VirtualEnvPattern) -> str:
-    """Infer a virtual environment name from path."""
-    path_resolved = path.resolve()
-    if (name := path_resolved.name) in validate_venv_patterns(venv_patterns):
-        return path_resolved.parent.name
-    return name
-
-
-def infer_virtualenv_path(
-    path: PathLike, venv_patterns: VirtualEnvPattern
-) -> Path | None:
-    """Find a virtual env by pattern and return None if not found."""
-    path = Path(path)
-    if is_valid_virtualenv(path):
-        return path
-    for pattern in validate_venv_patterns(venv_patterns):
-        if is_valid_virtualenv(path_pattern := path / pattern):
-            return path_pattern
-    return None
-
-
-def infer_virtualenv_path_raise(
-    path: PathLike, venv_patterns: VirtualEnvPattern
-) -> Path:
-    """Find a virtual env by pattern and raise if not found."""
-    if (path_ := infer_virtualenv_path(path, venv_patterns)) is None:
-        msg = f"No venv found at {path}"
-        raise NoVirtualEnvError(msg)
-    return path_
-
-
-# ** Convert
 def _converter_pathlike(path: PathLike) -> Path:
     return Path(path)
 
@@ -172,42 +95,48 @@ class VirtualEnvPathAndLink:
                 yield cls(path=path, link=link)
 
 
-def get_invalid_symlinks(workon_home: Path) -> Iterable[Path]:
-    """Get Iterable of paths to invalid symlinks."""
+def get_invalid_symlinks(workon_home: Path) -> Iterator[Path]:
+    """Get iterator of paths to invalid symlinks under a given path"""
     for path in workon_home.glob("*"):
         if path.is_symlink() and not is_valid_virtualenv(path):
             yield path
 
 
-def list_venv_paths(
+def get_virtualenv_paths(
     workon_home: Path,
-) -> list[Path]:
-    """Get list of venvs by name"""
-    return [path for path in workon_home.glob("*") if is_valid_virtualenv(path)]
+) -> Iterator[Path]:
+    """Get iterator of virtual environment paths under a given path."""
+    return (path for path in workon_home.glob("*") if is_valid_virtualenv(path))
 
 
-def select_option(
-    options: Sequence[str],
-    title: str = "",
-    usage: bool = True,
-) -> str:  # pragma: no cover
-    """Use selector"""
-    from simple_term_menu import (  # pyright: ignore[reportMissingTypeStubs]
-        TerminalMenu,
+def uv_run(
+    venv_path: Path,
+    *args: str,
+    dry_run: bool = False,
+) -> str:
+    """Construct and run command under uv"""
+    import shlex
+
+    args = ("uv", "run", "-p", str(venv_path), "--no-project", *args)
+    command: str = (
+        f"VIRTUAL_ENV={venv_path} UV_PROJECT_ENVIRONMENT={venv_path} {shlex.join(args)}"
     )
 
-    title = " ".join(
-        [
-            *([title] if title else []),
-            *(
-                ["use arrows or j/k to move down/up, or / to limit by name"]
-                if usage
-                else []
-            ),
-        ]
-    )
-    index: int = TerminalMenu(options, title=title or None).show()  # pyright: ignore[reportAssignmentType]
-    return options[index]
+    logger.info("running args: %s", args)
+    logger.info("command: %s", command)
+    if not dry_run:
+        import subprocess
+
+        subprocess.run(
+            args,
+            check=True,
+            env={
+                **os.environ,
+                "VIRTUAL_ENV": str(venv_path),
+                "UV_PROJECT_ENVIRONMENT": str(venv_path),
+            },
+        )
+    return command
 
 
 def generate_shell_config() -> str:

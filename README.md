@@ -5,9 +5,9 @@
 [![Docs][docs-badge]][docs-link]
 [![PyPI license][license-badge]][license-link]
 [![PyPI version][pypi-badge]][pypi-link]
-<!-- [![Conda (channel only)][conda-badge]][conda-link] -->
 [![Code style: ruff][ruff-badge]][ruff-link]
 [![uv][uv-badge]][uv-link]
+<!-- [![Conda (channel only)][conda-badge]][conda-link] -->
 
 <!--
   For more badges, see
@@ -81,13 +81,19 @@ Now, from anywhere, you can use the virtual environment `my-project`:
 
 - Link virtual environment to central location with `uv link`. These links are
   located at `WORKON_HOME` environment variable, defaulting to `~/.virtualenvs`.
-- Activate virtual environment with `uvw activate ...`
+- Activate virtual environment with `uvw activate ...` (requires shell
+  integration)
 - Run under virtual environment with `uvw run ...`
-- Change to project directory with `uvw cd ...`
+- Change to project directory with `uvw cd ...` (requires shell integration)
 - List available virtual environments with `uvw list`
 - Cleanup missing symlinks with `uvw clean`
-
-Currently `uvw` is setup to work with `bash` and `zsh` shells only.
+- Manage [`ipykernel`](https://github.com/ipython/ipykernel) with
+  `uvw kernels ...`
+  - Install kernels for linked virtual environments which have `ipykernel`
+    installed with `uvw kernels install ...`
+  - Remove kernels (including remove all missing/broken kernels) with
+    `uvw kernels remove ...`
+  - list installed kernels with `uvw kernels list ...`
 
 ## Status
 
@@ -106,6 +112,14 @@ It is recommended to install with [`uv`](https://docs.astral.sh/uv/):
 uv tool install uv-workon
 ```
 
+To include the ability to manage
+[`ipykernel`](https://github.com/ipython/ipykernel), include the `jupyter`
+extra:
+
+```bash
+uv tool install "uv-workon[jupyter]"
+```
+
 ### Add autocompletion
 
 Run the following to add autocompletion for `uvw`:
@@ -114,7 +128,7 @@ Run the following to add autocompletion for `uvw`:
 uvw --install-completion
 ```
 
-### Shell interaction
+### Shell integration
 
 To use `uvw activate` and `uvw cd`, you must enable the shell configuration with
 `eval "$(uvw shell-config)", or add it to you config script with:
@@ -125,6 +139,9 @@ echo 'eval "$(uvw shell-config)"' >> ~/.zshrc
 # for bash
 echo 'eval "$(uvw shell-config)"' >> ~/.bashrc
 ```
+
+Currently `uvw` shell integration is setup to work with `bash` and `zsh` shells
+only.
 
 <!-- end-installation -->
 
