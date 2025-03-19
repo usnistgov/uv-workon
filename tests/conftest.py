@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 import shutil
+import sys
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -10,8 +11,10 @@ from click.testing import CliRunner
 
 if TYPE_CHECKING:
     from collections.abc import Generator
+    from typing import Any
 
     from click import Command
+    from pytest_mock import MockerFixture
 
 
 @pytest.fixture(scope="session")
@@ -98,3 +101,58 @@ def workon_home_with_is_venv(
     )
 
     return workon_home
+
+
+@pytest.fixture
+def dummy_kernelspec() -> dict[str, Any]:
+    p = Path.cwd().resolve()
+    out = {
+        name: {
+            "resource_dir": str(p / name),
+            "spec": {
+                "argv": [
+                    str(p / name / "bin" / "python"),
+                    "-Xfrozen_modules=off",
+                    "-m",
+                    "ipykernel_launcher",
+                    "-f",
+                    "{connection_file}",
+                ],
+                "env": {},
+                "display_name": "Python [venv: dummy0]",
+                "language": "python",
+                "interrupt_mode": "signal",
+                "metadata": {"debugger": True},
+            },
+        }
+        for name in ("dummy0", "dummy1")
+    }
+
+    out["good"] = {
+        "resource_dir": str(p / "good"),
+        "spec": {
+            "argv": [
+                sys.executable,
+                "-Xfrozen_modules=off",
+                "-m",
+                "ipykernel_launcher",
+                "-f",
+                "{connection_file}",
+            ],
+            "env": {},
+            "display_name": "Python [venv: dummy0]",
+            "language": "python",
+            "interrupt_mode": "signal",
+            "metadata": {"debugger": True},
+        },
+    }
+    return out
+
+
+@pytest.fixture
+def mocked_get_kernelspec(
+    mocker: MockerFixture, dummy_kernelspec: dict[str, Any]
+) -> Any:
+    return mocker.patch(
+        "uv_workon.kernels.get_kernelspecs", return_value=dummy_kernelspec
+    )

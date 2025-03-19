@@ -14,6 +14,8 @@ import typer
 from uv_workon import cli
 from uv_workon.core import generate_shell_config
 
+from .test_kernels import skip_if_no_jupyter_client
+
 if TYPE_CHECKING:
     from typing import Any
 
@@ -469,14 +471,6 @@ def test_run(
         assert expected == out.output.strip()
 
 
-def test_install_ipykernels(
-    click_app: Command,
-    clirunner: CliRunner,
-    workon_home_with_is_venv: Path,
-) -> None:
-    pass
-
-
 def test_shell_config(click_app: Command, clirunner: CliRunner) -> None:
     out = clirunner.invoke(click_app, ["shell-config"])
     assert out.output.strip() == generate_shell_config().strip()
@@ -538,3 +532,67 @@ def test__main__() -> None:
     from subprocess import check_call
 
     assert not check_call(["python", "-m", "uv_workon"])
+
+
+@skip_if_no_jupyter_client
+def test_install_ipykernels(
+    click_app: Command,
+    clirunner: CliRunner,
+    workon_home_with_is_venv: Path,
+    venvs_parent_path: Path,
+) -> None:
+    expected_all = [
+        f"ipykernel_install_script.py --dry-run -- --name is_venv_{i} --display-name 'Python [venv: is_venv_{i}]' --user"
+        for i in range(3)
+    ]
+
+    out = clirunner.invoke(
+        click_app,
+        [
+            "kernels",
+            "install",
+            "--workon-home",
+            str(workon_home_with_is_venv),
+            "--all",
+            "--dry-run",
+        ],
+    )
+    assert not out.exit_code
+    for expected in expected_all:
+        assert expected in out.output
+
+    out = clirunner.invoke(
+        click_app,
+        [
+            "kernels",
+            "install",
+            "--workon-home",
+            str(workon_home_with_is_venv),
+            "--dry-run",
+            "-n",
+            "is_venv_0",
+        ],
+    )
+    assert not out.exit_code
+    assert expected_all[0] in out.output
+    for not_expected in expected_all[1:]:
+        assert not_expected not in out.output
+
+    out = clirunner.invoke(
+        click_app,
+        [
+            "kernels",
+            "install",
+            "--workon-home",
+            str(workon_home_with_is_venv),
+            "--dry-run",
+            "-p",
+            str(venvs_parent_path / "has_dotvenv_0"),
+        ],
+    )
+
+    assert not out.exit_code
+    assert (
+        "ipykernel_install_script.py --dry-run -- --name has_dotvenv_0 --display-name 'Python [venv: has_dotvenv_0]' --user"
+        in out.output
+    )

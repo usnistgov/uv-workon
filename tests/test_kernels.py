@@ -1,8 +1,6 @@
 from __future__ import annotations
 
-import sys
 from importlib.util import find_spec
-from pathlib import Path
 from typing import TYPE_CHECKING
 
 import pytest
@@ -19,52 +17,6 @@ _has_jupyter_client = find_spec("jupyter_client") is not None
 skip_if_no_jupyter_client = pytest.mark.skipif(
     not _has_jupyter_client, reason="Must install jupyter client for this test."
 )
-
-
-@pytest.fixture
-def dummy_kernelspec() -> dict[str, Any]:
-    p = Path.cwd().resolve()
-    out = {
-        name: {
-            "resource_dir": str(p / name),
-            "spec": {
-                "argv": [
-                    str(p / name / "bin" / "python"),
-                    "-Xfrozen_modules=off",
-                    "-m",
-                    "ipykernel_launcher",
-                    "-f",
-                    "{connection_file}",
-                ],
-                "env": {},
-                "display_name": "Python [venv: dummy0]",
-                "language": "python",
-                "interrupt_mode": "signal",
-                "metadata": {"debugger": True},
-            },
-        }
-        for name in ("dummy0", "dummy1")
-    }
-
-    out["good"] = {
-        "resource_dir": str(p / "good"),
-        "spec": {
-            "argv": [
-                sys.executable,
-                "-Xfrozen_modules=off",
-                "-m",
-                "ipykernel_launcher",
-                "-f",
-                "{connection_file}",
-            ],
-            "env": {},
-            "display_name": "Python [venv: dummy0]",
-            "language": "python",
-            "interrupt_mode": "signal",
-            "metadata": {"debugger": True},
-        },
-    }
-    return out
 
 
 def test_get_ipykernel_install_script_path() -> None:
@@ -90,7 +42,7 @@ def test_has_jupyter_client() -> None:
 
 
 @skip_if_no_jupyter_client
-def test_get_kernelspec() -> None:
+def test_get_kernelspec_0() -> None:
     assert isinstance(kernels.get_kernelspecs(), dict)
     assert isinstance(kernels.get_broken_kernelspecs(), dict)
     kernels.remove_kernelspecs([])
@@ -98,33 +50,28 @@ def test_get_kernelspec() -> None:
 
 @skip_if_no_jupyter_client
 def test_get_broken_kernelspecs(
-    mocker: MockerFixture, dummy_kernelspec: dict[str, Any]
+    mocker: MockerFixture,
+    dummy_kernelspec: dict[str, Any],
+    mocked_get_kernelspec: Any,
 ) -> None:
-    mock_get_kernelspecs = mocker.patch(
-        "uv_workon.kernels.get_kernelspecs", return_value=dummy_kernelspec
-    )
-
     assert kernels.get_broken_kernelspecs() == {
         k: v for k, v in dummy_kernelspec.items() if k != "good"
     }
-    assert mock_get_kernelspecs.mock_calls == [mocker.call()]
+    assert mocked_get_kernelspec.mock_calls == [mocker.call()]
 
 
 @skip_if_no_jupyter_client
 def test_complete_kernelspec_names(
-    mocker: MockerFixture, dummy_kernelspec: dict[str, Any]
+    mocker: MockerFixture,
+    mocked_get_kernelspec: Any,
 ) -> None:
-    mocked = mocker.patch(
-        "uv_workon.kernels.get_kernelspecs", return_value=dummy_kernelspec
-    )
-
     names = ["dummy0", "dummy1", "good"]
 
     assert list(kernels.complete_kernelspec_names("")) == names
     assert list(kernels.complete_kernelspec_names("d")) == names[:-1]
     assert list(kernels.complete_kernelspec_names("g")) == names[-1:]
 
-    assert mocked.mock_calls == [mocker.call()] * 3
+    assert mocked_get_kernelspec.mock_calls == [mocker.call()] * 3
 
 
 @skip_if_no_jupyter_client
