@@ -57,7 +57,6 @@ dev = [
     { include-group = "mypy" },
     { include-group = "test" },
     { include-group = "typing" },
-    { include-group = "uvxrun" },
 ]
 test = [
     { include-group = "test-extras" },
@@ -104,11 +103,7 @@ typing = [
     "pytest",
     "pytest-mock",
     { include-group = "optional" },
-    { include-group = "uvxrun" },
 ]
-# Anything needed to run tools/uvxrun.py
-# NOTE: uvxrun-tools defined explicitly in tool.pyproject2conda.envs.uvxrun-tools
-uvxrun = [ "packaging" ]
 
 [tool.hatch.version]
 source = "vcs"
@@ -275,13 +270,14 @@ groups = "test-extras"
 python = "all"
 skip_package = true
 
-[tool.pyproject2conda.envs.uvxrun-tools]
+[tool.pyproject2conda.envs.uvx-tools]
 reqs = [
-    # these used solely for specking tools to be used with tools/uvxrun.py
+    # these used solely for specking tools to be used with uvx ...
     "conda-lock>=2.5.5",
     "grayskull>=2.5.3",
     "nbqa>=1.8.4",
     "pre-commit",
+    "pre-commit-uv",
     "pyright>=1.1.396",
     "scriv",
     "twine>=5.0.0",
