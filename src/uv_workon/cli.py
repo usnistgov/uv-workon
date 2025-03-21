@@ -135,7 +135,7 @@ def _callback_verbose(
 
     for _logger in map(logging.getLogger, logging.root.manager.loggerDict):  # pylint: disable=no-member
         _logger.setLevel(level)
-    return None
+    return verbose
 
 
 # * Completions ---------------------------------------------------------------
