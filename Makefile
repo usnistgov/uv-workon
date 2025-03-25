@@ -201,8 +201,10 @@ publish-test: ## publish to testpypi
 _UV_PUBLISH = uv publish --username __token__ --keyring-provider subprocess
 uv-publish: ## uv release
 	$(_UV_PUBLISH)
+	@echo https://pypi.org/project/uv-workon
 uv-publish-test: ## uv test release on testpypi
 	$(_UV_PUBLISH) --publish-url https://test.pypi.org/legacy/
+	@echo https://test.pypi.org/project/uv-workon
 
 
 # ** dist conda
