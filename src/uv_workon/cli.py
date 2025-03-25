@@ -105,6 +105,12 @@ def _get_venv_name_path_mapping(
     return name_mapping
 
 
+def _confirm_action(yes: bool | None, msg: str) -> bool:
+    if yes is None:
+        return typer.confirm(msg)
+    return yes
+
+
 # * Callbacks -----------------------------------------------------------------
 def _callback_expand_user(x: Path) -> Path:
     return x.expanduser()
@@ -293,10 +299,14 @@ PARENTS_CLI = Annotated[
     ),
 ]
 YES_CLI = Annotated[
-    bool,
+    bool | None,
     typer.Option(
         "--yes/--no",
-        help="Answer yes to all confirmations",
+        help="""
+        Default is confirm yes/No for actions.
+        Passing ``--yes`` confirms all answers as yes.
+        Passing ``--no`` confirms all answers as no.
+        """,
     ),
 ]
 VENV_NAME_CLI = Annotated[
@@ -365,7 +375,7 @@ def link_virtualenvs(
     use_default_venv_patterns: USE_DEFAULT_VENV_PATTERNS_CLI = True,
     dry_run: DRY_RUN_CLI = False,
     verbose: VERBOSE_CLI = None,
-    yes: YES_CLI = False,
+    yes: YES_CLI = None,
 ) -> None:
     """Create symlink from paths to workon_home."""
     if not (input_paths := list(_get_input_paths(paths, parents))):
@@ -386,7 +396,7 @@ def link_virtualenvs(
 
     for obj in objs:
         if (not obj.link.exists()) or (
-            obj.link.is_symlink() and (yes or typer.confirm(f"Overwrite {obj.link}"))
+            obj.link.is_symlink() and _confirm_action(yes, f"Overwrite {obj.link}")
         ):
             obj.create_symlink(resolve=resolve, dry_run=dry_run)
         else:
@@ -413,15 +423,13 @@ def clean_virtualenvs(
     workon_home: WORKON_HOME_CLI,
     dry_run: DRY_RUN_CLI = False,
     verbose: VERBOSE_CLI = None,
-    yes: bool = False,
+    yes: YES_CLI = None,
 ) -> None:
     """Remove missing broken virtual environment symlinks."""
     logger.debug("params: %s", locals())
 
     for path in get_invalid_symlinks(workon_home):
-        if yes or typer.confirm(
-            f"Remove {path} -> {path.readlink()}"
-        ):  # pragma: no branch
+        if _confirm_action(yes, f"Remove {path} -> {path.readlink()}"):
             logger.info("Remove symlink: %s -> %s", path, path.readlink())
             if not dry_run:
                 path.unlink()
@@ -575,7 +583,7 @@ def install_ipykernels(
     use_default_venv_patterns: USE_DEFAULT_VENV_PATTERNS_CLI = True,
     dry_run: DRY_RUN_CLI = False,
     verbose: VERBOSE_CLI = None,
-    yes: YES_CLI = False,
+    yes: YES_CLI = None,
 ) -> None:
     """Install ipykernels for virtual environment(s) that contain ``ipykernel`` module."""
     from .kernels import get_ipykernel_install_script_path, get_kernelspecs
@@ -590,7 +598,7 @@ def install_ipykernels(
         workon_home=workon_home,
         venv_patterns=venv_patterns,
     ).items():
-        if yes or (name not in kernelspecs) or typer.confirm(f"Reinstall {name}?"):
+        if (name not in kernelspecs) or _confirm_action(yes, f"Reinstall {name}?"):
             display_name = display_format.format(name=name)
             command = uv_run(
                 path.resolve() if resolve else path,
@@ -633,7 +641,7 @@ def remove_kernels(
     use_default_venv_patterns: USE_DEFAULT_VENV_PATTERNS_CLI = True,
     dry_run: DRY_RUN_CLI = False,
     verbose: VERBOSE_CLI = None,
-    yes: YES_CLI = False,
+    yes: YES_CLI = None,
 ) -> None:
     """Remove installed kernels"""
     from .kernels import (
@@ -663,7 +671,7 @@ def remove_kernels(
     to_remove = to_remove.intersection(get_kernelspecs())
 
     to_remove_filtered = sorted(
-        name for name in to_remove if yes or typer.confirm(f"Remove {name}")
+        name for name in to_remove if _confirm_action(yes, f"Remove {name}")
     )
 
     if not to_remove_filtered:
