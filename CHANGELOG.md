@@ -16,6 +16,14 @@ See the fragment files in [changelog.d]
 
 <!-- scriv-insert-here -->
 
+## v0.4.0 — 2025-03-25
+
+### Changed
+
+- Now supports `--yes/--no` options. Default is to query the user to yes/no
+  questions. Passing `--yes` will always answer yes. Passing `--no` will always
+  answer no.
+
 ## v0.3.1 — 2025-03-25
 
 ### Fixed
