@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Command line interface &#8212; uv-workon 0.3.1 documentation</title>
+    <title>Command line interface &#8212; uv-workon 0.4.0 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="../_static/documentation_options.js?v=385a908f"></script>
+    <script src="../_static/documentation_options.js?v=183391d5"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -143,7 +143,7 @@
   
   
   
-    <p class="title logo__title">uv-workon 0.3.1 documentation</p>
+    <p class="title logo__title">uv-workon 0.4.0 documentation</p>
   
 </a></div>
         <div class="sidebar-primary-item">
@@ -660,12 +660,10 @@ variable, then <code class="docutils literal notranslate"><span class="pre">~/.v
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-uvw-clean-yes">
-<span id="cmdoption-uvw-clean-no-yes"></span><span class="sig-name descname"><span class="pre">--yes</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-yes</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-uvw-clean-yes" title="Link to this definition">#</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Default<span class="colon">:</span></dt>
-<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
-</dd>
-</dl>
+<span id="cmdoption-uvw-clean-no"></span><span class="sig-name descname"><span class="pre">--yes</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-uvw-clean-yes" title="Link to this definition">#</a></dt>
+<dd><p>Default is confirm yes/No for actions.
+Passing <code class="docutils literal notranslate"><span class="pre">--yes</span></code> confirms all answers as yes.
+Passing <code class="docutils literal notranslate"><span class="pre">--no</span></code> confirms all answers as no.</p>
 </dd></dl>
 
 <p class="rubric">Environment variables</p>
@@ -796,12 +794,9 @@ Pass <code class="docutils literal notranslate"><span class="pre">--no-default-v
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-uvw-kernels-install-yes">
 <span id="cmdoption-uvw-kernels-install-no"></span><span class="sig-name descname"><span class="pre">--yes</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-uvw-kernels-install-yes" title="Link to this definition">#</a></dt>
-<dd><p>Answer yes to all confirmations</p>
-<dl class="field-list simple">
-<dt class="field-odd">Default<span class="colon">:</span></dt>
-<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
-</dd>
-</dl>
+<dd><p>Default is confirm yes/No for actions.
+Passing <code class="docutils literal notranslate"><span class="pre">--yes</span></code> confirms all answers as yes.
+Passing <code class="docutils literal notranslate"><span class="pre">--no</span></code> confirms all answers as no.</p>
 </dd></dl>
 
 <p class="rubric">Environment variables</p>
@@ -907,12 +902,9 @@ Pass <code class="docutils literal notranslate"><span class="pre">--no-default-v
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-uvw-kernels-remove-yes">
 <span id="cmdoption-uvw-kernels-remove-no"></span><span class="sig-name descname"><span class="pre">--yes</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-uvw-kernels-remove-yes" title="Link to this definition">#</a></dt>
-<dd><p>Answer yes to all confirmations</p>
-<dl class="field-list simple">
-<dt class="field-odd">Default<span class="colon">:</span></dt>
-<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
-</dd>
-</dl>
+<dd><p>Default is confirm yes/No for actions.
+Passing <code class="docutils literal notranslate"><span class="pre">--yes</span></code> confirms all answers as yes.
+Passing <code class="docutils literal notranslate"><span class="pre">--no</span></code> confirms all answers as no.</p>
 </dd></dl>
 
 <p class="rubric">Environment variables</p>
@@ -1017,12 +1009,9 @@ Pass <code class="docutils literal notranslate"><span class="pre">--no-default-v
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-uvw-link-yes">
 <span id="cmdoption-uvw-link-no"></span><span class="sig-name descname"><span class="pre">--yes</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-uvw-link-yes" title="Link to this definition">#</a></dt>
-<dd><p>Answer yes to all confirmations</p>
-<dl class="field-list simple">
-<dt class="field-odd">Default<span class="colon">:</span></dt>
-<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
-</dd>
-</dl>
+<dd><p>Default is confirm yes/No for actions.
+Passing <code class="docutils literal notranslate"><span class="pre">--yes</span></code> confirms all answers as yes.
+Passing <code class="docutils literal notranslate"><span class="pre">--no</span></code> confirms all answers as no.</p>
 </dd></dl>
 
 <p class="rubric">Arguments</p>
