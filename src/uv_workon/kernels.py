@@ -41,7 +41,7 @@ def get_kernelspecs() -> dict[str, Any]:
     has_jupyter_client()
     from jupyter_client.kernelspecapp import ListKernelSpecs
 
-    return ListKernelSpecs().kernel_spec_manager.get_all_specs()
+    return ListKernelSpecs(log_level="ERROR").kernel_spec_manager.get_all_specs()
 
 
 def get_broken_kernelspecs() -> dict[str, Any]:
