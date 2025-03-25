@@ -109,6 +109,26 @@ def test__get_venv_name_path_mapping(
     }
 
 
+@pytest.mark.parametrize(
+    ("yes", "mock_value", "expected"),
+    [
+        (None, False, False),
+        (None, True, True),
+        (False, False, False),
+        (True, False, True),
+        (False, True, False),
+        (True, True, True),
+    ],
+)
+def test__confirm_action(
+    mocker: MockerFixture, yes: bool | None, mock_value: bool, expected: bool
+) -> None:
+    mocker.patch("typer.confirm", autospec=True, return_value=mock_value)
+    func = cli._confirm_action
+
+    assert func(yes, "hello") is expected
+
+
 def test__add_verbose_logger() -> None:
     import logging
 
@@ -377,12 +397,14 @@ def test_name_completions(
 
 
 @pytest.mark.parametrize("dry", [True, False])
+@pytest.mark.parametrize("yes", [True, False])
 def test_clean(
     click_app: Command,
     clirunner: CliRunner,
     workon_home_with_is_venv: Path,
     venvs_parent_path: Path,
     dry: bool,
+    yes: bool,
 ) -> None:
     paths = venvs_parent_path.glob("is_venv_*")
     clirunner.invoke(
@@ -411,15 +433,17 @@ def test_clean(
             "clean",
             "--workon-home",
             str(workon_home_with_is_venv),
-            "--yes",
+            *(["--yes"] if yes else ["--no"]),
             *(["--dry-run"] if dry else []),
         ],
     )
 
     if dry:
         assert link.exists()
-    else:
+    elif yes:
         assert not link.exists()
+    else:
+        assert link.exists()
 
 
 def test_run_help(
