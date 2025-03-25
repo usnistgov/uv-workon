@@ -53,8 +53,8 @@ projects, dependencies, virtual environment creation, and much more, all while
 being blazingly fast. One of the central ideas of [uv] is that the old method of
 activating virtual environments should be replace with `uv run ...` and letting
 [uv] figure out the rest. We fully agree with this workflow, but it does run
-counter to how many have used python virtual environments day to day data work.
-For example, many have historically used tools like [`conda`][conda] or
+counter to how many have used python virtual environments day to day for data
+work. For example, many have historically used tools like [`conda`][conda] or
 [`virtualenvwrapper`][virtualenvwrapper] to manage centrally located python
 environments, that can be reused for multiple tasks. While we discorage using
 "mega" environments (i.e., sticking every dependency you'll ever need in a
@@ -79,7 +79,7 @@ Now, from anywhere, you can use the virtual environment `my-project`:
 
 ## Features
 
-- Link virtual environment to central location with `uv link`. These links are
+- Link virtual environment to central location with `uvw link`. These links are
   located at `WORKON_HOME` environment variable, defaulting to `~/.virtualenvs`.
 - Activate virtual environment with `uvw activate ...` (requires shell
   integration)

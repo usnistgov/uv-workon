@@ -18,7 +18,6 @@ dependencies:
   - mypy>=1.15.0
   - nbclient>=0.10.0
   - nox>=2024.10.9
-  - packaging
   - pylint
   - pytest
   - pytest-cov
