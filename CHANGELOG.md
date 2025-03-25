@@ -16,6 +16,12 @@ See the fragment files in [changelog.d]
 
 <!-- scriv-insert-here -->
 
+## v0.3.1 — 2025-03-25
+
+### Fixed
+
+- Removed warning from `uvw kernels list` and type completion.
+
 ## v0.3.0 — 2025-03-19
 
 ### Added
