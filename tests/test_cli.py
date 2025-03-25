@@ -726,4 +726,4 @@ def test_list_kernels(
         ],
     )
 
-    assert mocked.mock_calls == [mocker.call(), mocker.call().start()]
+    assert mocked.mock_calls == [mocker.call(log_level="ERROR"), mocker.call().start()]

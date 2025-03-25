@@ -682,4 +682,4 @@ def list_kernels() -> None:
 
     from jupyter_client.kernelspecapp import ListKernelSpecs
 
-    ListKernelSpecs().start()
+    ListKernelSpecs(log_level="ERROR").start()
