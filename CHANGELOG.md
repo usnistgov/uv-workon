@@ -16,6 +16,12 @@ See the fragment files in [changelog.d]
 
 <!-- scriv-insert-here -->
 
+## v0.5.0 — 2025-03-27
+
+### Added
+
+- Added subcommand `uvw venv-link` to link from workon-home to local `.venv`.
+
 ## v0.4.0 — 2025-03-25
 
 ### Changed
