@@ -364,7 +364,7 @@ VENV_PATHS_CLI = Annotated[
 # * Commands ------------------------------------------------------------------
 # ** Links
 @app_typer.command("link")
-def link_virtualenvs(
+def link_virtualenvs_to_workon_home(
     *,
     paths: PATHS_CLI = None,
     parents: PARENTS_CLI = None,
@@ -484,6 +484,58 @@ def run_with_virtualenv(
     command = uv_run(path, *ctx.args, dry_run=dry_run)
     if dry_run:  # pragma: no branch
         typer.echo(command)
+
+
+@app_typer.command("venv-link")
+def link_workon_home_to_venv(
+    *,
+    venv_name: VENV_NAME_CLI = None,
+    venv_path: VENV_PATH_CLI = None,
+    resolve: RESOLVE_CLI = False,
+    destination: Annotated[
+        Path,
+        typer.Argument(
+            help="Path of linked virtual environment",
+            show_default=".venv",
+            default_factory=lambda: Path.cwd() / ".venv",
+        ),
+    ],
+    workon_home: WORKON_HOME_CLI,
+    venv_patterns: VENV_PATTERNS_CLI,
+    use_default_venv_patterns: USE_DEFAULT_VENV_PATTERNS_CLI = True,
+    dry_run: DRY_RUN_CLI = False,
+    verbose: VERBOSE_CLI = None,
+    yes: YES_CLI = None,
+) -> None:
+    """
+    Create symlink from virtual environment to a local ``.venv``
+
+    This is, in a sense, the inverse of the ``link`` subcommand. While ``link``
+    links from a virtualenv to ``workon_home``, this links from ``workon_home``
+    to a local ``.venv``. This can then be used (with care) via ``uv run ...``.
+
+    Note that this is experimental and subject to change.
+    """
+    if destination.exists():
+        if not destination.is_symlink():
+            typer.echo(f"{destination} exists and is not a virtualenv.  Exiting")
+            sys.exit(1)
+        elif not _confirm_action(yes, f"Overwrite {destination}?"):
+            return
+
+    path = _select_virtualenv_path(
+        venv_path=venv_path,
+        venv_name=venv_name,
+        workon_home=workon_home,
+        venv_patterns=venv_patterns,
+        resolve=resolve,
+    )
+
+    logger.info("Create symlink %s -> %s", destination, path)
+
+    if not dry_run:
+        destination.unlink(missing_ok=True)
+        destination.symlink_to(path)
 
 
 # ** Shell commands

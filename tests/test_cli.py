@@ -370,9 +370,80 @@ def test_list(
         click_app, ["list", "--workon-home", str(workon_home_with_is_venv)]
     )
 
+    assert not out.exit_code
+
     links = sorted(workon_home_with_is_venv.glob("*"), key=lambda x: x.name)
     expected = "\n".join([f"{p.name:25}  {p.resolve()}" for p in links])
     assert expected == out.output.strip()
+
+
+@pytest.mark.parametrize("dry_run", [False, True])
+def test_link_workon_home_to_venv(
+    click_app: Command,
+    clirunner: CliRunner,
+    example_path: Path,
+    # venvs_parent_path: Path,
+    workon_home_with_is_venv: Path,
+    dry_run: bool,
+) -> None:
+    link_path = example_path / ".venv"
+
+    out = clirunner.invoke(
+        click_app,
+        [
+            "venv-link",
+            "--workon-home",
+            str(workon_home_with_is_venv),
+            *(["--dry-run"] if dry_run else []),
+            "-n",
+            "is_venv_0",
+        ],
+    )
+
+    assert not out.exit_code
+
+    if dry_run:
+        assert not link_path.exists()
+    else:
+        assert link_path.is_symlink()
+
+        # try again with existing symlink and no
+        for opt in ("--no", "--yes"):
+            out = clirunner.invoke(
+                click_app,
+                [
+                    "venv-link",
+                    "--workon-home",
+                    str(workon_home_with_is_venv),
+                    *(["--dry-run"] if dry_run else []),
+                    "-n",
+                    "is_venv_0",
+                    opt,
+                ],
+            )
+
+            assert not out.exit_code
+            assert not out.output
+
+        # no symlink
+        path = example_path / "venv"
+        path.mkdir(exist_ok=True)
+
+        out = clirunner.invoke(
+            click_app,
+            [
+                "venv-link",
+                "--workon-home",
+                str(workon_home_with_is_venv),
+                *(["--dry-run"] if dry_run else []),
+                "-n",
+                "is_venv_0",
+                str(example_path / "venv"),
+            ],
+        )
+
+        assert out.exit_code == 1
+        assert "exists and is not a virtualenv" in out.output
 
 
 def test_name_completions(
