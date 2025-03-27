@@ -13,6 +13,7 @@ if TYPE_CHECKING:
 
         args: list[str]
         dry_run: bool
+        verbose: bool
 
 
 def get_parser() -> ArgumentParser:
@@ -20,6 +21,7 @@ def get_parser() -> ArgumentParser:
     parser = ArgumentParser(description="Interface to python -m ipykernel install")
 
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("--verbose", action="store_true")
     parser.add_argument("args", type=str, nargs="+", default=[])
 
     return parser
@@ -27,19 +29,21 @@ def get_parser() -> ArgumentParser:
 
 def main(args: Sequence[str] | None = None) -> int:
     """Main program."""
-    try:
-        import ipykernel  # pyright: ignore[reportUnusedImport] # noqa: F401  # pylint: disable=unused-import
-    except ImportError:
-        import sys
-
-        print(f"No ipykernel for {sys.executable}")  # noqa: T201
-        return 0
-
     parser = get_parser()
     options = cast(
         "_Parser",
         parser.parse_args() if args is None else parser.parse_args(args),
     )
+
+    try:
+        import ipykernel  # pyright: ignore[reportUnusedImport] # noqa: F401  # pylint: disable=unused-import
+    except ImportError:
+        import sys
+
+        if options.verbose:
+            print(f"No ipykernel for {sys.executable}")  # noqa: T201
+        return 0
+
     args_ = ["python", "-m", "ipykernel", "install", *options.args]
 
     if options.dry_run:
