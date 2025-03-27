@@ -16,6 +16,13 @@ See the fragment files in [changelog.d]
 
 <!-- scriv-insert-here -->
 
+## v0.5.1 — 2025-03-27
+
+### Changed
+
+- Cleanup output for kernels install for environments without ipykernels. Now
+  only outputs `No ipykernels` if `--verbose` option passed
+
 ## v0.5.0 — 2025-03-27
 
 ### Added
