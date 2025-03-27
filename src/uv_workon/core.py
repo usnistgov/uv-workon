@@ -122,8 +122,7 @@ def uv_run(
         f"VIRTUAL_ENV={venv_path} UV_PROJECT_ENVIRONMENT={venv_path} {shlex.join(args)}"
     )
 
-    logger.info("running args: %s", args)
-    logger.info("command: %s", command)
+    logger.debug("command: %s", command)
     if not dry_run:
         import subprocess
 

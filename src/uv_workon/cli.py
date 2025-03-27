@@ -657,6 +657,7 @@ def install_ipykernels(
                 "python",
                 script,
                 *(["--dry-run"] if dry_run else []),
+                *(["--verbose"] if verbose is not None and verbose > 0 else []),
                 "--",
                 *ctx.args,
                 "--name",
