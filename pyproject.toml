@@ -21,7 +21,6 @@ requires-python = ">=3.10"
 classifiers = [
     "Development Status :: 2 - Pre-Alpha",
     "Intended Audience :: Science/Research",
-    "License :: Public Domain",
     "Operating System :: OS Independent",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3 :: Only",
@@ -56,7 +55,7 @@ dev = [
     { include-group = "dev-extras" },
     { include-group = "mypy" },
     { include-group = "test" },
-    { include-group = "typing" },
+    { include-group = "typecheck" },
 ]
 test = [
     { include-group = "test-extras" },
@@ -76,7 +75,7 @@ dev-extras = [
     "ipykernel",
     "ipython",
     "nbclient>=0.10.0",
-    "nox>=2024.10.9",
+    "nox>=2025.5.1",
     "pytest-accept",
 ]
 docs-live = [
@@ -97,7 +96,7 @@ test-noopt = [
     "pytest-sugar",
     "pytest-xdist",
 ]
-typing = [
+typecheck = [
     "ipykernel",
     "pylint",
     "pytest",
@@ -185,7 +184,7 @@ source = [
     ".nox/**/site-packages/",
 ]
 
-# * Typing ---------------------------------------------------------------------
+# * typecheck ---------------------------------------------------------------------
 
 [tool.mypy]
 files = [
@@ -316,7 +315,7 @@ style = "requirements"
 managed = true
 default-groups = [ "dev" ]
 fork-strategy = "requires-python"
-required-version = ">=0.6.5"
+required-version = ">=0.7.2"
 
 [tool.uv.pip]
 annotation-style = "line"
