@@ -8,7 +8,7 @@ from __future__ import annotations
 import logging
 import os
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 import attrs
 
@@ -138,12 +138,60 @@ def uv_run(
     return command
 
 
+def is_fish_shell() -> bool:
+    """Whether current shell is fish shell."""
+    import shellingham  # pyright: ignore[reportMissingTypeStubs]
+
+    try:
+        shell_name, _ = cast("tuple[str, str]", shellingham.detect_shell())
+    except shellingham.ShellDetectionFailure:
+        shell_name = "bash"
+
+    return shell_name == "fish"
+
+
 def generate_shell_config() -> str:
     """Generate bash/zsh file for shell config."""
     from shutil import which
     from textwrap import dedent
 
     exe_location = which("uvw")
+
+    if is_fish_shell():
+        return dedent(f"""
+        set _UV_WORKON {exe_location}
+
+        function _uvw-interface --inherit-variable _UV_WORKON
+            if [ (count $argv) -gt 1 ]
+                set opt $argv[2]
+            else
+                set opt __missing__
+            end
+
+            switch $opt
+                case --help -h
+                    $_UV_WORKON activate --help
+                case '*'
+                    command $_UV_WORKON $argv | source
+            end
+        end
+
+
+        function uvw --inherit-variable _UV_WORKON
+            if [ (count $argv) -gt 0 ]
+                set cmd $argv[1]
+            else
+                set cmd __missing__
+            end
+
+            switch $cmd
+                case activate cd
+                    _uvw-interface $argv
+                case '*'
+                    command $_UV_WORKON $argv
+            end
+        end
+        """)
 
     return dedent(f"""\
     _UV_WORKON={exe_location}

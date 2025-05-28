@@ -21,6 +21,7 @@ from .core import (
     generate_shell_config,
     get_invalid_symlinks,
     get_virtualenv_paths,
+    is_fish_shell,
     uv_run,
 )
 from .kernels import complete_kernelspec_names
@@ -359,6 +360,10 @@ VENV_PATHS_CLI = Annotated[
         autocompletion=_complete_path,
     ),
 ]
+SHELL_TYPE_CLI = Annotated[
+    str,
+    typer.Option("--shell", help="Shell type.  Right now support bash/zsh and fish"),
+]
 
 
 # * Commands ------------------------------------------------------------------
@@ -542,8 +547,7 @@ def link_workon_home_to_venv(
 @app_typer.command("shell-config")
 def shell_config() -> None:
     """
-    Use with ``eval "$(uv-workon shell-config)"``.
-
+    Use with ``eval "$(uvw shell-config)"`` or ``uvw shell-config | source`` for fish shell.
 
     This will add the subcommand ``uvw activate`` and ``uvw cd`` to the shell.  Without
     running shell config, ``activate`` and ``cd`` will just print the command to screen.
@@ -571,8 +575,10 @@ def shell_activate(
         resolve=resolve,
     )
 
-    if (activate := path / "bin" / "activate").exists() or (
-        activate := path / "Scripts" / "activate"
+    activate_script_name = "activate.fish" if is_fish_shell() else "activate"
+
+    if (activate := path / "bin" / activate_script_name).exists() or (
+        activate := path / "Scripts" / activate_script_name
     ).exists():
         typer.echo(str(activate) if no_command else f"source {activate}")
     else:
