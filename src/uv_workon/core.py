@@ -143,7 +143,7 @@ def is_fish_shell() -> bool:
     import shellingham  # pyright: ignore[reportMissingTypeStubs]
 
     try:
-        shell_name, _ = cast("tuple[str, str]", shellingham.detect_shell())
+        shell_name, _ = cast("tuple[str, str]", shellingham.detect_shell())  # pyright: ignore[reportUnknownMemberType]
     except shellingham.ShellDetectionFailure:
         shell_name = "bash"
 
