@@ -16,6 +16,12 @@ See the fragment files in [changelog.d]
 
 <!-- scriv-insert-here -->
 
+## 0.6.0 — 2025-05-30
+
+### Added
+
+- Now supports fish shell integration.
+
 ## v0.5.1 — 2025-03-27
 
 ### Changed
