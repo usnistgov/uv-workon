@@ -92,7 +92,7 @@ class VirtualEnvPathAndLink:
                     else _name
                 )
                 link = validate_symlink(workon_home / name)
-                yield cls(path=path, link=link)
+                yield cls(path=path, link=link)  # pyre-ignore[unexpected-keyword]
 
 
 def get_invalid_symlinks(workon_home: Path) -> Iterator[Path]:

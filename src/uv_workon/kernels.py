@@ -62,7 +62,9 @@ def remove_kernelspecs(names: list[str]) -> None:
     has_jupyter_client()
     from jupyter_client.kernelspecapp import RemoveKernelSpec
 
-    RemoveKernelSpec(spec_names=names, force=True).start()
+    RemoveKernelSpec(
+        spec_names=names, force=True
+    ).start()  # ty: ignore[missing-argument]
 
 
 def complete_kernelspec_names(incomplete: str) -> Iterator[str]:

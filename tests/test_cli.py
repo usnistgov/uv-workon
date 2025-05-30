@@ -15,7 +15,7 @@ from uv_workon import cli
 from uv_workon.core import generate_shell_config
 from uv_workon.kernels import get_ipykernel_install_script_path
 
-from .test_kernels import skip_if_no_jupyter_client
+from .test_kernels import skip_if_no_jupyter_client  # pyre-ignore[import-error]
 
 if TYPE_CHECKING:
     from typing import Any
@@ -161,7 +161,7 @@ def workon_home_click_app() -> Command:
         typer.echo(str(workon_home))
         return workon_home
 
-    return typer.main.get_command(app)
+    return typer.main.get_command(app)  # ty: ignore[unresolved-attribute]
 
 
 @pytest.mark.parametrize(
@@ -201,7 +201,7 @@ def venv_patterns_app() -> Command:
         assert isinstance(venv_patterns, list)
         typer.echo(str(sorted(venv_patterns)))
 
-    return typer.main.get_command(app)
+    return typer.main.get_command(app)  # ty: ignore[unresolved-attribute]
 
 
 @pytest.mark.parametrize(

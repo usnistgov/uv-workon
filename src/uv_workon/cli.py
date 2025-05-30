@@ -753,4 +753,4 @@ def list_kernels() -> None:
 
     from jupyter_client.kernelspecapp import ListKernelSpecs
 
-    ListKernelSpecs(log_level="ERROR").start()
+    ListKernelSpecs(log_level="ERROR").start()  # ty: ignore[missing-argument]
