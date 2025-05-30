@@ -5,7 +5,7 @@ Utilities (:mod:`~uv_workon.utils`)
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -31,5 +31,5 @@ def select_option(
             ),
         ]
     )
-    index: int = TerminalMenu(options, title=title or None).show()  # pyright: ignore[reportAssignmentType]
+    index = cast("int", TerminalMenu(options, title=title or None).show())
     return options[index]
