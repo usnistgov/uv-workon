@@ -165,8 +165,8 @@ def _complete_path() -> list[str]:
 
 
 # * Main app ------------------------------------------------------------------
-app_typer = typer.Typer(no_args_is_help=True)
-app_kernels = typer.Typer(no_args_is_help=True, help="Jupyter kernel utilities")
+app_typer = typer.Typer()
+app_kernels = typer.Typer(help="Jupyter kernel utilities")
 app_typer.add_typer(app_kernels, name="kernels")
 
 
@@ -179,14 +179,18 @@ def version_callback(value: bool) -> None:
         raise typer.Exit
 
 
-@app_typer.callback()
+# NOTE: have to go with this, as the magic above
+# make no_arg_is_help option not work right.
+@app_typer.callback(invoke_without_command=True)
 def main(
+    ctx: typer.Context,
     version: bool = typer.Option(
         None, "--version", "-v", callback=version_callback, is_eager=True
     ),
 ) -> None:
     """Manage uv virtual environments from central location."""
-    return
+    if ctx.invoked_subcommand is None:
+        typer.echo(ctx.get_help())
 
 
 # * Options -------------------------------------------------------------------
