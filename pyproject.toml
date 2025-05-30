@@ -21,7 +21,6 @@ requires-python = ">=3.10"
 classifiers = [
     "Development Status :: 2 - Pre-Alpha",
     "Intended Audience :: Science/Research",
-    "License :: Public Domain",
     "Operating System :: OS Independent",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3 :: Only",
@@ -56,7 +55,7 @@ dev = [
     { include-group = "dev-extras" },
     { include-group = "mypy" },
     { include-group = "test" },
-    { include-group = "typing" },
+    { include-group = "typecheck" },
 ]
 test = [
     { include-group = "test-extras" },
@@ -76,7 +75,7 @@ dev-extras = [
     "ipykernel",
     "ipython",
     "nbclient>=0.10.0",
-    "nox>=2024.10.9",
+    "nox>=2025.5.1",
     "pytest-accept",
 ]
 docs-live = [
@@ -97,7 +96,7 @@ test-noopt = [
     "pytest-sugar",
     "pytest-xdist",
 ]
-typing = [
+typecheck = [
     "ipykernel",
     "pylint",
     "pytest",
@@ -122,6 +121,15 @@ fragments = [
     { path = "LICENSE" },
 ]
 
+[tool.repo-review]
+ignore = [
+    "GH",    # enable for actions
+    "PC140", # do this externally
+    "PC170", # pygrep
+    "PC901", # ci message
+    "RTD",
+]
+
 [tool.check-wheel-contents]
 toplevel = [ "uv_workon" ]
 src_dir = [ "src" ]
@@ -133,6 +141,9 @@ src_dir = [ "src" ]
 
 [tool.pytest.ini_options]
 addopts = [
+    "-ra",
+    "--strict-config",
+    "--strict-markers",
     "--doctest-modules",
     "--doctest-glob=*.md",
     "--pyargs",
@@ -142,6 +153,13 @@ testpaths = [
     "README.md",
     "uv_workon",
     "tests",
+]
+minversion = "8"
+log_cli_level = "INFO"
+xfail_strict = true
+filterwarnings = [
+    "error",
+    "ignore: Jupyter is migrating its paths to use standard platformdirs:DeprecationWarning",
 ]
 
 [tool.coverage.run]
@@ -166,17 +184,17 @@ source = [
     ".nox/**/site-packages/",
 ]
 
-# * Typing ---------------------------------------------------------------------
+# * typecheck ---------------------------------------------------------------------
 
 [tool.mypy]
 files = [
     "src",
     "tests",
 ]
-show_error_codes = true
 warn_unused_ignores = true
 warn_return_any = true
 warn_unused_configs = true
+warn_unreachable = true
 exclude = [
     ".eggs",
     ".tox",
@@ -187,10 +205,18 @@ exclude = [
 ]
 check_untyped_defs = true
 strict = true
+enable_error_code = [
+    "ignore-without-code",
+    "redundant-expr",
+    "truthy-bool",
+]
 
 [[tool.mypy.overrides]]
 ignore_missing_imports = true
-module = [ "simple_term_menu.*" ]
+module = [
+    "simple_term_menu.*",
+    "shellingham.*",
+]
 
 # [[tool.mypy.overrides]]
 # ignore_errors = true
@@ -292,7 +318,7 @@ style = "requirements"
 managed = true
 default-groups = [ "dev" ]
 fork-strategy = "requires-python"
-required-version = ">=0.6.5"
+required-version = ">=0.7.2"
 
 [tool.uv.pip]
 annotation-style = "line"

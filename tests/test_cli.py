@@ -285,7 +285,7 @@ def test_link_paths(
     resolve: bool,
     dry: bool,
 ) -> None:
-    paths = venvs_parent_path.glob(pattern)
+    paths = list(venvs_parent_path.glob(pattern))
 
     clirunner.invoke(
         click_app,
@@ -326,6 +326,23 @@ def test_link_paths(
 
         print(expected_paths)
         assert expected_paths == {p.readlink() for p in workon_home.glob("*")}
+
+    # try again with exiting symlinks
+    for opt in ("--no", "--yes"):
+        out = clirunner.invoke(
+            click_app,
+            [
+                "link",
+                "--workon-home",
+                str(workon_home),
+                "-vv",
+                *map(str, paths),
+                *(["--resolve"] if resolve else []),
+                opt,
+            ],
+        )
+        assert not out.exit_code
+        assert not out.output
 
 
 def test_link_parent(
@@ -415,7 +432,6 @@ def test_link_workon_home_to_venv(
                     "venv-link",
                     "--workon-home",
                     str(workon_home_with_is_venv),
-                    *(["--dry-run"] if dry_run else []),
                     "-n",
                     "is_venv_0",
                     opt,
@@ -435,7 +451,6 @@ def test_link_workon_home_to_venv(
                 "venv-link",
                 "--workon-home",
                 str(workon_home_with_is_venv),
-                *(["--dry-run"] if dry_run else []),
                 "-n",
                 "is_venv_0",
                 str(example_path / "venv"),
@@ -632,6 +647,22 @@ def test__main__() -> None:
     from subprocess import check_call
 
     assert not check_call(["python", "-m", "uv_workon"])
+
+
+def test_no_subcommand(
+    click_app: Command,
+    clirunner: CliRunner,
+) -> None:
+    a = clirunner.invoke(
+        click_app,
+        ["--help"],
+    )
+    b = clirunner.invoke(
+        click_app,
+        [],
+    )
+
+    assert a.output == b.output
 
 
 @skip_if_no_jupyter_client
