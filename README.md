@@ -138,10 +138,11 @@ To use `uvw activate` and `uvw cd`, you must enable the shell configuration with
 echo 'eval "$(uvw shell-config)"' >> ~/.zshrc
 # for bash
 echo 'eval "$(uvw shell-config)"' >> ~/.bashrc
+# for fish
+echo 'uvw shell-config | source' >> ~/.config/fish/completions/uvw.fish
 ```
 
-Currently `uvw` shell integration is setup to work with `bash` and `zsh` shells
-only.
+Open a issue if you need support for another shell.
 
 <!-- end-installation -->
 

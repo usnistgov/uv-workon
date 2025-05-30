@@ -21,6 +21,7 @@ from .core import (
     generate_shell_config,
     get_invalid_symlinks,
     get_virtualenv_paths,
+    is_fish_shell,
     uv_run,
 )
 from .kernels import complete_kernelspec_names
@@ -164,8 +165,8 @@ def _complete_path() -> list[str]:
 
 
 # * Main app ------------------------------------------------------------------
-app_typer = typer.Typer(no_args_is_help=True)
-app_kernels = typer.Typer(no_args_is_help=True, help="Jupyter kernel utilities")
+app_typer = typer.Typer()
+app_kernels = typer.Typer(help="Jupyter kernel utilities")
 app_typer.add_typer(app_kernels, name="kernels")
 
 
@@ -178,14 +179,18 @@ def version_callback(value: bool) -> None:
         raise typer.Exit
 
 
-@app_typer.callback()
+# NOTE: have to go with this, as the magic above
+# make no_arg_is_help option not work right.
+@app_typer.callback(invoke_without_command=True)
 def main(
+    ctx: typer.Context,
     version: bool = typer.Option(
         None, "--version", "-v", callback=version_callback, is_eager=True
     ),
 ) -> None:
     """Manage uv virtual environments from central location."""
-    return
+    if ctx.invoked_subcommand is None:
+        typer.echo(ctx.get_help())
 
 
 # * Options -------------------------------------------------------------------
@@ -358,6 +363,10 @@ VENV_PATHS_CLI = Annotated[
         help="Virtual environment paths.",
         autocompletion=_complete_path,
     ),
+]
+SHELL_TYPE_CLI = Annotated[
+    str,
+    typer.Option("--shell", help="Shell type.  Right now support bash/zsh and fish"),
 ]
 
 
@@ -542,8 +551,7 @@ def link_workon_home_to_venv(
 @app_typer.command("shell-config")
 def shell_config() -> None:
     """
-    Use with ``eval "$(uv-workon shell-config)"``.
-
+    Use with ``eval "$(uvw shell-config)"`` or ``uvw shell-config | source`` for fish shell.
 
     This will add the subcommand ``uvw activate`` and ``uvw cd`` to the shell.  Without
     running shell config, ``activate`` and ``cd`` will just print the command to screen.
@@ -571,8 +579,10 @@ def shell_activate(
         resolve=resolve,
     )
 
-    if (activate := path / "bin" / "activate").exists() or (
-        activate := path / "Scripts" / "activate"
+    activate_script_name = "activate.fish" if is_fish_shell() else "activate"
+
+    if (activate := path / "bin" / activate_script_name).exists() or (
+        activate := path / "Scripts" / activate_script_name
     ).exists():
         typer.echo(str(activate) if no_command else f"source {activate}")
     else:
