@@ -300,13 +300,16 @@ skip_package = true
 reqs = [
     # these used solely for specking tools to be used with uvx ...
     "conda-lock>=2.5.5",
+    "cruft",
     "grayskull>=2.5.3",
     "nbqa>=1.8.4",
     "pre-commit",
     "pre-commit-uv",
+    "pyrefly",
     "pyright>=1.1.396",
     "scriv",
     "twine>=5.0.0",
+    "ty",
 ]
 groups = "mypy"
 skip_package = true
