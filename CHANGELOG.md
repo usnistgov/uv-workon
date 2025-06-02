@@ -16,6 +16,13 @@ See the fragment files in [changelog.d]
 
 <!-- scriv-insert-here -->
 
+## 0.7.0 — 2025-06-02
+
+### Changed
+
+- Main executable is now named `uv-workon`, and removed `uvw` executable. This
+  is to avoid conflict with `uv` which added a `uvw` alias for windows machines.
+
 ## 0.6.0 — 2025-05-30
 
 ### Added
