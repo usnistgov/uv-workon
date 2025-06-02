@@ -466,7 +466,7 @@ def run_with_virtualenv(
     """
     Run uv commands using using the named or specified virtual environment.
 
-    For example, use ``uvw run -n my-env -- python ...`` is
+    For example, use ``uv-workon run -n my-env -- python ...`` is
     translated to ``uv run -p patt/to/my-env --no-project python ...``.
     If an option mirrors one of the command options (-n, etc), pass it after ``--``.
     Use ``--dry-run`` to echo the equivalent command to be run in the shell.
@@ -551,9 +551,9 @@ def link_workon_home_to_venv(
 @app_typer.command("shell-config")
 def shell_config() -> None:
     """
-    Use with ``eval "$(uvw shell-config)"`` or ``uvw shell-config | source`` for fish shell.
+    Use with ``eval "$(uv-workon shell-config)"`` or ``uv-workon shell-config | source`` for fish shell.
 
-    This will add the subcommand ``uvw activate`` and ``uvw cd`` to the shell.  Without
+    This will add the subcommand ``uv-workon activate`` and ``uv-workon cd`` to the shell.  Without
     running shell config, ``activate`` and ``cd`` will just print the command to screen.
     """
     typer.echo(generate_shell_config())
@@ -753,4 +753,4 @@ def list_kernels() -> None:
 
     from jupyter_client.kernelspecapp import ListKernelSpecs
 
-    ListKernelSpecs(log_level="ERROR").start()
+    ListKernelSpecs(log_level="ERROR").start()  # ty: ignore[missing-argument]

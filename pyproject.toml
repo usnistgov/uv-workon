@@ -48,7 +48,7 @@ optional-dependencies.jupyter = [
 ]
 urls.Documentation = "https://pages.nist.gov/uv-workon/"
 urls.Homepage = "https://github.com/usnistgov/uv-workon"
-scripts.uvw = "uv_workon.cli:app_typer"
+scripts.uv-workon = "uv_workon.cli:app_typer"
 
 [dependency-groups]
 dev = [
@@ -300,13 +300,16 @@ skip_package = true
 reqs = [
     # these used solely for specking tools to be used with uvx ...
     "conda-lock>=2.5.5",
+    "cruft",
     "grayskull>=2.5.3",
     "nbqa>=1.8.4",
     "pre-commit",
     "pre-commit-uv",
+    "pyrefly",
     "pyright>=1.1.396",
     "scriv",
     "twine>=5.0.0",
+    "ty",
 ]
 groups = "mypy"
 skip_package = true

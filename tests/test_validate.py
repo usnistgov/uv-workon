@@ -74,9 +74,24 @@ def test_validate_symlink(venvs_parent_path: Path) -> None:
 @pytest.mark.parametrize(
     ("args", "expected"),
     [
-        (("has_dotvenv_0",), nullcontext(("has_dotvenv_0", ".venv"))),
-        (("has_venv_0", "venv"), nullcontext(("has_venv_0", "venv"))),
-        (("is_venv_0",), nullcontext(("is_venv_0",))),
+        (
+            ("has_dotvenv_0",),
+            nullcontext(  # pyre-ignore[no-matching-overload,bad-argument-type]
+                ("has_dotvenv_0", ".venv")
+            ),
+        ),
+        (
+            ("has_venv_0", "venv"),
+            nullcontext(  # pyre-ignore[no-matching-overload,bad-argument-type]
+                ("has_venv_0", "venv")
+            ),
+        ),
+        (
+            ("is_venv_0",),
+            nullcontext(  # pyre-ignore[no-matching-overload,bad-argument-type]
+                ("is_venv_0",)
+            ),
+        ),
         (
             ("bad_dotvenv_0",),
             pytest.raises(NoVirtualEnvError, match=r"No venv found .*"),
