@@ -42,9 +42,9 @@
 
 # `uv-workon`
 
-Command line program `uvw` to work with multiple [uv] based virtual
-environments. Note that the program name `uvw` differs from the project name
-`uv-workon` as `uvw` was taken on pypi.
+Command line program `uv-workon` to work with multiple [uv] based virtual
+environments. Note that the program name `uv-workon` differs from the project
+name `uv-workon` as `uv-workon` was taken on pypi.
 
 ## Overview
 
@@ -63,37 +63,39 @@ multiple tasks. There is [active discussion][uv-central-discussion] regarding if
 and how [uv] should manage centralized virtual environments.
 
 We takes the perspective that python virtual environments should be managed with
-uv inside a project. `uvw` allows for the usage of such virtual environments
-_outside_ the project. The basic workflow is as follows:
+uv inside a project. `uv-workon` allows for the usage of such virtual
+environments _outside_ the project. The basic workflow is as follows:
 
 1. Create a project `my-project` using `uv init ...`
 2. Create a virtual environment `my-project/.venv` using `uv sync ...`
-3. Link to central location using `uvw link my-project`
+3. Link to central location using `uv-workon link my-project`
 
 Now, from anywhere, you can use the virtual environment `my-project`:
 
-- Activate with `uvw activate -n my-project`
+- Activate with `uv-workon activate -n my-project`
 - Run python using the `my-project` virtual environment with
-  `uvw run -n my-project ...`
-- Change to the `my-project` project directory with `uvw cd -n my-project`
+  `uv-workon run -n my-project ...`
+- Change to the `my-project` project directory with `uv-workon cd -n my-project`
 
 ## Features
 
-- Link virtual environment to central location with `uvw link`. These links are
-  located at `WORKON_HOME` environment variable, defaulting to `~/.virtualenvs`.
-- Activate virtual environment with `uvw activate ...` (requires shell
+- Link virtual environment to central location with `uv-workon link`. These
+  links are located at `WORKON_HOME` environment variable, defaulting to
+  `~/.virtualenvs`.
+- Activate virtual environment with `uv-workon activate ...` (requires shell
   integration)
-- Run under virtual environment with `uvw run ...`
-- Change to project directory with `uvw cd ...` (requires shell integration)
-- List available virtual environments with `uvw list`
-- Cleanup missing symlinks with `uvw clean`
+- Run under virtual environment with `uv-workon run ...`
+- Change to project directory with `uv-workon cd ...` (requires shell
+  integration)
+- List available virtual environments with `uv-workon list`
+- Cleanup missing symlinks with `uv-workon clean`
 - Manage [`ipykernel`](https://github.com/ipython/ipykernel) with
-  `uvw kernels ...`
+  `uv-workon kernels ...`
   - Install kernels for linked virtual environments which have `ipykernel`
-    installed with `uvw kernels install ...`
+    installed with `uv-workon kernels install ...`
   - Remove kernels (including remove all missing/broken kernels) with
-    `uvw kernels remove ...`
-  - list installed kernels with `uvw kernels list ...`
+    `uv-workon kernels remove ...`
+  - list installed kernels with `uv-workon kernels list ...`
 
 ## Status
 
@@ -122,24 +124,25 @@ uv tool install "uv-workon[jupyter]"
 
 ### Add autocompletion
 
-Run the following to add autocompletion for `uvw`:
+Run the following to add autocompletion for `uv-workon`:
 
 ```bash
-uvw --install-completion
+uv-workon --install-completion
 ```
 
 ### Shell integration
 
-To use `uvw activate` and `uvw cd`, you must enable the shell configuration with
-`eval "$(uvw shell-config)", or add it to you config script with:
+To use `uv-workon activate` and `uv-workon cd`, you must enable the shell
+configuration with `eval "$(uv-workon shell-config)", or add it to you config
+script with:
 
 ```bash
 # for zsh
-echo 'eval "$(uvw shell-config)"' >> ~/.zshrc
+echo 'eval "$(uv-workon shell-config)"' >> ~/.zshrc
 # for bash
-echo 'eval "$(uvw shell-config)"' >> ~/.bashrc
+echo 'eval "$(uv-workon shell-config)"' >> ~/.bashrc
 # for fish
-echo 'uvw shell-config | source' >> ~/.config/fish/completions/uvw.fish
+echo 'uv-workon shell-config | source' >> ~/.config/fish/completions/uv-workon.fish
 ```
 
 Open a issue if you need support for another shell.

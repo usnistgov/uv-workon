@@ -152,16 +152,11 @@ def is_fish_shell() -> bool:
 
 def generate_shell_config() -> str:
     """Generate bash/zsh file for shell config."""
-    from shutil import which
     from textwrap import dedent
 
-    exe_location = which("uvw")
-
     if is_fish_shell():
-        return dedent(f"""
-        set _UV_WORKON {exe_location}
-
-        function _uvw-interface --inherit-variable _UV_WORKON
+        return dedent("""
+        function _uv-workon-interface
             if [ (count $argv) -gt 1 ]
                 set opt $argv[2]
             else
@@ -170,14 +165,14 @@ def generate_shell_config() -> str:
 
             switch $opt
                 case --help -h
-                    $_UV_WORKON activate --help
+                    command uv-workon $argv
                 case '*'
-                    command $_UV_WORKON $argv | source
+                    command uv-workon $argv | source
             end
         end
 
 
-        function uvw --inherit-variable _UV_WORKON
+        function uv-workon
             if [ (count $argv) -gt 0 ]
                 set cmd $argv[1]
             else
@@ -186,30 +181,28 @@ def generate_shell_config() -> str:
 
             switch $cmd
                 case activate cd
-                    _uvw-interface $argv
+                    _uv-workon-interface $argv
                 case '*'
-                    command $_UV_WORKON $argv
+                    command uv-workon $argv
             end
         end
         """)
 
-    return dedent(f"""\
-    _UV_WORKON={exe_location}
-
-    _uvw-interface() {{
-        local opt="${{2-__missing__}}"
+    return dedent("""\
+    _uv-workon-interface() {
+        local opt="${2-__missing__}"
         case "$opt" in
-            --help | -h) $_UV_WORKON activate --help ;;
-            *) eval $(command $_UV_WORKON $@) ;;
+            --help | -h) command uv-workon $@ ;;
+            *) eval $(command uv-workon $@) ;;
         esac
-    }}
+    }
 
-    uvw() {{
-        local cmd="${{1-__missing__}}"
+    uv-workon() {
+        local cmd="${1-__missing__}"
         case "$cmd" in
-            activate | cd) _uvw-interface $@ ;;
-            *) command $_UV_WORKON $@ ;;
+            activate | cd) _uv-workon-interface $@ ;;
+            *) command uv-workon $@ ;;
         esac
-    }}
+    }
 
     """)

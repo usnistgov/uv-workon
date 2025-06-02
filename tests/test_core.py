@@ -100,7 +100,7 @@ def test_find_venvs_with_name(venvs_parent_path: Path, workon_home: Path) -> Non
 
 
 def test_generate_shell_config() -> None:
-    assert "_UV_WORKON" in generate_shell_config()
+    assert "uv-workon" in generate_shell_config()
 
 
 @pytest.mark.parametrize("is_fish", [True, False])
@@ -110,9 +110,9 @@ def test_generate_shell_config_bash_and_fish(
     mocker.patch("uv_workon.core.is_fish_shell", autospec=True, return_value=is_fish)
 
     if is_fish:
-        assert "function uvw" in generate_shell_config()
+        assert "function uv-workon" in generate_shell_config()
     else:
-        assert "uvw()" in generate_shell_config()
+        assert "uv-workon()" in generate_shell_config()
 
 
 def test_uv_run_error() -> None:

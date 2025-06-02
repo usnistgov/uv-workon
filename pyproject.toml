@@ -48,7 +48,7 @@ optional-dependencies.jupyter = [
 ]
 urls.Documentation = "https://pages.nist.gov/uv-workon/"
 urls.Homepage = "https://github.com/usnistgov/uv-workon"
-scripts.uvw = "uv_workon.cli:app_typer"
+scripts.uv-workon = "uv_workon.cli:app_typer"
 
 [dependency-groups]
 dev = [

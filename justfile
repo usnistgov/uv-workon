@@ -114,6 +114,7 @@ just-fmt: (lint-manual "just-fmt")
 # Create .autoenv.zsh files
 user-all:
     echo source ./.venv/bin/activate > .autoenv.zsh
+    echo 'eval "$(.venv/bin/uv-workon shell-config)"' >> .autoenv.zsh
     echo deactivate > .autoenv_leave.zsh
 
 # * Testing --------------------------------------------------------------------
