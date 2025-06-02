@@ -10,7 +10,7 @@
 channels:
   - conda-forge
 dependencies:
-  - python=3.12
+  - python=3.13
   - attrs>=25.3.0
   - ipykernel
   - ipython
