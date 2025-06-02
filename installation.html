@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Installation &#8212; uv-workon 0.6.0 documentation</title>
+    <title>Installation &#8212; uv-workon 0.7.0 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=3af6fc4c"></script>
+    <script src="_static/documentation_options.js?v=c62cc9a0"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -57,7 +57,7 @@
     <link rel="prev" title="uv-workon" href="index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-    <meta name="docbuild:last-update" content="2025-05-30"/>
+    <meta name="docbuild:last-update" content="2025-06-02"/>
   </head>
   
   
@@ -143,7 +143,7 @@
   
   
   
-    <p class="title logo__title">uv-workon 0.6.0 documentation</p>
+    <p class="title logo__title">uv-workon 0.7.0 documentation</p>
   
 </a></div>
         <div class="sidebar-primary-item">
@@ -443,21 +443,22 @@ extra:</p>
 </div>
 <section id="add-autocompletion">
 <h3>Add autocompletion<a class="headerlink" href="#add-autocompletion" title="Link to this heading">#</a></h3>
-<p>Run the following to add autocompletion for <code class="docutils literal notranslate"><span class="pre">uvw</span></code>:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>uvw<span class="w"> </span>--install-completion
+<p>Run the following to add autocompletion for <code class="docutils literal notranslate"><span class="pre">uv-workon</span></code>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>uv-workon<span class="w"> </span>--install-completion
 </pre></div>
 </div>
 </section>
 <section id="shell-integration">
 <h3>Shell integration<a class="headerlink" href="#shell-integration" title="Link to this heading">#</a></h3>
-<p>To use <code class="docutils literal notranslate"><span class="pre">uvw</span> <span class="pre">activate</span></code> and <code class="docutils literal notranslate"><span class="pre">uvw</span> <span class="pre">cd</span></code>, you must enable the shell configuration with
-`eval “$(uvw shell-config)”, or add it to you config script with:</p>
+<p>To use <code class="docutils literal notranslate"><span class="pre">uv-workon</span> <span class="pre">activate</span></code> and <code class="docutils literal notranslate"><span class="pre">uv-workon</span> <span class="pre">cd</span></code>, you must enable the shell
+configuration with `eval “$(uv-workon shell-config)”, or add it to you config
+script with:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># for zsh</span>
-<span class="nb">echo</span><span class="w"> </span><span class="s1">&#39;eval &quot;$(uvw shell-config)&quot;&#39;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>~/.zshrc
+<span class="nb">echo</span><span class="w"> </span><span class="s1">&#39;eval &quot;$(uv-workon shell-config)&quot;&#39;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>~/.zshrc
 <span class="c1"># for bash</span>
-<span class="nb">echo</span><span class="w"> </span><span class="s1">&#39;eval &quot;$(uvw shell-config)&quot;&#39;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>~/.bashrc
+<span class="nb">echo</span><span class="w"> </span><span class="s1">&#39;eval &quot;$(uv-workon shell-config)&quot;&#39;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>~/.bashrc
 <span class="c1"># for fish</span>
-<span class="nb">echo</span><span class="w"> </span><span class="s1">&#39;uvw shell-config | source&#39;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>~/.config/fish/completions/uvw.fish
+<span class="nb">echo</span><span class="w"> </span><span class="s1">&#39;uv-workon shell-config | source&#39;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>~/.config/fish/completions/uv-workon.fish
 </pre></div>
 </div>
 <p>Open a issue if you need support for another shell.</p>
@@ -555,7 +556,7 @@ By William P. Krekelberg
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on 2025-05-30.
+  Last updated on 2025-06-02.
   <br/>
 </p>
   </div>

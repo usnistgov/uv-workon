@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Changelog &#8212; uv-workon 0.6.0 documentation</title>
+    <title>Changelog &#8212; uv-workon 0.7.0 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=3af6fc4c"></script>
+    <script src="_static/documentation_options.js?v=c62cc9a0"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -57,7 +57,7 @@
     <link rel="prev" title="Credits" href="authors.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-    <meta name="docbuild:last-update" content="2025-05-30"/>
+    <meta name="docbuild:last-update" content="2025-06-02"/>
   </head>
   
   
@@ -143,7 +143,7 @@
   
   
   
-    <p class="title logo__title">uv-workon 0.6.0 documentation</p>
+    <p class="title logo__title">uv-workon 0.7.0 documentation</p>
   
 </a></div>
         <div class="sidebar-primary-item">
@@ -411,20 +411,24 @@ document.write(`
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#unreleased">Unreleased</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">0.6.0 — 2025-05-30</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">0.7.0 — 2025-06-02</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#changed">Changed</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">0.6.0 — 2025-05-30</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#added">Added</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#v0-5-1-2025-03-27">v0.5.1 — 2025-03-27</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#changed">Changed</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">Changed</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#v0-5-0-2025-03-27">v0.5.0 — 2025-03-27</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Added</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">Added</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#v0-4-0-2025-03-25">v0.4.0 — 2025-03-25</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">Changed</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">Changed</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#v0-3-1-2025-03-25">v0.3.1 — 2025-03-25</a><ul class="visible nav section-nav flex-column">
@@ -432,7 +436,7 @@ document.write(`
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#v0-3-0-2025-03-19">v0.3.0 — 2025-03-19</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">Added</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">Added</a></li>
 </ul>
 </li>
 </ul>
@@ -461,7 +465,17 @@ document.write(`
 <!-- scriv-insert-here -->
 </section>
 <section id="id1">
-<h2>0.6.0 — 2025-05-30<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
+<h2>0.7.0 — 2025-06-02<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
+<section id="changed">
+<h3>Changed<a class="headerlink" href="#changed" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Main executable is now named <code class="docutils literal notranslate"><span class="pre">uv-workon</span></code>, and removed <code class="docutils literal notranslate"><span class="pre">uvw</span></code> executable. This
+is to avoid conflict with <code class="docutils literal notranslate"><span class="pre">uv</span></code> which added a <code class="docutils literal notranslate"><span class="pre">uvw</span></code> alias for windows machines.</p></li>
+</ul>
+</section>
+</section>
+<section id="id2">
+<h2>0.6.0 — 2025-05-30<a class="headerlink" href="#id2" title="Link to this heading">#</a></h2>
 <section id="added">
 <h3>Added<a class="headerlink" href="#added" title="Link to this heading">#</a></h3>
 <ul class="simple">
@@ -471,8 +485,8 @@ document.write(`
 </section>
 <section id="v0-5-1-2025-03-27">
 <h2>v0.5.1 — 2025-03-27<a class="headerlink" href="#v0-5-1-2025-03-27" title="Link to this heading">#</a></h2>
-<section id="changed">
-<h3>Changed<a class="headerlink" href="#changed" title="Link to this heading">#</a></h3>
+<section id="id3">
+<h3>Changed<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p>Cleanup output for kernels install for environments without ipykernels. Now
 only outputs <code class="docutils literal notranslate"><span class="pre">No</span> <span class="pre">ipykernels</span></code> if <code class="docutils literal notranslate"><span class="pre">--verbose</span></code> option passed</p></li>
@@ -481,8 +495,8 @@ only outputs <code class="docutils literal notranslate"><span class="pre">No</sp
 </section>
 <section id="v0-5-0-2025-03-27">
 <h2>v0.5.0 — 2025-03-27<a class="headerlink" href="#v0-5-0-2025-03-27" title="Link to this heading">#</a></h2>
-<section id="id2">
-<h3>Added<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
+<section id="id4">
+<h3>Added<a class="headerlink" href="#id4" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p>Added subcommand <code class="docutils literal notranslate"><span class="pre">uvw</span> <span class="pre">venv-link</span></code> to link from workon-home to local <code class="docutils literal notranslate"><span class="pre">.venv</span></code>.</p></li>
 </ul>
@@ -490,8 +504,8 @@ only outputs <code class="docutils literal notranslate"><span class="pre">No</sp
 </section>
 <section id="v0-4-0-2025-03-25">
 <h2>v0.4.0 — 2025-03-25<a class="headerlink" href="#v0-4-0-2025-03-25" title="Link to this heading">#</a></h2>
-<section id="id3">
-<h3>Changed<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
+<section id="id5">
+<h3>Changed<a class="headerlink" href="#id5" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p>Now supports <code class="docutils literal notranslate"><span class="pre">--yes/--no</span></code> options. Default is to query the user to yes/no
 questions. Passing <code class="docutils literal notranslate"><span class="pre">--yes</span></code> will always answer yes. Passing <code class="docutils literal notranslate"><span class="pre">--no</span></code> will always
@@ -510,8 +524,8 @@ answer no.</p></li>
 </section>
 <section id="v0-3-0-2025-03-19">
 <h2>v0.3.0 — 2025-03-19<a class="headerlink" href="#v0-3-0-2025-03-19" title="Link to this heading">#</a></h2>
-<section id="id4">
-<h3>Added<a class="headerlink" href="#id4" title="Link to this heading">#</a></h3>
+<section id="id6">
+<h3>Added<a class="headerlink" href="#id6" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p>Added <code class="docutils literal notranslate"><span class="pre">kernels</span></code> subcommands with:</p>
 <ul>
@@ -573,20 +587,24 @@ nb_conda_kernels to using uv to manage virtual environment.</p></li>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#unreleased">Unreleased</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">0.6.0 — 2025-05-30</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">0.7.0 — 2025-06-02</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#changed">Changed</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">0.6.0 — 2025-05-30</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#added">Added</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#v0-5-1-2025-03-27">v0.5.1 — 2025-03-27</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#changed">Changed</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">Changed</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#v0-5-0-2025-03-27">v0.5.0 — 2025-03-27</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Added</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">Added</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#v0-4-0-2025-03-25">v0.4.0 — 2025-03-25</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">Changed</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">Changed</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#v0-3-1-2025-03-25">v0.3.1 — 2025-03-25</a><ul class="visible nav section-nav flex-column">
@@ -594,7 +612,7 @@ nb_conda_kernels to using uv to manage virtual environment.</p></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#v0-3-0-2025-03-19">v0.3.0 — 2025-03-19</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">Added</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">Added</a></li>
 </ul>
 </li>
 </ul>
@@ -630,7 +648,7 @@ By William P. Krekelberg
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on 2025-05-30.
+  Last updated on 2025-06-02.
   <br/>
 </p>
   </div>

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>uv-workon &#8212; uv-workon 0.6.0 documentation</title>
+    <title>uv-workon &#8212; uv-workon 0.7.0 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
   <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script src="_static/documentation_options.js?v=3af6fc4c"></script>
+    <script src="_static/documentation_options.js?v=c62cc9a0"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -56,7 +56,7 @@
     <link rel="next" title="Installation" href="installation.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-    <meta name="docbuild:last-update" content="2025-05-30"/>
+    <meta name="docbuild:last-update" content="2025-06-02"/>
   </head>
   
   
@@ -144,7 +144,7 @@
   
   
   
-    <p class="title logo__title">uv-workon 0.6.0 documentation</p>
+    <p class="title logo__title">uv-workon 0.7.0 documentation</p>
   
 </a></div>
         <div class="sidebar-primary-item">
@@ -447,9 +447,9 @@ document.write(`
 <!-- prettier-ignore-end -->
 <section class="tex2jax_ignore mathjax_ignore" id="uv-workon">
 <h1><code class="docutils literal notranslate"><span class="pre">uv-workon</span></code><a class="headerlink" href="#uv-workon" title="Link to this heading">#</a></h1>
-<p>Command line program <code class="docutils literal notranslate"><span class="pre">uvw</span></code> to work with multiple <a class="reference external" href="https://docs.astral.sh/uv/">uv</a> based virtual
-environments. Note that the program name <code class="docutils literal notranslate"><span class="pre">uvw</span></code> differs from the project name
-<code class="docutils literal notranslate"><span class="pre">uv-workon</span></code> as <code class="docutils literal notranslate"><span class="pre">uvw</span></code> was taken on pypi.</p>
+<p>Command line program <code class="docutils literal notranslate"><span class="pre">uv-workon</span></code> to work with multiple <a class="reference external" href="https://docs.astral.sh/uv/">uv</a> based virtual
+environments. Note that the program name <code class="docutils literal notranslate"><span class="pre">uv-workon</span></code> differs from the project
+name <code class="docutils literal notranslate"><span class="pre">uv-workon</span></code> as <code class="docutils literal notranslate"><span class="pre">uv-workon</span></code> was taken on pypi.</p>
 <section id="overview">
 <h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">#</a></h2>
 <p><a class="reference external" href="https://docs.astral.sh/uv/"><code class="docutils literal notranslate"><span class="pre">uv</span></code></a> has taken the python world by storm, and for good reason. It manages
@@ -466,40 +466,42 @@ single python environments), there is utility in using a virtual environment for
 multiple tasks. There is <a class="reference external" href="https://github.com/astral-sh/uv/issues/1495">active discussion</a> regarding if
 and how <a class="reference external" href="https://docs.astral.sh/uv/">uv</a> should manage centralized virtual environments.</p>
 <p>We takes the perspective that python virtual environments should be managed with
-uv inside a project. <code class="docutils literal notranslate"><span class="pre">uvw</span></code> allows for the usage of such virtual environments
-<em>outside</em> the project. The basic workflow is as follows:</p>
+uv inside a project. <code class="docutils literal notranslate"><span class="pre">uv-workon</span></code> allows for the usage of such virtual
+environments <em>outside</em> the project. The basic workflow is as follows:</p>
 <ol class="arabic simple">
 <li><p>Create a project <code class="docutils literal notranslate"><span class="pre">my-project</span></code> using <code class="docutils literal notranslate"><span class="pre">uv</span> <span class="pre">init</span> <span class="pre">...</span></code></p></li>
 <li><p>Create a virtual environment <code class="docutils literal notranslate"><span class="pre">my-project/.venv</span></code> using <code class="docutils literal notranslate"><span class="pre">uv</span> <span class="pre">sync</span> <span class="pre">...</span></code></p></li>
-<li><p>Link to central location using <code class="docutils literal notranslate"><span class="pre">uvw</span> <span class="pre">link</span> <span class="pre">my-project</span></code></p></li>
+<li><p>Link to central location using <code class="docutils literal notranslate"><span class="pre">uv-workon</span> <span class="pre">link</span> <span class="pre">my-project</span></code></p></li>
 </ol>
 <p>Now, from anywhere, you can use the virtual environment <code class="docutils literal notranslate"><span class="pre">my-project</span></code>:</p>
 <ul class="simple">
-<li><p>Activate with <code class="docutils literal notranslate"><span class="pre">uvw</span> <span class="pre">activate</span> <span class="pre">-n</span> <span class="pre">my-project</span></code></p></li>
+<li><p>Activate with <code class="docutils literal notranslate"><span class="pre">uv-workon</span> <span class="pre">activate</span> <span class="pre">-n</span> <span class="pre">my-project</span></code></p></li>
 <li><p>Run python using the <code class="docutils literal notranslate"><span class="pre">my-project</span></code> virtual environment with
-<code class="docutils literal notranslate"><span class="pre">uvw</span> <span class="pre">run</span> <span class="pre">-n</span> <span class="pre">my-project</span> <span class="pre">...</span></code></p></li>
-<li><p>Change to the <code class="docutils literal notranslate"><span class="pre">my-project</span></code> project directory with <code class="docutils literal notranslate"><span class="pre">uvw</span> <span class="pre">cd</span> <span class="pre">-n</span> <span class="pre">my-project</span></code></p></li>
+<code class="docutils literal notranslate"><span class="pre">uv-workon</span> <span class="pre">run</span> <span class="pre">-n</span> <span class="pre">my-project</span> <span class="pre">...</span></code></p></li>
+<li><p>Change to the <code class="docutils literal notranslate"><span class="pre">my-project</span></code> project directory with <code class="docutils literal notranslate"><span class="pre">uv-workon</span> <span class="pre">cd</span> <span class="pre">-n</span> <span class="pre">my-project</span></code></p></li>
 </ul>
 </section>
 <section id="features">
 <h2>Features<a class="headerlink" href="#features" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p>Link virtual environment to central location with <code class="docutils literal notranslate"><span class="pre">uvw</span> <span class="pre">link</span></code>. These links are
-located at <code class="docutils literal notranslate"><span class="pre">WORKON_HOME</span></code> environment variable, defaulting to <code class="docutils literal notranslate"><span class="pre">~/.virtualenvs</span></code>.</p></li>
-<li><p>Activate virtual environment with <code class="docutils literal notranslate"><span class="pre">uvw</span> <span class="pre">activate</span> <span class="pre">...</span></code> (requires shell
+<li><p>Link virtual environment to central location with <code class="docutils literal notranslate"><span class="pre">uv-workon</span> <span class="pre">link</span></code>. These
+links are located at <code class="docutils literal notranslate"><span class="pre">WORKON_HOME</span></code> environment variable, defaulting to
+<code class="docutils literal notranslate"><span class="pre">~/.virtualenvs</span></code>.</p></li>
+<li><p>Activate virtual environment with <code class="docutils literal notranslate"><span class="pre">uv-workon</span> <span class="pre">activate</span> <span class="pre">...</span></code> (requires shell
 integration)</p></li>
-<li><p>Run under virtual environment with <code class="docutils literal notranslate"><span class="pre">uvw</span> <span class="pre">run</span> <span class="pre">...</span></code></p></li>
-<li><p>Change to project directory with <code class="docutils literal notranslate"><span class="pre">uvw</span> <span class="pre">cd</span> <span class="pre">...</span></code> (requires shell integration)</p></li>
-<li><p>List available virtual environments with <code class="docutils literal notranslate"><span class="pre">uvw</span> <span class="pre">list</span></code></p></li>
-<li><p>Cleanup missing symlinks with <code class="docutils literal notranslate"><span class="pre">uvw</span> <span class="pre">clean</span></code></p></li>
+<li><p>Run under virtual environment with <code class="docutils literal notranslate"><span class="pre">uv-workon</span> <span class="pre">run</span> <span class="pre">...</span></code></p></li>
+<li><p>Change to project directory with <code class="docutils literal notranslate"><span class="pre">uv-workon</span> <span class="pre">cd</span> <span class="pre">...</span></code> (requires shell
+integration)</p></li>
+<li><p>List available virtual environments with <code class="docutils literal notranslate"><span class="pre">uv-workon</span> <span class="pre">list</span></code></p></li>
+<li><p>Cleanup missing symlinks with <code class="docutils literal notranslate"><span class="pre">uv-workon</span> <span class="pre">clean</span></code></p></li>
 <li><p>Manage <a class="reference external" href="https://github.com/ipython/ipykernel"><code class="docutils literal notranslate"><span class="pre">ipykernel</span></code></a> with
-<code class="docutils literal notranslate"><span class="pre">uvw</span> <span class="pre">kernels</span> <span class="pre">...</span></code></p>
+<code class="docutils literal notranslate"><span class="pre">uv-workon</span> <span class="pre">kernels</span> <span class="pre">...</span></code></p>
 <ul>
 <li><p>Install kernels for linked virtual environments which have <code class="docutils literal notranslate"><span class="pre">ipykernel</span></code>
-installed with <code class="docutils literal notranslate"><span class="pre">uvw</span> <span class="pre">kernels</span> <span class="pre">install</span> <span class="pre">...</span></code></p></li>
+installed with <code class="docutils literal notranslate"><span class="pre">uv-workon</span> <span class="pre">kernels</span> <span class="pre">install</span> <span class="pre">...</span></code></p></li>
 <li><p>Remove kernels (including remove all missing/broken kernels) with
-<code class="docutils literal notranslate"><span class="pre">uvw</span> <span class="pre">kernels</span> <span class="pre">remove</span> <span class="pre">...</span></code></p></li>
-<li><p>list installed kernels with <code class="docutils literal notranslate"><span class="pre">uvw</span> <span class="pre">kernels</span> <span class="pre">list</span> <span class="pre">...</span></code></p></li>
+<code class="docutils literal notranslate"><span class="pre">uv-workon</span> <span class="pre">kernels</span> <span class="pre">remove</span> <span class="pre">...</span></code></p></li>
+<li><p>list installed kernels with <code class="docutils literal notranslate"><span class="pre">uv-workon</span> <span class="pre">kernels</span> <span class="pre">list</span> <span class="pre">...</span></code></p></li>
 </ul>
 </li>
 </ul>
@@ -594,7 +596,7 @@ By William P. Krekelberg
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on 2025-05-30.
+  Last updated on 2025-06-02.
   <br/>
 </p>
   </div>
