@@ -45,10 +45,10 @@ repos:
       - id: validate-pyproject
   # ** validate (schema-store)
   - repo: https://github.com/henryiii/validate-pyproject-schema-store
-    rev: 2025.05.12
+    rev: 2025.06.23
     hooks:
       - id: validate-pyproject
-        alias: validate-pyproject-full
+        name: validate-pyproject-schema-store
         stages: [manual]
   # ** repo review
   - repo: https://github.com/scientific-python/cookie
@@ -59,7 +59,7 @@ repos:
 
   # * Prettier
   - repo: https://github.com/rbubley/mirrors-prettier
-    rev: v3.5.3
+    rev: v3.6.2
     hooks:
       - id: prettier
         alias: markdownlint
@@ -76,7 +76,7 @@ repos:
 
   # * Linting
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.11.12
+    rev: v0.12.1
     hooks:
       - id: ruff-check
         alias: ruff
@@ -95,11 +95,12 @@ repos:
 
   # * Spelling
   # ** typos (only with manual)
-  - repo: https://github.com/crate-ci/typos
-    rev: v1.33.1
+  # Revert to crate-ci/typos if https://github.com/crate-ci/typos/issues/390 is fixed.
+  # - repo: https://github.com/crate-ci/typos
+  - repo: https://github.com/adhtruong/mirrors-typos
+    rev: v1.34.0
     hooks:
       - id: typos
-        stages: [manual]
         exclude_types: [jupyter]
         exclude: ^uv[.]lock$|^requirements
   # ** codespell
@@ -111,36 +112,31 @@ repos:
         args: [-I, docs/spelling_wordlist.txt]
         exclude_types: [jupyter]
         exclude: ^uv[.]lock$|^requirements
+        stages: [manual]
 
   # * Dependencies
-  # ** uv
-  - repo: https://github.com/astral-sh/uv-pre-commit
-    # uv version.
-    rev: 0.7.11
-    hooks:
-      - id: uv-lock
-        args: [--locked]
   # ** pyproject2conda
   - repo: https://github.com/usnistgov/pyproject2conda
-    rev: v0.19.1
+    rev: v0.22.1
     hooks:
       - id: pyproject2conda-project
         alias: requirements
-  # ** all lock files
-  - repo: local
+  # ** uv
+  - repo: https://github.com/astral-sh/uv-pre-commit
+    rev: 0.7.17
     hooks:
-      - id: requirements-lock
-        name: requirements-lock
-        alias: lock
-        entry: nox -s lock -- # ++lock-force
-        language: python
-        files: ^requirements/.*\.txt$
-        pass_filenames: false
-        additional_dependencies: ["nox==2025.5.1"]
+      - id: uv-lock
+        alias: requirements
+        args: [--locked]
+      - id: pip-compile
+        alias: requirements
+        entry: python tools/requirements_lock.py
+        pass_filenames: true
+        files: ^requirements/[^/]*\.txt$
 
   # * Commit message
   - repo: https://github.com/commitizen-tools/commitizen
-    rev: v4.8.2
+    rev: v4.8.3
     hooks:
       - id: commitizen
         stages: [commit-msg]
@@ -151,11 +147,11 @@ repos:
       - id: just-fmt
         name: just-fmt
         entry:
-          uvx --constraints=requirements/lock/uvx-tools.txt --from="rust-just"
-          just --fmt --justfile
+          bash -c 'for x in "$@"; do just --fmt --unstable --justfile "$x";
+          done' --
+        language: system
+        files: \.?[jJ]ustfile|.*\.just$
         stages: [manual]
-        language: python
-        files: \.?[jJ]ustfile
 
   # * Cruft
   - repo: https://github.com/cruft/cruft.git
