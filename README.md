@@ -43,8 +43,7 @@
 # `uv-workon`
 
 Command line program `uv-workon` to work with multiple [uv] based virtual
-environments. Note that the program name `uv-workon` differs from the project
-name `uv-workon` as `uv-workon` was taken on pypi.
+environments.
 
 ## Overview
 
