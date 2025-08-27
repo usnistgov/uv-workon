@@ -236,12 +236,11 @@ exclude = [
     "**/.numba_cache",
 ]
 pythonVersion = "3.11"
+typeCheckingMode = "strict"
 # Turn on always
 enableTypeIgnoreComments = false
 reportUnnecessaryTypeIgnoreComment = true
 reportUnreachable = "warning"
-# strict options
-typeCheckingMode = "strict"
 
 [tool.pytype]
 inputs = [
