@@ -206,7 +206,7 @@ def venv_patterns_app() -> Command:
 
 @pytest.mark.parametrize(
     ("environment_val", "venv_patterns", "use_default", "expected"),
-    [  # pyright: ignore[reportUnknownArgumentType]
+    [
         (None, [], True, {".venv", "venv"}),
         (None, ["hello"], True, {"hello", ".venv", "venv"}),
         (None, ["hello", "there"], True, {"hello", "there", ".venv", "venv"}),

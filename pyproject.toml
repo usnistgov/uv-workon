@@ -243,7 +243,6 @@ strict = [
 ]
 pythonVersion = "3.11"
 typeCheckingMode = "strict"
-enableTypeIgnoreComments = false
 # typeCheckingMode = "basic"
 # # enable subset of "strict"
 # reportDuplicateImport = true
@@ -264,6 +263,8 @@ enableTypeIgnoreComments = false
 # reportOptionalSubscript = false
 # reportPrivateImportUsage = false
 # reportUnboundVariable = false
+enableTypeIgnoreComments = false
+reportUnnecessaryTypeIgnoreComment = true
 
 [tool.pytype]
 inputs = [
