@@ -50,7 +50,7 @@ def get_broken_kernelspecs() -> dict[str, Any]:
 
     broken: dict[str, Any] = {}
     for name, data in get_kernelspecs().items():
-        exe = data["spec"]["argv"][0]
+        exe: str = data["spec"]["argv"][0]
         if Path(exe).exists() or which(exe):
             continue
         broken[name] = data
