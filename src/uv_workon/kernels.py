@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     from typing import Any
 
 
-logger = logging.getLogger(__name__)
+logger: logging.Logger = logging.getLogger(__name__)
 
 
 def has_jupyter_client() -> None:

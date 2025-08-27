@@ -42,7 +42,7 @@ if TYPE_CHECKING:
 # * Logging -------------------------------------------------------------------
 FORMAT = "[%(name)s - %(levelname)s] %(message)s"
 logging.basicConfig(level=logging.WARNING, format=FORMAT)
-logger = logging.getLogger(__name__)
+logger: logging.Logger = logging.getLogger(__name__)
 
 
 # * Utils ---------------------------------------------------------------------
@@ -165,8 +165,8 @@ def _complete_path() -> list[str]:
 
 
 # * Main app ------------------------------------------------------------------
-app_typer = typer.Typer()
-app_kernels = typer.Typer(help="Jupyter kernel utilities")
+app_typer: typer.Typer = typer.Typer()
+app_kernels: typer.Typer = typer.Typer(help="Jupyter kernel utilities")
 app_typer.add_typer(app_kernels, name="kernels")
 
 

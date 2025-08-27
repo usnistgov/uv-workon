@@ -27,7 +27,7 @@ if TYPE_CHECKING:
     from ._typing import PathLike, VirtualEnvPattern
     from ._typing_compat import Self
 
-logger = logging.getLogger(__name__)
+logger: logging.Logger = logging.getLogger(__name__)
 
 
 def _converter_pathlike(path: PathLike) -> Path:
