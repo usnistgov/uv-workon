@@ -283,6 +283,7 @@ reqs = [
     "grayskull>=2.5.3",
     "pre-commit>=4.0.0",
     "pre-commit-uv",
+    "prek",
     "pyrefly",
     "pyright>=1.1.396",
     "basedpyright>=1.31.3",
