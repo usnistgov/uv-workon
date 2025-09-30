@@ -300,26 +300,34 @@ mypy.requires-python = ">=3.12"
 nox.requires-python = ">=3.12"
 
 [tool.uv.build-backend]
-source-include = [
-    "tests/**",
-    "docs/**",
-    "tools/**",
-    "requirements/**",
-    "changelog.d/**",
-    "*.md",
-    "*.py",
-    "ruff.toml",
-    "uv.lock",
-    "[jJ]ustfile",
-    ".cruft.json",
-    ".editorconfig",
-    ".markdownlint.yaml",
-    ".pre-commit-config.yaml",
-    ".prettierignore",
-    ".prettierrc.yaml",
-    ".pylintrc.toml",
-    ".python-version",
-]
+source-include = [ "tests/**" ]
+# source-include = [
+#     "tests/**",
+#     "examples/**",
+#     "docs/**",
+#     "tools/**",
+#     "requirements/**",
+#     "changelog.d/**",
+#     "*.md",
+#     "*.py",
+#     "ruff.toml",
+#     "uv.lock",
+#     "[jJ]ustfile",
+#     ".cruft.json",
+#     ".editorconfig",
+#     ".markdownlint.yaml",
+#     ".pre-commit-config.yaml",
+#     ".prettierignore",
+#     ".prettierrc.yaml",
+#     ".pylintrc.toml",
+#     ".python-version",
+# ]
+
+# source-exclude = [
+#     "_build",
+#     "docs/**/generated",
+#     "docs/example/usage",
+# ]
 
 # * Other tools ----------------------------------------------------------------
 
