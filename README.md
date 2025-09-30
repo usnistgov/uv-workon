@@ -30,6 +30,7 @@
 <!-- [conda-link]: https://anaconda.org/wpk-nist/uv-workon -->
 [license-badge]: https://img.shields.io/pypi/l/uv-workon?color=informational
 [license-link]: https://github.com/usnistgov/uv-workon/blob/main/LICENSE
+[changelog-link]: https://github.com/usnistgov/uv-workon/blob/main/CHANGELOG.md
 
 <!-- other links -->
 
@@ -151,6 +152,10 @@ Open a issue if you need support for another shell.
 ## Documentation
 
 See the [documentation][docs-link] for further details.
+
+## What's new?
+
+See [changelog][changelog-link].
 
 ## License
 
