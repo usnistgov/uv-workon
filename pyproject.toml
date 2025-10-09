@@ -6,7 +6,7 @@ requires = [
 
 [project]
 name = "uv-workon"
-version = "0.7.0.dev"
+version = "0.7.1.dev0"
 description = "Tools to activate and run virtual environments from central location"
 readme = "README.md"
 keywords = [
@@ -28,6 +28,7 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Topic :: Scientific/Engineering",
 ]
 dependencies = [
@@ -99,6 +100,60 @@ typecheck = [
     { include-group = "pylint" },
     { include-group = "pytest" },
 ]
+
+# * uv -------------------------------------------------------------------------
+
+[tool.uv]
+managed = true
+default-groups = [ "dev" ]
+fork-strategy = "requires-python"
+required-version = ">=0.7.15"
+
+[tool.uv.pip]
+annotation-style = "line"
+generate-hashes = true
+
+[tool.uv.dependency-groups]
+dev.requires-python = ">=3.14"
+docs.requires-python = ">=3.14"
+docs-live.requires-python = ">=3.14"
+docs-spelling.requires-python = ">=3.14"
+# other tools
+ipython.requires-python = ">=3.14"
+mypy.requires-python = ">=3.14"
+nox.requires-python = ">=3.14"
+
+[tool.uv.build-backend]
+source-include = [ "tests/**" ]
+# source-include = [
+#     "tests/**",
+#     "examples/**",
+#     "docs/**",
+#     "tools/**",
+#     "requirements/**",
+#     "changelog.d/**",
+#     "*.md",
+#     "*.py",
+#     "ruff.toml",
+#     "uv.lock",
+#     "[jJ]ustfile",
+#     ".cruft.json",
+#     ".editorconfig",
+#     ".markdownlint.yaml",
+#     ".pre-commit-config.yaml",
+#     ".prettierignore",
+#     ".prettierrc.yaml",
+#     ".pylintrc.toml",
+#     ".python-version",
+# ]
+
+# source-exclude = [
+#     "_build",
+#     "docs/**/generated",
+#     "docs/example/usage",
+# ]
+
+# * Checks ---------------------------------------------------------------------
 
 [tool.repo-review]
 ignore = [
@@ -276,58 +331,6 @@ groups = [
 ]
 skip-package = true
 style = "requirements"
-
-# * uv -------------------------------------------------------------------------
-
-[tool.uv]
-managed = true
-default-groups = [ "dev" ]
-fork-strategy = "requires-python"
-required-version = ">=0.7.15"
-
-[tool.uv.pip]
-annotation-style = "line"
-generate-hashes = true
-
-[tool.uv.dependency-groups]
-dev.requires-python = ">=3.12"
-docs.requires-python = ">=3.12"
-docs-live.requires-python = ">=3.12"
-docs-spelling.requires-python = ">=3.12"
-# other tools
-ipython.requires-python = ">=3.12"
-mypy.requires-python = ">=3.12"
-nox.requires-python = ">=3.12"
-
-[tool.uv.build-backend]
-source-include = [ "tests/**" ]
-# source-include = [
-#     "tests/**",
-#     "examples/**",
-#     "docs/**",
-#     "tools/**",
-#     "requirements/**",
-#     "changelog.d/**",
-#     "*.md",
-#     "*.py",
-#     "ruff.toml",
-#     "uv.lock",
-#     "[jJ]ustfile",
-#     ".cruft.json",
-#     ".editorconfig",
-#     ".markdownlint.yaml",
-#     ".pre-commit-config.yaml",
-#     ".prettierignore",
-#     ".prettierrc.yaml",
-#     ".pylintrc.toml",
-#     ".python-version",
-# ]
-
-# source-exclude = [
-#     "_build",
-#     "docs/**/generated",
-#     "docs/example/usage",
-# ]
 
 # * Other tools ----------------------------------------------------------------
 
