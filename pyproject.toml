@@ -1,14 +1,14 @@
 [build-system]
-build-backend = "hatchling.build"
+build-backend = "uv_build"
 requires = [
-    "hatch-fancy-pypi-readme",
-    "hatch-vcs",
-    "hatchling",
+    "uv-build>=0.8.22,<0.9.0",
 ]
 
 [project]
 name = "uv-workon"
+version = "0.7.2"
 description = "Tools to activate and run virtual environments from central location"
+readme = "README.md"
 keywords = [
     "uv-workon",
 ]
@@ -28,11 +28,8 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Topic :: Scientific/Engineering",
-]
-dynamic = [
-    "readme",
-    "version",
 ]
 dependencies = [
     "attrs>=25.3.0",
@@ -52,82 +49,120 @@ scripts.uv-workon = "uv_workon.cli:app_typer"
 
 [dependency-groups]
 dev = [
-    { include-group = "dev-extras" },
     { include-group = "mypy" },
+    { include-group = "nox" },
     { include-group = "test" },
     { include-group = "typecheck" },
 ]
 test = [
-    { include-group = "test-extras" },
+    { include-group = "optional" },
+    { include-group = "test-noopt" },
 ]
 docs = [
     "autodocsumm",
     "myst-parser",
-    "pyenchant",
     "sphinx>=5.3.0",
     "sphinx-book-theme",
     "sphinx-click",
     "sphinx-copybutton",
-    "sphinxcontrib-spelling",
 ]
-cog = [ "cogapp" ]
-dev-extras = [
-    "ipykernel",
-    "ipython",
-    "nbclient>=0.10.0",
-    "nox>=2025.5.1",
-    "pytest-accept",
-]
+# other packages/tools
+ipython = [ "ipython" ]
+mypy = [ "mypy>=1.15.0", "orjson" ]
+nox = [ "nox>=2025.5.1" ]
+pylint = [ "pylint" ]
+pytest = [ "pytest", "pytest-mock>=3.14.0" ]
+# other environments
+optional = [ "uv-workon[all]" ]
 docs-live = [
     "sphinx-autobuild",
     { include-group = "docs" },
 ]
-mypy = [ "mypy>=1.15.0" ]
-nbval = [ "nbval" ]
-optional = [ "uv-workon[all]" ]
-test-extras = [
-    { include-group = "optional" },
-    { include-group = "test-noopt" },
+docs-spelling = [
+    "pyenchant",
+    "sphinxcontrib-spelling",
+    { include-group = "docs" },
 ]
 test-noopt = [
     "pytest",
     "pytest-cov",
-    "pytest-mock>=3.14.0",
     "pytest-sugar",
     "pytest-xdist",
+    { include-group = "pytest" },
+
+]
+test-extras = [
+    { include-group = "test" },
 ]
 typecheck = [
     "ipykernel",
-    "pylint",
-    "pytest",
-    "pytest-mock",
     { include-group = "optional" },
+    { include-group = "pylint" },
+    { include-group = "pytest" },
 ]
 
-[tool.hatch.version]
-source = "vcs"
-raw-options = { local_scheme = "no-local-version" }
+# * uv -------------------------------------------------------------------------
 
-[tool.hatch.build]
-exclude = [
-    ".*_cache",
-]
+[tool.uv]
+managed = true
+default-groups = [ "dev" ]
+fork-strategy = "requires-python"
+required-version = ">=0.7.15"
 
-[tool.hatch.metadata.hooks.fancy-pypi-readme]
-content-type = "text/markdown"
-fragments = [
-    { path = "README.md" },
-    { path = "CHANGELOG.md" },
-    { path = "LICENSE" },
-]
+[tool.uv.pip]
+annotation-style = "line"
+generate-hashes = true
+
+[tool.uv.dependency-groups]
+dev.requires-python = ">=3.14"
+docs.requires-python = ">=3.14"
+docs-live.requires-python = ">=3.14"
+docs-spelling.requires-python = ">=3.14"
+# other tools
+ipython.requires-python = ">=3.14"
+mypy.requires-python = ">=3.14"
+nox.requires-python = ">=3.14"
+
+[tool.uv.build-backend]
+source-include = [ "tests/**" ]
+# source-include = [
+#     "tests/**",
+#     "examples/**",
+#     "docs/**",
+#     "tools/**",
+#     "requirements/**",
+#     "changelog.d/**",
+#     "*.md",
+#     "*.py",
+#     "ruff.toml",
+#     "uv.lock",
+#     "[jJ]ustfile",
+#     ".cruft.json",
+#     ".editorconfig",
+#     ".markdownlint.yaml",
+#     ".pre-commit-config.yaml",
+#     ".prettierignore",
+#     ".prettierrc.yaml",
+#     ".pylintrc.toml",
+#     ".python-version",
+# ]
+
+# source-exclude = [
+#     "_build",
+#     "docs/**/generated",
+#     "docs/example/usage",
+# ]
+
+# * Checks ---------------------------------------------------------------------
 
 [tool.repo-review]
 ignore = [
-    "GH",    # enable for actions
-    "PC140", # do this externally
-    "PC170", # pygrep
-    "PC901", # ci message
+    # "GH",     # enable for actions
+    "PC140",  # do this externally
+    "PC170",  # pygrep
+    "PC901",  # ci message
     "RTD",
+    "NOX103", # I prefer using "nox.options.sessions"
 ]
 
 [tool.check-wheel-contents]
@@ -235,34 +270,12 @@ exclude = [
     "**/.mypy_cache",
     "**/.numba_cache",
 ]
-strict = [
-    "src",
-    "tests",
-    "noxfile.py",
-    "tools/*.py",
-]
 pythonVersion = "3.11"
 typeCheckingMode = "strict"
-# typeCheckingMode = "basic"
-# # enable subset of "strict"
-# reportDuplicateImport = true
-# reportInvalidStubStatement = true
-# reportOverlappingOverload = true
-# reportPropertyTypeMismatch = true
-# reportUntypedClassDecorator = true
-# reportUntypedFunctionDecorator = true
-# reportUntypedNamedTuple = true
-# reportUnusedImport = true
-# # disable subset of "basic"
-# reportGeneralTypeIssues = false
-# reportMissingModuleSource = false
-# reportOptionalCall = false
-# reportOptionalIterable = false
-# reportOptionalMemberAccess = false
-# reportOptionalOperand = false
-# reportOptionalSubscript = false
-# reportPrivateImportUsage = false
-# reportUnboundVariable = false
+# Turn on always
+enableTypeIgnoreComments = false
+reportUnnecessaryTypeIgnoreComment = true
+reportUnreachable = "warning"
 
 [tool.pytype]
 inputs = [
@@ -273,9 +286,10 @@ inputs = [
 # * Dependency creation --------------------------------------------------------
 
 [tool.pyproject2conda]
-user_config = "config/userconfig.toml"
-template_python = "requirements/py{py}-{env}"
+user-config = "config/userconfig.toml"
+template-python = "requirements/py{py}-{env}"
 template = "requirements/{env}"
+name = "py{py}-{env}"
 python = "default"
 channels = "conda-forge"
 style = "yaml"
@@ -294,7 +308,7 @@ python = "all"
 [tool.pyproject2conda.envs.test-extras]
 groups = "test-extras"
 python = "all"
-skip_package = true
+skip-package = true
 
 [tool.pyproject2conda.envs.uvx-tools]
 reqs = [
@@ -302,29 +316,22 @@ reqs = [
     "conda-lock>=2.5.5",
     "cruft",
     "grayskull>=2.5.3",
-    "nbqa>=1.8.4",
-    "pre-commit",
+    "pre-commit>=4.0.0",
     "pre-commit-uv",
-    "pyrefly",
+    "prek",
+    "pyrefly>=0.37.0",
     "pyright>=1.1.396",
+    "basedpyright>=1.31.3",
     "scriv",
     "twine>=5.0.0",
     "ty",
 ]
-groups = "mypy"
-skip_package = true
+groups = [
+    "mypy",
+    "nox",
+]
+skip-package = true
 style = "requirements"
-
-# * uv -------------------------------------------------------------------------
-
-[tool.uv]
-managed = true
-default-groups = [ "dev" ]
-fork-strategy = "requires-python"
-required-version = ">=0.7.2"
-
-[tool.uv.pip]
-annotation-style = "line"
 
 # * Other tools ----------------------------------------------------------------
 

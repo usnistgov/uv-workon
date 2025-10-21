@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     from typing import Any
 
 
-logger = logging.getLogger(__name__)
+logger: logging.Logger = logging.getLogger(__name__)
 
 
 def has_jupyter_client() -> None:
@@ -50,7 +50,7 @@ def get_broken_kernelspecs() -> dict[str, Any]:
 
     broken: dict[str, Any] = {}
     for name, data in get_kernelspecs().items():
-        exe = data["spec"]["argv"][0]
+        exe: str = data["spec"]["argv"][0]
         if Path(exe).exists() or which(exe):
             continue
         broken[name] = data
@@ -62,9 +62,7 @@ def remove_kernelspecs(names: list[str]) -> None:
     has_jupyter_client()
     from jupyter_client.kernelspecapp import RemoveKernelSpec
 
-    RemoveKernelSpec(
-        spec_names=names, force=True
-    ).start()  # ty: ignore[missing-argument]
+    RemoveKernelSpec(spec_names=names, force=True).start()  # ty: ignore[missing-argument]
 
 
 def complete_kernelspec_names(incomplete: str) -> Iterator[str]:
