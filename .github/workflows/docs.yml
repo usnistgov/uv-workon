@@ -1,0 +1,45 @@
+# .github/workflows/deploy-mkdocs.yml
+name: Deploy docs
+
+# Trigger on sem-version tag
+on:
+  push:
+    tags:
+      - v*
+      - test_docs_*
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency: docs # auto-cancel superseded runs
+
+jobs:
+  Initialize-Docs-Deployment:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo with submodule
+        uses: actions/checkout@v4
+
+      - name: "Set up Python"
+        uses: actions/setup-python@v5
+        with:
+          python-version-file: ".python-version"
+
+      - name: "Set up just"
+        uses: extractions/setup-just@v3
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: false
+
+      - name: Build docs
+        run: just docs html
+
+      - name: Deploy docs
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          just docs-release "docs: $TAG"

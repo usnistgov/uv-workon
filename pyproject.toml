@@ -157,7 +157,7 @@ source-include = [ "tests/**" ]
 
 [tool.repo-review]
 ignore = [
-    "GH",     # enable for actions
+    # "GH",     # enable for actions
     "PC140",  # do this externally
     "PC170",  # pygrep
     "PC901",  # ci message

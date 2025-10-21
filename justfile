@@ -231,7 +231,7 @@ docs-clean-build: clean-docs docs
 [group("dist")]
 [group("docs")]
 docs-release message="update docs" branch="nist-pages":
-    {{ UVX_WITH_OPTS }} ghp-import -o -n -m "{{ message }}" -b {{ branch }} docs/_build/html
+    {{ UVX_WITH_OPTS }} ghp-import -o -n -m "{{ message }}" -b {{ branch }} -p -f docs/_build/html
 
 [group("docs")]
 docs-open: (docs "open")
