@@ -1,7 +1,7 @@
 {
   "template": "https://github.com/usnistgov/cookiecutter-nist-python.git",
   "commit": "48475fde07911b73825769f93a37461cd644e36c",
-  "checkout": "develop",
+  "checkout": "main",
   "context": {
     "cookiecutter": {
       "project_name": "uv-workon",
