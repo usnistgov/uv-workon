@@ -272,7 +272,7 @@ exclude = [
 ]
 pythonVersion = "3.11"
 typeCheckingMode = "strict"
-# Turn on always
+# Turn on always.
 enableTypeIgnoreComments = false
 reportUnnecessaryTypeIgnoreComment = true
 reportUnreachable = "warning"
