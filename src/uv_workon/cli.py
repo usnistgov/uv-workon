@@ -140,8 +140,8 @@ def _callback_verbose(
     else:  # pragma: no cover
         level = logging.DEBUG
 
-    for _logger in map(logging.getLogger, logging.root.manager.loggerDict):  # pylint: disable=no-member
-        _logger.setLevel(level)
+    for logger_ in map(logging.getLogger, logging.root.manager.loggerDict):  # pylint: disable=no-member
+        logger_.setLevel(level)
     return verbose
 
 

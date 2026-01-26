@@ -84,12 +84,12 @@ class VirtualEnvPathAndLink:
                 names = [names]
             seq = zip(paths, names, strict=True)
 
-        for _path, _name in seq:
-            if (path := infer_virtualenv_path(_path, venv_patterns)) is not None:
+        for path_, name_ in seq:
+            if (path := infer_virtualenv_path(path_, venv_patterns)) is not None:
                 name = (
                     infer_virtualenv_name(path, venv_patterns)
-                    if _name is None
-                    else _name
+                    if name_ is None
+                    else name_
                 )
                 link = validate_symlink(workon_home / name)
                 yield cls(path=path, link=link)  # pyrefly: ignore[unexpected-keyword]
