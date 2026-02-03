@@ -23,7 +23,7 @@ def validate_venv_patterns(venv_patterns: VirtualEnvPattern) -> list[str]:
     """Validate venv patterns."""
     # fast exit for most likely cas
     if isinstance(venv_patterns, list):
-        return venv_patterns
+        return venv_patterns  # ty: ignore[invalid-return-type]
 
     if venv_patterns is None:
         return []

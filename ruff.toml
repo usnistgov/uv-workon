@@ -23,10 +23,10 @@ select = [
 ]
 # fixable = [ "ALL" ]
 unfixable = [
+    "B006",    # Disable because need default value of [] in for callbacks
     "ERA",
     "PLR6104",
     "T",       # NOTE: remove this option when ready to go to new annotation style (needs python >= 3.10)
-    "B006",    # Disable because need default value of [] in for callbacks
 ]
 ignore = [
     "ANN401",  # - Any ok sometimes
@@ -44,10 +44,10 @@ ignore = [
     "E501",    # - line too long - let formatter fix this
     "E731",    # - do not assign a lambda expression, use a def
     "FBT",     # - bools are ok
+    "PLC0415", # - import should be at top level (leads to issues with imports in func?)
     "S404",    # - Want to use subprocess sometimes
     "S603",    # - subprocess-without-shell-equals-true
     "S607",    # - start-process-with-partial-path
-    "PLC0415", # - import should be at top level (leads to issues with imports in func?)
     "TID252",  # - Allow relative imports
 ]
 # Use extend-ignore for project specific ignores. Prefer lint.extend-per-file-ignores."src/**/*.py" below
@@ -59,6 +59,8 @@ pydocstyle.convention = "numpy"
 pylint.max-args = 15
 pylint.max-positional-args = 15
 pylint.max-public-methods = 30
+
+ruff.strictly-empty-init-modules = false
 
 [lint.per-file-ignores]
 "docs/conf.py" = [
@@ -100,9 +102,9 @@ pylint.max-public-methods = 30
     # "PLR0917", # - complexity sometimes ok
     "DOC402",
 ]
-"tests/**/*.py" = [ "T201", "SLF001" ]
+"tests/**/*.py" = [ "SLF001", "T201" ]
 "src/**/cli.py" = [
-    "T201",
     "ARG001", # with callbacks and decorators, there are unused parameters...
+    "T201",
 ]
 "src/**/scripts/*.py" = [ "INP001" ]

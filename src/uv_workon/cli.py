@@ -184,7 +184,7 @@ def version_callback(value: bool) -> None:
 @app_typer.callback(invoke_without_command=True)
 def main(
     ctx: typer.Context,
-    version: bool = typer.Option(
+    version: bool = typer.Option(  # pyright: ignore[reportCallInDefaultInitializer]
         None, "--version", "-v", callback=version_callback, is_eager=True
     ),
 ) -> None:

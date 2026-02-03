@@ -7,8 +7,9 @@ from typing import TYPE_CHECKING, cast
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
+    from typing import NamedTuple
 
-    class _Parser:
+    class _Parser(NamedTuple):
         """Dummy class for parser."""
 
         args: list[str]
@@ -20,9 +21,9 @@ def get_parser() -> ArgumentParser:
     """Basic parser."""
     parser = ArgumentParser(description="Interface to python -m ipykernel install")
 
-    parser.add_argument("--dry-run", action="store_true")
-    parser.add_argument("--verbose", action="store_true")
-    parser.add_argument("args", type=str, nargs="+", default=[])
+    _ = parser.add_argument("--dry-run", action="store_true")
+    _ = parser.add_argument("--verbose", action="store_true")
+    _ = parser.add_argument("args", type=str, nargs="+", default=[])
 
     return parser
 
@@ -36,7 +37,7 @@ def main(args: Sequence[str] | None = None) -> int:
     )
 
     try:
-        import ipykernel  # pyright: ignore[reportUnusedImport] # noqa: F401  # pylint: disable=unused-import
+        import ipykernel  # noqa: F401  # pylint: disable=unused-import
     except ImportError:
         import sys
 
@@ -51,7 +52,7 @@ def main(args: Sequence[str] | None = None) -> int:
     else:
         import subprocess
 
-        subprocess.run(args_, check=True)
+        _ = subprocess.run(args_, check=True)
 
     return 0
 
