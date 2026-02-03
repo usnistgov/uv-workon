@@ -378,7 +378,7 @@ reqs = [
     "pyright>=1.1.396",
     "scriv",
     "twine>=5.0.0",
-    "ty",
+    "ty>=0.0.14",
 ]
 groups = [
     "basedpyright",
