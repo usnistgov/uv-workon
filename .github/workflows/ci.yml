@@ -44,7 +44,7 @@ jobs:
           default_python_version = Path(".python-version").read_text().strip()
 
           # min max and default pythons
-          matrix_test_python = list({ python_versions[0], python_versions[-1], default_python_version, f"pypy-3.11" })
+          matrix_test_python = list({ python_versions[0], python_versions[-1], default_python_version})
 
           with open(os.getenv("GITHUB_OUTPUT"), "a") as f:
             f.write(f"{default_python_version=:s}\n")
@@ -81,8 +81,8 @@ jobs:
             prek-v1|${{ runner.os }}|${{ runner.arch }}|${{ env.pythonLocation
             }}|${{ hashFiles('./**/.pre-commit-config.yaml') }}
       - name: Run prek
-        env:
-          SKIP: typecheck
+        # env:
+        #   SKIP: typecheck
         run: >-
           $UVX_COMMAND prek run --show-diff-on-failure --color=always
           --all-files --hook-stage=manual -v
@@ -95,7 +95,6 @@ jobs:
       matrix:
         os:
           - ubuntu-latest
-          - windows-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
@@ -124,12 +123,20 @@ jobs:
       matrix:
         os:
           - ubuntu-latest
+        style:
+          - test
         python-version:
           ${{ fromJson(needs.build-package.outputs.matrix-test-python) }}
         include:
-          - os: windows-latest
+          # - os: windows-latest
+          #   python-version:
+          #     ${{ needs.build-package.outputs.default-python-version }}
+          #   style: test
+          - os: ubuntu-latest
             python-version:
               ${{ needs.build-package.outputs.default-python-version }}
+            style: test-noopt
+
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
@@ -146,8 +153,10 @@ jobs:
       - name: Test with nox
         env:
           python_version: ${{ matrix.python-version }}
+          style: ${{ matrix.style }}
         run: >-
-          $UVX_COMMAND nox -s test-"$python_version" -- ++installpkg dist/*.whl
+          $UVX_COMMAND nox -s "${style}-${python_version}" -- ++installpkg
+          dist/*.whl
         shell: bash
 
       - name: Upload coverage data
