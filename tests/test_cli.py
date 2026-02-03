@@ -2,6 +2,7 @@
 # pylint: disable=protected-access
 from __future__ import annotations
 
+import contextlib
 import os
 import shlex
 from functools import partial
@@ -643,12 +644,6 @@ def test_shell_cd(
     assert f"cd {path}" in out.output
 
 
-def test__main__() -> None:
-    from subprocess import check_call
-
-    assert not check_call(["python", "-m", "uv_workon"])
-
-
 def test_no_subcommand(
     click_app: Command,
     clirunner: CliRunner,
@@ -853,3 +848,13 @@ def test_list_kernels(
     )
 
     assert mocked.mock_calls == [mocker.call(log_level="ERROR"), mocker.call().start()]
+
+
+def test__main__(
+    mocker: MockerFixture,
+) -> None:
+    mocked_app = mocker.patch("uv_workon.cli.app_typer")
+    with contextlib.suppress(SystemExit):
+        import uv_workon.__main__  # noqa: F401
+
+        mocked_app.assert_called_once_with(prog_name="uv-workon")

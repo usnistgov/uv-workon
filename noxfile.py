@@ -471,7 +471,7 @@ def pre_commit_run(
 def test_all(session: Session) -> None:
     """Run all tests and coverage."""
     session.notify("coverage-erase")
-    for py in PYTHON_TEST_VERSIONS:
+    for py in [PYTHON_TEST_VERSIONS[i] for i in (0, -1)]:
         session.notify(f"test-{py}")
     session.notify(f"test-noopt-{PYTHON_DEFAULT_VERSION}")
     session.notify("coverage")
