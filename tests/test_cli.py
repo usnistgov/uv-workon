@@ -18,6 +18,7 @@ from uv_workon.core import generate_shell_config
 from uv_workon.kernels import get_ipykernel_install_script_path
 
 from .test_kernels import skip_if_no_jupyter_client  # pyrefly: ignore[missing-import]
+from .utils import normalize_path  # pyrefly: ignore[missing-import]
 
 if TYPE_CHECKING:
     from typing import Any
@@ -330,7 +331,9 @@ def test_link_paths(
             }
 
         print(expected_paths)
-        assert expected_paths == {p.readlink() for p in workon_home.glob("*")}
+        assert expected_paths == set(
+            map(normalize_path, (p.readlink() for p in workon_home.glob("*")))
+        )
 
     # try again with exiting symlinks
     for opt in ("--no", "--yes"):
@@ -516,7 +519,7 @@ def test_clean(
     link.symlink_to(path)
 
     assert link.exists()
-    assert link.readlink() == path
+    assert path == normalize_path(link.readlink())
 
     clirunner.invoke(
         click_app,
@@ -587,7 +590,7 @@ def test_run(
     )
 
     if dry:
-        expected = f"VIRTUAL_ENV={path} UV_PROJECT_ENVIRONMENT={path} uv run -p {path} --no-project {shlex.join(args)}"
+        expected = f"VIRTUAL_ENV={path} UV_PROJECT_ENVIRONMENT={path} {shlex.join(['uv', 'run', '-p', str(path), '--no-project', *args])}"
         assert expected == out.output.strip()
 
 
