@@ -21,9 +21,11 @@ def select_option(
         TerminalMenu,
     )
 
+    title_list: list[str] = [title] if title else []
+
     title = " ".join(
         [
-            *([title] if title else []),
+            *title_list,
             *(
                 ["use arrows or j/k to move down/up, or / to limit by name"]
                 if usage

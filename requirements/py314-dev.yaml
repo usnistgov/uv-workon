@@ -17,7 +17,6 @@ dependencies:
   - jupyter-client>=8.6.3
   - mypy>=1.15.0
   - nox>=2025.5.1
-  - orjson
   - pylint
   - pytest
   - pytest-cov
@@ -25,5 +24,6 @@ dependencies:
   - pytest-sugar
   - pytest-xdist
   - simple-term-menu>=1.6.6
+  - typecheck-runner>=0.1.0
   - typer>=0.15.2
   - pip

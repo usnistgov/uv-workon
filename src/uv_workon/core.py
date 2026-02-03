@@ -126,7 +126,7 @@ def uv_run(
     if not dry_run:
         import subprocess
 
-        subprocess.run(
+        _ = subprocess.run(
             args,
             check=True,
             env={

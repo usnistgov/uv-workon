@@ -11,9 +11,8 @@ basedpyright>=1.31.3
 conda-lock>=2.5.5
 cruft
 grayskull>=2.5.3
-mypy>=1.15.0
+mypy[faster-cache]>=1.15.0
 nox>=2025.5.1
-orjson
 pre-commit-uv
 pre-commit>=4.0.0
 prek
@@ -22,3 +21,4 @@ pyright>=1.1.396
 scriv
 twine>=5.0.0
 ty
+typecheck-runner>=0.1.0; python_version > "3.9"
