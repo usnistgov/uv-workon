@@ -128,10 +128,10 @@ jobs:
         python-version:
           ${{ fromJson(needs.build-package.outputs.matrix-test-python) }}
         include:
-          # - os: windows-latest
-          #   python-version:
-          #     ${{ needs.build-package.outputs.default-python-version }}
-          #   style: test
+          - os: windows-latest
+            python-version:
+              ${{ needs.build-package.outputs.default-python-version }}
+            style: test-noopt
           - os: ubuntu-latest
             python-version:
               ${{ needs.build-package.outputs.default-python-version }}

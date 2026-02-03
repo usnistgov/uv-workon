@@ -6,6 +6,7 @@ import contextlib
 import os
 import shlex
 from functools import partial
+from importlib.util import find_spec
 from pathlib import Path
 from typing import TYPE_CHECKING, cast
 
@@ -54,6 +55,9 @@ def test__get_input_paths(venvs_parent_path: Path) -> None:
     assert set(out) == expected2
 
 
+@pytest.mark.skipif(
+    not find_spec("simple_term_menu"), reason="missing simple_term_menu"
+)
 def test__select_venv_path(
     venvs_parent_path: Path,
     workon_home_with_is_venv: Path,
