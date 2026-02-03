@@ -608,7 +608,7 @@ def test_shell_activate(
         click_app,
         ["activate", "-n", "is_venv_0", "--workon-home", str(workon_home_with_is_venv)],
     )
-    assert f"source {workon_home_with_is_venv}/is_venv_0" in out.output
+    assert f"source {workon_home_with_is_venv / 'is_venv_0'}" in out.output
 
     out = clirunner.invoke(
         click_app,
