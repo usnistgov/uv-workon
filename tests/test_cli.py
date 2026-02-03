@@ -2,9 +2,11 @@
 # pylint: disable=protected-access
 from __future__ import annotations
 
+import contextlib
 import os
 import shlex
 from functools import partial
+from importlib.util import find_spec
 from pathlib import Path
 from typing import TYPE_CHECKING, cast
 
@@ -16,6 +18,7 @@ from uv_workon.core import generate_shell_config
 from uv_workon.kernels import get_ipykernel_install_script_path
 
 from .test_kernels import skip_if_no_jupyter_client  # pyrefly: ignore[missing-import]
+from .utils import normalize_path  # pyrefly: ignore[missing-import]
 
 if TYPE_CHECKING:
     from typing import Any
@@ -53,6 +56,9 @@ def test__get_input_paths(venvs_parent_path: Path) -> None:
     assert set(out) == expected2
 
 
+@pytest.mark.skipif(
+    not find_spec("simple_term_menu"), reason="missing simple_term_menu"
+)
 def test__select_venv_path(
     venvs_parent_path: Path,
     workon_home_with_is_venv: Path,
@@ -325,7 +331,9 @@ def test_link_paths(
             }
 
         print(expected_paths)
-        assert expected_paths == {p.readlink() for p in workon_home.glob("*")}
+        assert expected_paths == set(
+            map(normalize_path, (p.readlink() for p in workon_home.glob("*")))
+        )
 
     # try again with exiting symlinks
     for opt in ("--no", "--yes"):
@@ -511,7 +519,7 @@ def test_clean(
     link.symlink_to(path)
 
     assert link.exists()
-    assert link.readlink() == path
+    assert path == normalize_path(link.readlink())
 
     clirunner.invoke(
         click_app,
@@ -582,7 +590,7 @@ def test_run(
     )
 
     if dry:
-        expected = f"VIRTUAL_ENV={path} UV_PROJECT_ENVIRONMENT={path} uv run -p {path} --no-project {shlex.join(args)}"
+        expected = f"VIRTUAL_ENV={path} UV_PROJECT_ENVIRONMENT={path} {shlex.join(['uv', 'run', '-p', str(path), '--no-project', *args])}"
         assert expected == out.output.strip()
 
 
@@ -600,7 +608,7 @@ def test_shell_activate(
         click_app,
         ["activate", "-n", "is_venv_0", "--workon-home", str(workon_home_with_is_venv)],
     )
-    assert f"source {workon_home_with_is_venv}/is_venv_0" in out.output
+    assert f"source {workon_home_with_is_venv / 'is_venv_0'}" in out.output
 
     out = clirunner.invoke(
         click_app,
@@ -612,7 +620,7 @@ def test_shell_activate(
             str(workon_home_with_is_venv),
         ],
     )
-    assert f"source {workon_home_with_is_venv}/is_venv_1" in out.output
+    assert f"source {workon_home_with_is_venv / 'is_venv_1'}" in out.output
 
     out = clirunner.invoke(
         click_app,
@@ -641,12 +649,6 @@ def test_shell_cd(
     path = (workon_home_with_is_venv / "is_venv_0").resolve().parent
 
     assert f"cd {path}" in out.output
-
-
-def test__main__() -> None:
-    from subprocess import check_call
-
-    assert not check_call(["python", "-m", "uv_workon"])
 
 
 def test_no_subcommand(
@@ -853,3 +855,13 @@ def test_list_kernels(
     )
 
     assert mocked.mock_calls == [mocker.call(log_level="ERROR"), mocker.call().start()]
+
+
+def test__main__(
+    mocker: MockerFixture,
+) -> None:
+    mocked_app = mocker.patch("uv_workon.cli.app_typer")
+    with contextlib.suppress(SystemExit):
+        import uv_workon.__main__  # noqa: F401
+
+        mocked_app.assert_called_once_with(prog_name="uv-workon")

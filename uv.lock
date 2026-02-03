@@ -2009,7 +2009,6 @@ version = "0.7.2"
 source = { editable = "." }
 dependencies = [
     { name = "attrs" },
-    { name = "simple-term-menu" },
     { name = "typer" },
     { name = "typing-extensions", marker = "python_full_version < '3.11'" },
 ]
@@ -2017,9 +2016,13 @@ dependencies = [
 [package.optional-dependencies]
 all = [
     { name = "jupyter-client" },
+    { name = "simple-term-menu" },
 ]
 jupyter = [
     { name = "jupyter-client" },
+]
+menu = [
+    { name = "simple-term-menu" },
 ]
 
 [package.dev-dependencies]
@@ -2124,12 +2127,12 @@ typecheck-runner = [
 requires-dist = [
     { name = "attrs", specifier = ">=25.3.0" },
     { name = "jupyter-client", marker = "extra == 'jupyter'", specifier = ">=8.6.3" },
-    { name = "simple-term-menu", specifier = ">=1.6.6" },
+    { name = "simple-term-menu", marker = "extra == 'menu'", specifier = ">=1.6.6" },
     { name = "typer", specifier = ">=0.15.2" },
     { name = "typing-extensions", marker = "python_full_version < '3.11'", specifier = ">=4.12.2" },
-    { name = "uv-workon", extras = ["jupyter"], marker = "extra == 'all'" },
+    { name = "uv-workon", extras = ["jupyter", "menu"], marker = "extra == 'all'" },
 ]
-provides-extras = ["all", "jupyter"]
+provides-extras = ["all", "menu", "jupyter"]
 
 [package.metadata.requires-dev]
 basedpyright = [{ name = "basedpyright", specifier = ">=1.31.3" }]

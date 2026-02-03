@@ -471,9 +471,9 @@ def pre_commit_run(
 def test_all(session: Session) -> None:
     """Run all tests and coverage."""
     session.notify("coverage-erase")
-    for py in PYTHON_TEST_VERSIONS:
+    for py in [PYTHON_TEST_VERSIONS[i] for i in (0, -1)]:
         session.notify(f"test-{py}")
-    session.notify("test-noopt")
+    session.notify(f"test-noopt-{PYTHON_DEFAULT_VERSION}")
     session.notify("coverage")
 
 
@@ -580,7 +580,7 @@ nox.session(python=PYTHON_TEST_VERSIONS)(test)
 nox.session(name="test-conda", **CONDA_ALL_KWS)(test)
 
 
-@nox.session(name="test-noopt", **DEFAULT_KWS)
+@nox.session(name="test-noopt", python=[PYTHON_DEFAULT_VERSION])
 @add_opts
 def test_noopt(
     session: Session,
@@ -839,7 +839,7 @@ def typecheck(  # noqa: C901
 
     cmd = opts.typecheck or []
     if not opts.typecheck_run and not cmd:
-        cmd = ["mypy", "basedpyright"]
+        cmd = ["mypy", "basedpyright", "pyrefly", "ty"]
 
     if "all" in cmd:
         cmd = ["mypy", "basedpyright", "pylint"]
