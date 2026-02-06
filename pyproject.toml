@@ -146,7 +146,6 @@ generate-hashes = true
 #     "ruff.toml",
 #     "uv.lock",
 #     "[jJ]ustfile",
-#     ".cruft.json",
 #     ".editorconfig",
 #     ".markdownlint.yaml",
 #     ".pre-commit-config.yaml",
@@ -344,9 +343,6 @@ channels = "conda-forge"
 style = "yaml"
 deps = "pip"
 
-[tool.pyproject2conda.dependencies]
-pytest-accept = { pip = true }
-
 [tool.pyproject2conda.envs.dev]
 groups = "dev"
 
@@ -369,10 +365,9 @@ skip-package = true
 [tool.pyproject2conda.envs.uvx-tools]
 reqs = [
     "conda-lock>=2.5.5",
-    "cruft",
+    "copier",
+    "copier-template-extensions>=0.3.1",
     "grayskull>=2.5.3",
-    "pre-commit-uv",
-    "pre-commit>=4.0.0",
     "prek",
     "pyrefly>=0.37.0",
     "pyright>=1.1.396",
@@ -398,5 +393,3 @@ new_fragment_template = "file: changelog.d/templates/new_fragment.md.j2"
 
 [tool.commitizen]
 use_shortcuts = true
-
-[tool.cruft]
