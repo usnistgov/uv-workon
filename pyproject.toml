@@ -36,6 +36,7 @@ dependencies = [
     "typer>=0.15.2",
     "typing-extensions>=4.12.2; python_full_version<'3.11'",
 ]
+
 [project.optional-dependencies]
 all = [
     "uv-workon[jupyter,menu]",
@@ -46,8 +47,10 @@ menu = [
 jupyter = [
     "jupyter-client>=8.6.3",
 ]
+
 [project.scripts]
 uv-workon = "uv_workon.cli:app_typer"
+
 [project.urls]
 Documentation = "https://pages.nist.gov/uv-workon/"
 Homepage = "https://github.com/usnistgov/uv-workon"
@@ -72,16 +75,7 @@ docs = [
     "sphinx-click",
     "sphinx-copybutton",
 ]
-# other packages/tools
-ipython = [ "ipython" ]
 basedpyright = [ "basedpyright>=1.31.3" ]
-mypy = [ "mypy[faster-cache]>=1.15.0" ]
-nox = [ "nox>=2025.5.1" ]
-pylint = [ "pylint" ]
-pytest = [ "pytest", "pytest-mock>=3.14.0" ]
-typecheck-runner = [ "typecheck-runner>=0.1.0; python_version>'3.9'" ]
-# other environments
-optional = [ "uv-workon[all]" ]
 docs-live = [
     "sphinx-autobuild",
     { include-group = "docs" },
@@ -91,16 +85,23 @@ docs-spelling = [
     "sphinxcontrib-spelling",
     { include-group = "docs" },
 ]
+# other packages/tools
+ipython = [ "ipython" ]
+mypy = [ "mypy[faster-cache]>=1.15.0" ]
+nox = [ "nox>=2025.5.1" ]
+# other environments
+optional = [ "uv-workon[all]" ]
+pylint = [ "pylint" ]
+pytest = [ "pytest", "pytest-mock>=3.14.0" ]
+test-extras = [
+    { include-group = "test" },
+]
 test-noopt = [
     "pytest",
     "pytest-cov",
     "pytest-sugar",
     "pytest-xdist",
     { include-group = "pytest" },
-
-]
-test-extras = [
-    { include-group = "test" },
 ]
 typecheck = [
     "ipykernel",
@@ -109,30 +110,26 @@ typecheck = [
     { include-group = "pytest" },
     { include-group = "typecheck-runner" },
 ]
+typecheck-runner = [ "typecheck-runner>=0.1.0; python_version>'3.9'" ]
 
 # * uv -------------------------------------------------------------------------
 
 [tool.uv]
-managed = true
-default-groups = [ "dev" ]
-fork-strategy = "requires-python"
 required-version = ">=0.7.15"
-
-[tool.uv.build-backend]
-source-include = [ "tests/**" ]
-[tool.uv.dependency-groups]
-dev.requires-python = ">=3.14"
-docs.requires-python = ">=3.14"
-docs-live.requires-python = ">=3.14"
-docs-spelling.requires-python = ">=3.14"
+default-groups = [ "dev" ]
+dependency-groups.dev.requires-python = ">=3.14"
+dependency-groups.docs-live.requires-python = ">=3.14"
+dependency-groups.docs-spelling.requires-python = ">=3.14"
+dependency-groups.docs.requires-python = ">=3.14"
 # other tools
-ipython.requires-python = ">=3.14"
-mypy.requires-python = ">=3.14"
-nox.requires-python = ">=3.14"
-
-[tool.uv.pip]
-annotation-style = "line"
-generate-hashes = true
+dependency-groups.ipython.requires-python = ">=3.14"
+dependency-groups.mypy.requires-python = ">=3.14"
+dependency-groups.nox.requires-python = ">=3.14"
+fork-strategy = "requires-python"
+managed = true
+build-backend.source-include = [ "tests/**" ]
+pip.annotation-style = "line"
+pip.generate-hashes = true
 
 # source-include = [
 #     "tests/**",
@@ -186,15 +183,15 @@ expand_tables = [
     "project.scripts",
     "project.urls",
 ]
-collapse_tables = [  ]
+collapse_tables = []
 
-[tool.typos.default.extend-identifiers]
-CPY = "CPY"
+[tool.typos]
+default.extend-identifiers.CPY = "CPY"
 
+[tool.pytest]
 # * Testing --------------------------------------------------------------------
 
-[tool.pytest.ini_options]
-addopts = [
+ini_options.addopts = [
     "--cov-config=pyproject.toml",
     "--doctest-glob=*.md",
     "--doctest-modules",
@@ -203,42 +200,38 @@ addopts = [
     "--strict-markers",
     "-ra",
 ]
-testpaths = [
+ini_options.testpaths = [
     "README.md",
     "tests",
     "uv_workon",
 ]
-minversion = "8"
-log_cli_level = "INFO"
-log_level = "INFO"
-xfail_strict = true
-filterwarnings = [
+ini_options.minversion = "8"
+ini_options.log_cli_level = "INFO"
+ini_options.log_level = "INFO"
+ini_options.xfail_strict = true
+ini_options.filterwarnings = [
     "error",
     "ignore: Jupyter is migrating its paths to use standard platformdirs:DeprecationWarning",
 ]
 
-[tool.coverage.paths]
-source = [
+[tool.coverage]
+run.branch = true
+paths.source = [
     "src/",
     # needed for non editable doctests
     ".nox/**/site-packages/",
 ]
-
-[tool.coverage.report]
-show_missing = true
-exclude_also = [
+report.exclude_also = [
     "@overload",
     "if TYPE_CHECKING:",
 ]
-omit = [
-    "*/vendored/*",
-]
-include = [
+report.include = [
     "src/*",
 ]
-
-[tool.coverage.run]
-branch = true
+report.omit = [
+    "*/vendored/*",
+]
+report.show_missing = true
 
 # * typecheck ---------------------------------------------------------------------
 
@@ -266,13 +259,10 @@ enable_error_code = [
     "redundant-expr",
     "truthy-bool",
 ]
-
-[[tool.mypy.overrides]]
-ignore_missing_imports = true
-module = [
+overrides = [ { ignore_missing_imports = true, module = [
     "shellingham.*",
     "simple_term_menu.*",
-]
+] } ]
 
 [tool.pyrefly]
 project-includes = [ "src", "tests" ]
@@ -300,7 +290,6 @@ reportUntypedFunctionDecorator = true
 enableTypeIgnoreComments = false
 reportUnnecessaryTypeIgnoreComment = true
 reportUnreachable = "warning"
-
 deprecateTypingAliases = true
 enableReachabilityAnalysis = false
 reportCallInDefaultInitializer = true
@@ -309,27 +298,24 @@ reportImportCycles = true
 # reportMissingSuperCall = true
 reportUninitializedInstanceVariable = true
 reportUnusedCallResult = true
-
 # type-checkers should type-check; linters should lint
 reportImplicitStringConcatenation = false
-reportPrivateUsage = false                # dupe of PLC2701
-reportPrivateImportUsage = false          # dupe of PLC2701
-reportUnusedImport = false                # dupe of F401
-reportUnusedVariable = false              # dupe of F841
+reportPrivateUsage = false  # dupe of PLC2701
+reportPrivateImportUsage = false  # dupe of PLC2701
+reportUnusedImport = false  # dupe of F401
+reportUnusedVariable = false  # dupe of F841
+executionEnvironments = [
+    { root = "tests" },
+    # reportCallIssue = false
+    # reportArgumentType = false
+    # reportMissingImports = false
+    { reportUnusedCallResult = false },
+]
 
-[[tool.pyright.executionEnvironments]]
-root = "tests"
-# reportCallIssue = false
-# reportArgumentType = false
-# reportMissingImports = false
-reportUnusedCallResult = false
-
-[tool.ty.analysis]
+[tool.ty]
 # Disable support for `type: ignore` comments
-respect-type-ignore-comments = false
-
-[tool.ty.src]
-include = [ "src", "tests" ]
+analysis.respect-type-ignore-comments = false
+src.include = [ "src", "tests" ]
 
 # * Dependency creation --------------------------------------------------------
 
@@ -342,28 +328,18 @@ python = "default"
 channels = "conda-forge"
 style = "yaml"
 deps = "pip"
-
-[tool.pyproject2conda.envs.dev]
-groups = "dev"
-
-[tool.pyproject2conda.envs.pre-commit-additional-dependencies]
-reqs = [
+envs.dev.groups = "dev"
+envs.pre-commit-additional-dependencies.reqs = [
     "rust-just",
 ]
-skip-package = true
-style = "requirements"
-
-[tool.pyproject2conda.envs.test]
-groups = "test"
-python = "all"
-
-[tool.pyproject2conda.envs.test-extras]
-groups = "test-extras"
-python = "all"
-skip-package = true
-
-[tool.pyproject2conda.envs.uvx-tools]
-reqs = [
+envs.pre-commit-additional-dependencies.skip-package = true
+envs.pre-commit-additional-dependencies.style = "requirements"
+envs.test.groups = "test"
+envs.test.python = "all"
+envs.test-extras.groups = "test-extras"
+envs.test-extras.python = "all"
+envs.test-extras.skip-package = true
+envs.uvx-tools.reqs = [
     "conda-lock>=2.5.5",
     "copier",
     "copier-template-extensions>=0.3.1",
@@ -375,14 +351,14 @@ reqs = [
     "twine>=5.0.0",
     "ty>=0.0.14",
 ]
-groups = [
+envs.uvx-tools.groups = [
     "basedpyright",
     "mypy",
     "nox",
     "typecheck-runner",
 ]
-skip-package = true
-style = "requirements"
+envs.uvx-tools.skip-package = true
+envs.uvx-tools.style = "requirements"
 
 # * Other tools ----------------------------------------------------------------
 
