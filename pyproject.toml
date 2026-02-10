@@ -36,6 +36,7 @@ dependencies = [
     "typer>=0.15.2",
     "typing-extensions>=4.12.2; python_full_version<'3.11'",
 ]
+
 [project.optional-dependencies]
 all = [
     "uv-workon[jupyter,menu]",
@@ -46,8 +47,10 @@ menu = [
 jupyter = [
     "jupyter-client>=8.6.3",
 ]
+
 [project.scripts]
 uv-workon = "uv_workon.cli:app_typer"
+
 [project.urls]
 Documentation = "https://pages.nist.gov/uv-workon/"
 Homepage = "https://github.com/usnistgov/uv-workon"
@@ -72,16 +75,8 @@ docs = [
     "sphinx-click",
     "sphinx-copybutton",
 ]
-# other packages/tools
-ipython = [ "ipython" ]
+# other envs
 basedpyright = [ "basedpyright>=1.31.3" ]
-mypy = [ "mypy[faster-cache]>=1.15.0" ]
-nox = [ "nox>=2025.5.1" ]
-pylint = [ "pylint" ]
-pytest = [ "pytest", "pytest-mock>=3.14.0" ]
-typecheck-runner = [ "typecheck-runner>=0.1.0; python_version>'3.9'" ]
-# other environments
-optional = [ "uv-workon[all]" ]
 docs-live = [
     "sphinx-autobuild",
     { include-group = "docs" },
@@ -91,16 +86,21 @@ docs-spelling = [
     "sphinxcontrib-spelling",
     { include-group = "docs" },
 ]
+ipython = [ "ipython" ]
+mypy = [ "mypy[faster-cache]>=1.15.0" ]
+nox = [ "nox>=2025.5.1" ]
+optional = [ "uv-workon[all]" ]
+pylint = [ "pylint" ]
+pytest = [ "pytest", "pytest-mock>=3.14.0" ]
+test-extras = [
+    { include-group = "test" },
+]
 test-noopt = [
     "pytest",
     "pytest-cov",
     "pytest-sugar",
     "pytest-xdist",
     { include-group = "pytest" },
-
-]
-test-extras = [
-    { include-group = "test" },
 ]
 typecheck = [
     "ipykernel",
@@ -109,57 +109,27 @@ typecheck = [
     { include-group = "pytest" },
     { include-group = "typecheck-runner" },
 ]
+typecheck-runner = [ "typecheck-runner>=0.1.0; python_version>'3.9'" ]
 
 # * uv -------------------------------------------------------------------------
 
 [tool.uv]
-managed = true
+required-version = ">=0.7.15"
 default-groups = [ "dev" ]
 fork-strategy = "requires-python"
-required-version = ">=0.7.15"
+managed = true
+build-backend.source-include = [ "tests/**" ]
+pip.annotation-style = "line"
+pip.generate-hashes = true
 
-[tool.uv.build-backend]
-source-include = [ "tests/**" ]
 [tool.uv.dependency-groups]
 dev.requires-python = ">=3.14"
-docs.requires-python = ">=3.14"
 docs-live.requires-python = ">=3.14"
 docs-spelling.requires-python = ">=3.14"
-# other tools
+docs.requires-python = ">=3.14"
 ipython.requires-python = ">=3.14"
 mypy.requires-python = ">=3.14"
 nox.requires-python = ">=3.14"
-
-[tool.uv.pip]
-annotation-style = "line"
-generate-hashes = true
-
-# source-include = [
-#     "tests/**",
-#     "examples/**",
-#     "docs/**",
-#     "tools/**",
-#     "requirements/**",
-#     "changelog.d/**",
-#     "*.md",
-#     "*.py",
-#     "ruff.toml",
-#     "uv.lock",
-#     "[jJ]ustfile",
-#     ".editorconfig",
-#     ".markdownlint.yaml",
-#     ".pre-commit-config.yaml",
-#     ".prettierignore",
-#     ".prettierrc.yaml",
-#     ".pylintrc.toml",
-#     ".python-version",
-# ]
-
-# source-exclude = [
-#     "_build",
-#     "docs/**/generated",
-#     "docs/example/usage",
-# ]
 
 # * Checks ---------------------------------------------------------------------
 
@@ -185,8 +155,12 @@ expand_tables = [
     "project.optional-dependencies",
     "project.scripts",
     "project.urls",
+    "tool.pyproject2conda",
+    "tool.pyright.executionEnvironments",
+    "tool.pytest",
+    "tool.typos",
+    "tool.uv.dependency-groups",
 ]
-collapse_tables = [  ]
 
 [tool.typos.default.extend-identifiers]
 CPY = "CPY"
@@ -217,28 +191,24 @@ filterwarnings = [
     "ignore: Jupyter is migrating its paths to use standard platformdirs:DeprecationWarning",
 ]
 
-[tool.coverage.paths]
-source = [
+[tool.coverage]
+run.branch = true
+paths.source = [
     "src/",
     # needed for non editable doctests
     ".nox/**/site-packages/",
 ]
-
-[tool.coverage.report]
-show_missing = true
-exclude_also = [
+report.exclude_also = [
     "@overload",
     "if TYPE_CHECKING:",
 ]
-omit = [
-    "*/vendored/*",
-]
-include = [
+report.include = [
     "src/*",
 ]
-
-[tool.coverage.run]
-branch = true
+report.omit = [
+    "*/vendored/*",
+]
+report.show_missing = true
 
 # * typecheck ---------------------------------------------------------------------
 
@@ -266,12 +236,11 @@ enable_error_code = [
     "redundant-expr",
     "truthy-bool",
 ]
-
-[[tool.mypy.overrides]]
-ignore_missing_imports = true
-module = [
-    "shellingham.*",
-    "simple_term_menu.*",
+overrides = [
+    { ignore_missing_imports = true, module = [
+        "shellingham.*",
+        "simple_term_menu.*",
+    ] },
 ]
 
 [tool.pyrefly]
@@ -297,25 +266,23 @@ reportPropertyTypeMismatch = true
 reportUntypedClassDecorator = true
 reportUntypedFunctionDecorator = true
 # Extra flags
-enableTypeIgnoreComments = false
-reportUnnecessaryTypeIgnoreComment = true
-reportUnreachable = "warning"
-
 deprecateTypingAliases = true
 enableReachabilityAnalysis = false
+enableTypeIgnoreComments = false
 reportCallInDefaultInitializer = true
 reportImplicitOverride = true
 reportImportCycles = true
 # reportMissingSuperCall = true
 reportUninitializedInstanceVariable = true
+reportUnnecessaryTypeIgnoreComment = true
+reportUnreachable = "warning"
 reportUnusedCallResult = true
-
 # type-checkers should type-check; linters should lint
 reportImplicitStringConcatenation = false
-reportPrivateUsage = false                # dupe of PLC2701
-reportPrivateImportUsage = false          # dupe of PLC2701
-reportUnusedImport = false                # dupe of F401
-reportUnusedVariable = false              # dupe of F841
+reportPrivateUsage = false
+reportPrivateImportUsage = false
+reportUnusedImport = false
+reportUnusedVariable = false
 
 [[tool.pyright.executionEnvironments]]
 root = "tests"
@@ -324,12 +291,10 @@ root = "tests"
 # reportMissingImports = false
 reportUnusedCallResult = false
 
-[tool.ty.analysis]
+[tool.ty]
 # Disable support for `type: ignore` comments
-respect-type-ignore-comments = false
-
-[tool.ty.src]
-include = [ "src", "tests" ]
+analysis.respect-type-ignore-comments = false
+src.include = [ "src", "tests" ]
 
 # * Dependency creation --------------------------------------------------------
 
