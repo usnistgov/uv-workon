@@ -32,6 +32,7 @@ enable = [
     # "useless-suppression",
     "all",
 ]
+# disable options
 disable = [
     # defer to ruff
     "line-too-long",
@@ -41,6 +42,7 @@ disable = [
     "redefined-outer-name",
     "too-complex",
     "unused-argument",
+    "unused-import",
     # Silly
     "docstring-first-line-empty",
     "magic-value-comparison",
