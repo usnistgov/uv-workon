@@ -2134,7 +2134,7 @@ test-noopt = [
     { name = "pytest-sugar" },
     { name = "pytest-xdist" },
 ]
-typecheck = [
+type = [
     { name = "ipykernel" },
     { name = "pylint" },
     { name = "pytest" },
@@ -2231,7 +2231,7 @@ test-noopt = [
     { name = "pytest-sugar" },
     { name = "pytest-xdist" },
 ]
-typecheck = [
+type = [
     { name = "ipykernel" },
     { name = "pylint" },
     { name = "pytest" },
