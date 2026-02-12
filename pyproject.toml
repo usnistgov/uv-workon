@@ -82,7 +82,7 @@ docs = [
     "sphinx-click",
     "sphinx-copybutton",
 ]
-# other envs
+# other groups
 basedpyright = [ "basedpyright>=1.31.3" ]
 docs-live = [
     "sphinx-autobuild",
@@ -147,6 +147,7 @@ src_dir = [ "src" ]
 toplevel = [ "uv_workon" ]
 
 [tool.pyproject-fmt]
+# max_supported_python = "3.13"
 expand_tables = [
     "project.entry-points",
     "project.optional-dependencies",
@@ -159,7 +160,6 @@ expand_tables = [
     "tool.typos",
     "tool.uv.dependency-groups",
 ]
-# max_supported_python = "3.13"
 indent = 4
 keep_full_version = true
 
@@ -183,7 +183,7 @@ testpaths = [
     "tests",
     "uv_workon",
 ]
-# other options
+# options
 filterwarnings = [
     "error",
     "ignore: Jupyter is migrating its paths to use standard platformdirs:DeprecationWarning",
@@ -266,21 +266,20 @@ include = [
 ]
 typeCheckingMode = "strict"
 # options
-reportOverlappingOverload = true
-reportPropertyTypeMismatch = true
-reportUntypedClassDecorator = true
-reportUntypedFunctionDecorator = true
-# Extra flags
+# reportMissingSuperCall = true
 deprecateTypingAliases = true
 enableReachabilityAnalysis = false
 enableTypeIgnoreComments = false
 reportCallInDefaultInitializer = true
 reportImplicitOverride = true
 reportImportCycles = true
-# reportMissingSuperCall = true
+reportOverlappingOverload = true
+reportPropertyTypeMismatch = true
 reportUninitializedInstanceVariable = true
 reportUnnecessaryTypeIgnoreComment = true
 reportUnreachable = "warning"
+reportUntypedClassDecorator = true
+reportUntypedFunctionDecorator = true
 reportUnusedCallResult = true
 # type-checkers should type-check; linters should lint
 reportImplicitStringConcatenation = false
