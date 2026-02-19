@@ -36,4 +36,5 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./docs/_build/html
           publish_branch: nist-pages
+          force_orphan: true
           commit_message: ${{ github.event.head_commit.message }}
