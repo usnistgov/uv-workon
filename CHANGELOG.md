@@ -1,9 +1,37 @@
 <!-- markdownlint-disable MD024 -->
+
 <!-- markdownlint-disable MD013 -->
+
 <!-- prettier-ignore-start -->
+
 # Changelog
 
 Changelog for `uv-workon`
+
+## 0.7.3
+
+Released on 2026-02-19.
+
+### Changes
+
+- [pre-commit.ci] pre-commit autoupdate ([#5](https://github.com/usnistgov/uv-workon/pull/5))
+- chore(deps): bump actions/checkout from 5 to 6 in the actions group ([#4](https://github.com/usnistgov/uv-workon/pull/4))
+- chore(deps): bump the actions group with 3 updates ([#2](https://github.com/usnistgov/uv-workon/pull/2))
+- chore: add .git-town.toml ([#3](https://github.com/usnistgov/uv-workon/pull/3))
+- chore: cruft update ([#7](https://github.com/usnistgov/uv-workon/pull/7))
+- chore: cruft update ([#9](https://github.com/usnistgov/uv-workon/pull/9))
+- chore: remove .cruft.json ([#11](https://github.com/usnistgov/uv-workon/pull/11))
+- chore: update copier and requirements ([#19](https://github.com/usnistgov/uv-workon/pull/19))
+- feature/copier update ([#13](https://github.com/usnistgov/uv-workon/pull/13))
+- feature/copier update ([#15](https://github.com/usnistgov/uv-workon/pull/15))
+- feature/copier update ([#16](https://github.com/usnistgov/uv-workon/pull/16))
+- feature/migrate to copier ([#10](https://github.com/usnistgov/uv-workon/pull/10))
+- feature/update actions ([#8](https://github.com/usnistgov/uv-workon/pull/8))
+
+### Contributors
+
+- [@pre-commit-ci](https://github.com/pre-commit-ci)
+- [@wpk-nist-gov](https://github.com/wpk-nist-gov)
 
 ## Unreleased
 
