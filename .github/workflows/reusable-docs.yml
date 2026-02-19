@@ -2,6 +2,7 @@ name: Docs
 
 on:
   workflow_call:
+  workflow_dispatch:
 
 env:
   FORCE_COLOR: "3"
