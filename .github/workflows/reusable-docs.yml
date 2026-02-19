@@ -29,8 +29,11 @@ jobs:
 
       - name: Deploy docs
         uses: peaceiris/actions-gh-pages@4f9cc6602d3f66b9c108549d475ec49e8ef4d45e # v4.0.0
-        if: github.event_name == 'release' && github.event.action == 'published'
+        if:
+          github.event_name == "workflow_dispatch" || (github.event_name ==
+          'release' && github.event.action == 'published')
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./docs/_build/html
           publish_branch: nist-pages
+          commit_message: ${{ github.event.head_commit.message }}
