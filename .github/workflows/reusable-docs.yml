@@ -2,7 +2,21 @@ name: Docs
 
 on:
   workflow_call:
+    inputs:
+      force_orphan:
+        description: "Pass false to keep history."
+        required: false
+        type: boolean
+        default: true
+
   workflow_dispatch:
+    inputs:
+      force_orphan:
+        # with dispatch, default to keeping history
+        description: "Pass true to remove history."
+        required: false
+        type: boolean
+        default: false
 
 env:
   FORCE_COLOR: "3"
@@ -37,5 +51,5 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./docs/_build/html
           publish_branch: nist-pages
-          force_orphan: true
+          force_orphan: ${{ inputs.force_orphan }}
           commit_message: ${{ github.event.head_commit.message }}
