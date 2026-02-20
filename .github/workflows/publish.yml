@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
     inputs:
       deploy:
-        description: "Deploy docs to nist-page."
+        description: "Deploy package and docs."
         required: false
         type: boolean
         default: false
