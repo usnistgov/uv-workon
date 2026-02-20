@@ -1,0 +1,1448 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Command line interface &#8212; uv-workon 0.7.4 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="https://pages.nist.gov/nist-header-footer/css/nist-combined.css" />
+    <link rel="stylesheet" type="text/css" href="https://pages.nist.gov/leaveNotice/css/jquery.leaveNotice.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../_static/documentation_options.js?v=444dcb17"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'reference/cli';</script>
+    <script src="https://code.jquery.com/jquery-3.6.2.min.js"></script>
+    <script src="https://pages.nist.gov/nist-header-footer/js/nist-header-footer.js"></script>
+    <script src="https://pages.nist.gov/leaveNotice/js/jquery.leaveNotice-nist.min.js"></script>
+    <script src="../_static/js/leave_notice.js?v=133c5535"></script>
+    <script async="async" id="_fed_au_ua_tag" type="text/javascript" src="https://dap.digitalgov.gov/Universal-Federated-Analytics-Min.js?agency=NIST&subagency=github&pua=UA-66610693-1&yt=true&exts=ppsx,pps,f90,sch,rtf,wrl,txz,m1v,xlsm,msi,xsd,f,tif,eps,mpg,xml,pl,xlt,c"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Console script (cli)" href="generated/uv_workon.cli.html" />
+    <link rel="prev" title="API Reference" href="index.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+    <meta name="docbuild:last-update" content="2026-02-20"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">uv-workon 0.7.4 documentation</p>
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../index.html">
+                    uv-workon
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">API Reference</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Command line interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/uv_workon.cli.html">Console script (<code class="xref py py-mod docutils literal notranslate"><span class="pre">cli</span></code>)</a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li class="toctree-l2"><a class="reference internal" href="generated/uv_workon.core.html">Core functionality (<code class="xref py py-mod docutils literal notranslate"><span class="pre">core</span></code>)</a></li>
+
+
+
+
+
+
+<li class="toctree-l2"><a class="reference internal" href="generated/uv_workon.validate.html">Validation/inference (<code class="xref py py-mod docutils literal notranslate"><span class="pre">validate</span></code>)</a></li>
+
+
+
+
+
+
+
+
+
+<li class="toctree-l2"><a class="reference internal" href="generated/uv_workon.utils.html">Utilities (<code class="xref py py-mod docutils literal notranslate"><span class="pre">utils</span></code>)</a></li>
+
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../authors.html">Credits</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../navigation.html">Indices and tables</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../genindex.html">Index</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../py-modindex.html">Module Index</a></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/usnistgov/uv-workon" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/usnistgov/uv-workon/issues/new?title=Issue%20on%20page%20%2Freference/cli.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/reference/cli.rst" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.rst</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Command line interface</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#uv-workon">uv-workon</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#uv-workon-activate">activate</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#uv-workon-cd">cd</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#uv-workon-clean">clean</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#uv-workon-kernels">kernels</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#uv-workon-kernels-install">install</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#uv-workon-kernels-list">list</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#uv-workon-kernels-remove">remove</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#uv-workon-link">link</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#uv-workon-list">list</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#uv-workon-run">run</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#uv-workon-shell-config">shell-config</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#uv-workon-venv-link">venv-link</a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="command-line-interface">
+<h1>Command line interface<a class="headerlink" href="#command-line-interface" title="Link to this heading">#</a></h1>
+<section id="uv-workon">
+<h2>uv-workon<a class="headerlink" href="#uv-workon" title="Link to this heading">#</a></h2>
+<p>Manage uv virtual environments from central location.</p>
+<p class="rubric">Usage</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>uv-workon<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>COMMAND<span class="w"> </span><span class="o">[</span>ARGS<span class="o">]</span>...
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-uv-workon-v">
+<span id="cmdoption-uv-workon-version"></span><span class="sig-name descname"><span class="pre">-v</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--version</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-uv-workon-v" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-uv-workon-install-completion">
+<span class="sig-name descname"><span class="pre">--install-completion</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-uv-workon-install-completion" title="Link to this definition">#</a></dt>
+<dd><p>Install completion for the current shell.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-uv-workon-show-completion">
+<span class="sig-name descname"><span class="pre">--show-completion</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-uv-workon-show-completion" title="Link to this definition">#</a></dt>
+<dd><p>Show completion for the current shell, to copy it or customize the installation.</p>
+</dd></dl>
+
+<section id="uv-workon-activate">
+<h3>activate<a class="headerlink" href="#uv-workon-activate" title="Link to this heading">#</a></h3>
+<p>Use to activate virtual environments.</p>
+<p class="rubric">Usage</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>uv-workon<span class="w"> </span>activate<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-uv-workon-activate-n">
+<span id="cmdoption-uv-workon-activate-name"></span><span class="sig-name descname"><span class="pre">-n</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--name</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;venv_name&gt;</span></span><a class="headerlink" href="#cmdoption-uv-workon-activate-n" title="Link to this definition">#</a></dt>
+<dd><p>Use virtual environment located at ${workon_home}/{name}.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-uv-workon-activate-p">
+<span id="cmdoption-uv-workon-activate-path"></span><span class="sig-name descname"><span class="pre">-p</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--path</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;venv_path&gt;</span></span><a class="headerlink" href="#cmdoption-uv-workon-activate-p" title="Link to this definition">#</a></dt>
+<dd><p>Path to venv</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-uv-workon-activate-resolve">
+<span id="cmdoption-uv-workon-activate-no-resolve"></span><span class="sig-name descname"><span class="pre">--resolve</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-resolve</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-uv-workon-activate-resolve" title="Link to this definition">#</a></dt>
+<dd><p>Pass <code class="docutils literal notranslate"><span class="pre">--resolve</span></code> to resolve paths and symlinks.  Otherwise, use relative paths.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-uv-workon-activate-command">
+<span id="cmdoption-uv-workon-activate-no-command"></span><span class="sig-name descname"><span class="pre">--command</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-command</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-uv-workon-activate-command" title="Link to this definition">#</a></dt>
+<dd><p>If <code class="docutils literal notranslate"><span class="pre">--command</span></code>, include command name with output.
+If <code class="docutils literal notranslate"><span class="pre">--no-command</span></code>, only list the path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-uv-workon-activate-o">
+<span id="cmdoption-uv-workon-activate-workon-home"></span><span class="sig-name descname"><span class="pre">-o</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--workon-home</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;workon_home&gt;</span></span><a class="headerlink" href="#cmdoption-uv-workon-activate-o" title="Link to this definition">#</a></dt>
+<dd><p>Directory containing the virtual environments and links to virtual
+environments. If not passed, uses in order, <code class="docutils literal notranslate"><span class="pre">WORKON_HOME</span></code> environment
+variable, then <code class="docutils literal notranslate"><span class="pre">~/.virtualenvs</span></code> directory.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-uv-workon-activate-venv">
+<span class="sig-name descname"><span class="pre">--venv</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;venv_patterns&gt;</span></span><a class="headerlink" href="#cmdoption-uv-workon-activate-venv" title="Link to this definition">#</a></dt>
+<dd><p>Virtual environment pattern. Can specify multiple times.
+Default is to include virtual environment directories of form
+<code class="docutils literal notranslate"><span class="pre">&quot;.venv&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;venv&quot;</span></code>.  To exclude these defaults, pass <code class="docutils literal notranslate"><span class="pre">--no-default-venv</span></code>.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-uv-workon-activate-default-venv">
+<span id="cmdoption-uv-workon-activate-no-default-venv"></span><span class="sig-name descname"><span class="pre">--default-venv</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-default-venv</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-uv-workon-activate-default-venv" title="Link to this definition">#</a></dt>
+<dd><p>Default is to include virtual environment patterns <code class="docutils literal notranslate"><span class="pre">&quot;.venv&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;venv&quot;</span></code>.
+Pass <code class="docutils literal notranslate"><span class="pre">--no-default-venv</span></code> to exclude these default values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<p class="rubric">Environment variables</p>
+<dl class="std envvar" id="uv-workon-activate-workon-home-workon-home">
+<dt class="sig sig-object std">
+<span class="sig-name descname"><span class="pre">WORKON_HOME</span></span></dt>
+<dd><blockquote>
+<div><p>Provide a default for <a class="reference internal" href="#cmdoption-uv-workon-activate-o"><code class="xref std std-option docutils literal notranslate"><span class="pre">--workon-home</span></code></a></p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="std envvar" id="uv-workon-activate-venv-patterns-uv-workon-venv-patterns">
+<dt class="sig sig-object std">
+<span class="sig-name descname"><span class="pre">UV_WORKON_VENV_PATTERNS</span></span></dt>
+<dd><blockquote>
+<div><p>Provide a default for <a class="reference internal" href="#cmdoption-uv-workon-activate-venv"><code class="xref std std-option docutils literal notranslate"><span class="pre">--venv</span></code></a></p>
+</div></blockquote>
+</dd></dl>
+
+</section>
+<section id="uv-workon-cd">
+<h3>cd<a class="headerlink" href="#uv-workon-cd" title="Link to this heading">#</a></h3>
+<p>Command to change to parent directory of virtual environment.</p>
+<p class="rubric">Usage</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>uv-workon<span class="w"> </span><span class="nb">cd</span><span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-uv-workon-cd-n">
+<span id="cmdoption-uv-workon-cd-name"></span><span class="sig-name descname"><span class="pre">-n</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--name</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;venv_name&gt;</span></span><a class="headerlink" href="#cmdoption-uv-workon-cd-n" title="Link to this definition">#</a></dt>
+<dd><p>Use virtual environment located at ${workon_home}/{name}.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-uv-workon-cd-p">
+<span id="cmdoption-uv-workon-cd-path"></span><span class="sig-name descname"><span class="pre">-p</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--path</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;venv_path&gt;</span></span><a class="headerlink" href="#cmdoption-uv-workon-cd-p" title="Link to this definition">#</a></dt>
+<dd><p>Path to venv</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-uv-workon-cd-command">
+<span id="cmdoption-uv-workon-cd-no-command"></span><span class="sig-name descname"><span class="pre">--command</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-command</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-uv-workon-cd-command" title="Link to this definition">#</a></dt>
+<dd><p>If <code class="docutils literal notranslate"><span class="pre">--command</span></code>, include command name with output.
+If <code class="docutils literal notranslate"><span class="pre">--no-command</span></code>, only list the path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-uv-workon-cd-o">
+<span id="cmdoption-uv-workon-cd-workon-home"></span><span class="sig-name descname"><span class="pre">-o</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--workon-home</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;workon_home&gt;</span></span><a class="headerlink" href="#cmdoption-uv-workon-cd-o" title="Link to this definition">#</a></dt>
+<dd><p>Directory containing the virtual environments and links to virtual
+environments. If not passed, uses in order, <code class="docutils literal notranslate"><span class="pre">WORKON_HOME</span></code> environment
+variable, then <code class="docutils literal notranslate"><span class="pre">~/.virtualenvs</span></code> directory.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-uv-workon-cd-venv">
+<span class="sig-name descname"><span class="pre">--venv</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;venv_patterns&gt;</span></span><a class="headerlink" href="#cmdoption-uv-workon-cd-venv" title="Link to this definition">#</a></dt>
+<dd><p>Virtual environment pattern. Can specify multiple times.
+Default is to include virtual environment directories of form
+<code class="docutils literal notranslate"><span class="pre">&quot;.venv&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;venv&quot;</span></code>.  To exclude these defaults, pass <code class="docutils literal notranslate"><span class="pre">--no-default-venv</span></code>.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-uv-workon-cd-default-venv">
+<span id="cmdoption-uv-workon-cd-no-default-venv"></span><span class="sig-name descname"><span class="pre">--default-venv</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-default-venv</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-uv-workon-cd-default-venv" title="Link to this definition">#</a></dt>
+<dd><p>Default is to include virtual environment patterns <code class="docutils literal notranslate"><span class="pre">&quot;.venv&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;venv&quot;</span></code>.
+Pass <code class="docutils literal notranslate"><span class="pre">--no-default-venv</span></code> to exclude these default values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<p class="rubric">Environment variables</p>
+<dl class="std envvar" id="uv-workon-cd-workon-home-workon-home">
+<dt class="sig sig-object std">
+<span class="sig-name descname"><span class="pre">WORKON_HOME</span></span></dt>
+<dd><blockquote>
+<div><p>Provide a default for <a class="reference internal" href="#cmdoption-uv-workon-cd-o"><code class="xref std std-option docutils literal notranslate"><span class="pre">--workon-home</span></code></a></p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="std envvar" id="uv-workon-cd-venv-patterns-uv-workon-venv-patterns">
+<dt class="sig sig-object std">
+<span class="sig-name descname"><span class="pre">UV_WORKON_VENV_PATTERNS</span></span></dt>
+<dd><blockquote>
+<div><p>Provide a default for <a class="reference internal" href="#cmdoption-uv-workon-cd-venv"><code class="xref std std-option docutils literal notranslate"><span class="pre">--venv</span></code></a></p>
+</div></blockquote>
+</dd></dl>
+
+</section>
+<section id="uv-workon-clean">
+<h3>clean<a class="headerlink" href="#uv-workon-clean" title="Link to this heading">#</a></h3>
+<p>Remove missing broken virtual environment symlinks.</p>
+<p class="rubric">Usage</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>uv-workon<span class="w"> </span>clean<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-uv-workon-clean-o">
+<span id="cmdoption-uv-workon-clean-workon-home"></span><span class="sig-name descname"><span class="pre">-o</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--workon-home</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;workon_home&gt;</span></span><a class="headerlink" href="#cmdoption-uv-workon-clean-o" title="Link to this definition">#</a></dt>
+<dd><p>Directory containing the virtual environments and links to virtual
+environments. If not passed, uses in order, <code class="docutils literal notranslate"><span class="pre">WORKON_HOME</span></code> environment
+variable, then <code class="docutils literal notranslate"><span class="pre">~/.virtualenvs</span></code> directory.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-uv-workon-clean-dry-run">
+<span id="cmdoption-uv-workon-clean-no-dry-run"></span><span class="sig-name descname"><span class="pre">--dry-run</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-dry-run</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-uv-workon-clean-dry-run" title="Link to this definition">#</a></dt>
+<dd><p>Perform a dry run, without executing any action</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-uv-workon-clean-v">
+<span id="cmdoption-uv-workon-clean-verbose"></span><span class="sig-name descname"><span class="pre">-v</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--verbose</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-uv-workon-clean-v" title="Link to this definition">#</a></dt>
+<dd><p>Set verbosity level.  Can specify multiple times</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-uv-workon-clean-yes">
+<span id="cmdoption-uv-workon-clean-no"></span><span class="sig-name descname"><span class="pre">--yes</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-uv-workon-clean-yes" title="Link to this definition">#</a></dt>
+<dd><p>Default is confirm yes/No for actions.
+Passing <code class="docutils literal notranslate"><span class="pre">--yes</span></code> confirms all answers as yes.
+Passing <code class="docutils literal notranslate"><span class="pre">--no</span></code> confirms all answers as no.</p>
+</dd></dl>
+
+<p class="rubric">Environment variables</p>
+<dl class="std envvar" id="uv-workon-clean-workon-home-workon-home">
+<dt class="sig sig-object std">
+<span class="sig-name descname"><span class="pre">WORKON_HOME</span></span></dt>
+<dd><blockquote>
+<div><p>Provide a default for <a class="reference internal" href="#cmdoption-uv-workon-clean-o"><code class="xref std std-option docutils literal notranslate"><span class="pre">--workon-home</span></code></a></p>
+</div></blockquote>
+</dd></dl>
+
+</section>
+<section id="uv-workon-kernels">
+<h3>kernels<a class="headerlink" href="#uv-workon-kernels" title="Link to this heading">#</a></h3>
+<p>Jupyter kernel utilities</p>
+<p class="rubric">Usage</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>uv-workon<span class="w"> </span>kernels<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>COMMAND<span class="w"> </span><span class="o">[</span>ARGS<span class="o">]</span>...
+</pre></div>
+</div>
+<section id="uv-workon-kernels-install">
+<h4>install<a class="headerlink" href="#uv-workon-kernels-install" title="Link to this heading">#</a></h4>
+<p>Install ipykernels for virtual environment(s) that contain <code class="docutils literal notranslate"><span class="pre">ipykernel</span></code> module.</p>
+<p class="rubric">Usage</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>uv-workon<span class="w"> </span>kernels<span class="w"> </span>install<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-uv-workon-kernels-install-n">
+<span id="cmdoption-uv-workon-kernels-install-name"></span><span class="sig-name descname"><span class="pre">-n</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--name</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;venv_names&gt;</span></span><a class="headerlink" href="#cmdoption-uv-workon-kernels-install-n" title="Link to this definition">#</a></dt>
+<dd><p>Virtual environment names.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-uv-workon-kernels-install-p">
+<span id="cmdoption-uv-workon-kernels-install-path"></span><span class="sig-name descname"><span class="pre">-p</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--path</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;venv_paths&gt;</span></span><a class="headerlink" href="#cmdoption-uv-workon-kernels-install-p" title="Link to this definition">#</a></dt>
+<dd><p>Virtual environment paths.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-uv-workon-kernels-install-all">
+<span class="sig-name descname"><span class="pre">--all</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-uv-workon-kernels-install-all" title="Link to this definition">#</a></dt>
+<dd><p>If passed, install for all environments</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-uv-workon-kernels-install-display-format">
+<span class="sig-name descname"><span class="pre">--display-format</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;display_format&gt;</span></span><a class="headerlink" href="#cmdoption-uv-workon-kernels-install-display-format" title="Link to this definition">#</a></dt>
+<dd><p>Format to use in display name. Can contain <code class="docutils literal notranslate"><span class="pre">name</span></code> which is
+inferred from the virtual environment location.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">'Python</span> <span class="pre">[venv:</span> <span class="pre">{name}]'</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-uv-workon-kernels-install-user">
+<span id="cmdoption-uv-workon-kernels-install-no-user"></span><span class="sig-name descname"><span class="pre">--user</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-user</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-uv-workon-kernels-install-user" title="Link to this definition">#</a></dt>
+<dd><p>Default is to pass the <code class="docutils literal notranslate"><span class="pre">--user</span></code> options.  Use this to override.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-uv-workon-kernels-install-resolve">
+<span id="cmdoption-uv-workon-kernels-install-no-resolve"></span><span class="sig-name descname"><span class="pre">--resolve</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-resolve</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-uv-workon-kernels-install-resolve" title="Link to this definition">#</a></dt>
+<dd><p>Pass <code class="docutils literal notranslate"><span class="pre">--resolve</span></code> to resolve paths and symlinks.  Otherwise, use relative paths.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-uv-workon-kernels-install-o">
+<span id="cmdoption-uv-workon-kernels-install-workon-home"></span><span class="sig-name descname"><span class="pre">-o</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--workon-home</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;workon_home&gt;</span></span><a class="headerlink" href="#cmdoption-uv-workon-kernels-install-o" title="Link to this definition">#</a></dt>
+<dd><p>Directory containing the virtual environments and links to virtual
+environments. If not passed, uses in order, <code class="docutils literal notranslate"><span class="pre">WORKON_HOME</span></code> environment
+variable, then <code class="docutils literal notranslate"><span class="pre">~/.virtualenvs</span></code> directory.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-uv-workon-kernels-install-venv">
+<span class="sig-name descname"><span class="pre">--venv</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;venv_patterns&gt;</span></span><a class="headerlink" href="#cmdoption-uv-workon-kernels-install-venv" title="Link to this definition">#</a></dt>
+<dd><p>Virtual environment pattern. Can specify multiple times.
+Default is to include virtual environment directories of form
+<code class="docutils literal notranslate"><span class="pre">&quot;.venv&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;venv&quot;</span></code>.  To exclude these defaults, pass <code class="docutils literal notranslate"><span class="pre">--no-default-venv</span></code>.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-uv-workon-kernels-install-default-venv">
+<span id="cmdoption-uv-workon-kernels-install-no-default-venv"></span><span class="sig-name descname"><span class="pre">--default-venv</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-default-venv</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-uv-workon-kernels-install-default-venv" title="Link to this definition">#</a></dt>
+<dd><p>Default is to include virtual environment patterns <code class="docutils literal notranslate"><span class="pre">&quot;.venv&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;venv&quot;</span></code>.
+Pass <code class="docutils literal notranslate"><span class="pre">--no-default-venv</span></code> to exclude these default values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-uv-workon-kernels-install-dry-run">
+<span id="cmdoption-uv-workon-kernels-install-no-dry-run"></span><span class="sig-name descname"><span class="pre">--dry-run</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-dry-run</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-uv-workon-kernels-install-dry-run" title="Link to this definition">#</a></dt>
+<dd><p>Perform a dry run, without executing any action</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-uv-workon-kernels-install-v">
+<span id="cmdoption-uv-workon-kernels-install-verbose"></span><span class="sig-name descname"><span class="pre">-v</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--verbose</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-uv-workon-kernels-install-v" title="Link to this definition">#</a></dt>
+<dd><p>Set verbosity level.  Can specify multiple times</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-uv-workon-kernels-install-yes">
+<span id="cmdoption-uv-workon-kernels-install-no"></span><span class="sig-name descname"><span class="pre">--yes</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-uv-workon-kernels-install-yes" title="Link to this definition">#</a></dt>
+<dd><p>Default is confirm yes/No for actions.
+Passing <code class="docutils literal notranslate"><span class="pre">--yes</span></code> confirms all answers as yes.
+Passing <code class="docutils literal notranslate"><span class="pre">--no</span></code> confirms all answers as no.</p>
+</dd></dl>
+
+<p class="rubric">Environment variables</p>
+<dl class="std envvar" id="uv-workon-kernels-install-workon-home-workon-home">
+<dt class="sig sig-object std">
+<span class="sig-name descname"><span class="pre">WORKON_HOME</span></span></dt>
+<dd><blockquote>
+<div><p>Provide a default for <a class="reference internal" href="#cmdoption-uv-workon-kernels-install-o"><code class="xref std std-option docutils literal notranslate"><span class="pre">--workon-home</span></code></a></p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="std envvar" id="uv-workon-kernels-install-venv-patterns-uv-workon-venv-patterns">
+<dt class="sig sig-object std">
+<span class="sig-name descname"><span class="pre">UV_WORKON_VENV_PATTERNS</span></span></dt>
+<dd><blockquote>
+<div><p>Provide a default for <a class="reference internal" href="#cmdoption-uv-workon-kernels-install-venv"><code class="xref std std-option docutils literal notranslate"><span class="pre">--venv</span></code></a></p>
+</div></blockquote>
+</dd></dl>
+
+</section>
+<section id="uv-workon-kernels-list">
+<h4>list<a class="headerlink" href="#uv-workon-kernels-list" title="Link to this heading">#</a></h4>
+<p>List installed kernels.  Interface to jupyter kernelspec list.</p>
+<p class="rubric">Usage</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>uv-workon<span class="w"> </span>kernels<span class="w"> </span>list<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+</section>
+<section id="uv-workon-kernels-remove">
+<h4>remove<a class="headerlink" href="#uv-workon-kernels-remove" title="Link to this heading">#</a></h4>
+<p>Remove installed kernels</p>
+<p class="rubric">Usage</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>uv-workon<span class="w"> </span>kernels<span class="w"> </span>remove<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-uv-workon-kernels-remove-n">
+<span id="cmdoption-uv-workon-kernels-remove-name"></span><span class="sig-name descname"><span class="pre">-n</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--name</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;names&gt;</span></span><a class="headerlink" href="#cmdoption-uv-workon-kernels-remove-n" title="Link to this definition">#</a></dt>
+<dd><p>Kernel names to remove</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-uv-workon-kernels-remove-p">
+<span id="cmdoption-uv-workon-kernels-remove-path"></span><span class="sig-name descname"><span class="pre">-p</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--path</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;venv_paths&gt;</span></span><a class="headerlink" href="#cmdoption-uv-workon-kernels-remove-p" title="Link to this definition">#</a></dt>
+<dd><p>Virtual environment paths.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-uv-workon-kernels-remove-missing">
+<span class="sig-name descname"><span class="pre">--missing</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-uv-workon-kernels-remove-missing" title="Link to this definition">#</a></dt>
+<dd><p>Remove kernelspecs that are missing/broken.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-uv-workon-kernels-remove-o">
+<span id="cmdoption-uv-workon-kernels-remove-workon-home"></span><span class="sig-name descname"><span class="pre">-o</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--workon-home</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;workon_home&gt;</span></span><a class="headerlink" href="#cmdoption-uv-workon-kernels-remove-o" title="Link to this definition">#</a></dt>
+<dd><p>Directory containing the virtual environments and links to virtual
+environments. If not passed, uses in order, <code class="docutils literal notranslate"><span class="pre">WORKON_HOME</span></code> environment
+variable, then <code class="docutils literal notranslate"><span class="pre">~/.virtualenvs</span></code> directory.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-uv-workon-kernels-remove-venv">
+<span class="sig-name descname"><span class="pre">--venv</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;venv_patterns&gt;</span></span><a class="headerlink" href="#cmdoption-uv-workon-kernels-remove-venv" title="Link to this definition">#</a></dt>
+<dd><p>Virtual environment pattern. Can specify multiple times.
+Default is to include virtual environment directories of form
+<code class="docutils literal notranslate"><span class="pre">&quot;.venv&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;venv&quot;</span></code>.  To exclude these defaults, pass <code class="docutils literal notranslate"><span class="pre">--no-default-venv</span></code>.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-uv-workon-kernels-remove-default-venv">
+<span id="cmdoption-uv-workon-kernels-remove-no-default-venv"></span><span class="sig-name descname"><span class="pre">--default-venv</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-default-venv</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-uv-workon-kernels-remove-default-venv" title="Link to this definition">#</a></dt>
+<dd><p>Default is to include virtual environment patterns <code class="docutils literal notranslate"><span class="pre">&quot;.venv&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;venv&quot;</span></code>.
+Pass <code class="docutils literal notranslate"><span class="pre">--no-default-venv</span></code> to exclude these default values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-uv-workon-kernels-remove-dry-run">
+<span id="cmdoption-uv-workon-kernels-remove-no-dry-run"></span><span class="sig-name descname"><span class="pre">--dry-run</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-dry-run</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-uv-workon-kernels-remove-dry-run" title="Link to this definition">#</a></dt>
+<dd><p>Perform a dry run, without executing any action</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-uv-workon-kernels-remove-v">
+<span id="cmdoption-uv-workon-kernels-remove-verbose"></span><span class="sig-name descname"><span class="pre">-v</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--verbose</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-uv-workon-kernels-remove-v" title="Link to this definition">#</a></dt>
+<dd><p>Set verbosity level.  Can specify multiple times</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-uv-workon-kernels-remove-yes">
+<span id="cmdoption-uv-workon-kernels-remove-no"></span><span class="sig-name descname"><span class="pre">--yes</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-uv-workon-kernels-remove-yes" title="Link to this definition">#</a></dt>
+<dd><p>Default is confirm yes/No for actions.
+Passing <code class="docutils literal notranslate"><span class="pre">--yes</span></code> confirms all answers as yes.
+Passing <code class="docutils literal notranslate"><span class="pre">--no</span></code> confirms all answers as no.</p>
+</dd></dl>
+
+<p class="rubric">Environment variables</p>
+<dl class="std envvar" id="uv-workon-kernels-remove-workon-home-workon-home">
+<dt class="sig sig-object std">
+<span class="sig-name descname"><span class="pre">WORKON_HOME</span></span></dt>
+<dd><blockquote>
+<div><p>Provide a default for <a class="reference internal" href="#cmdoption-uv-workon-kernels-remove-o"><code class="xref std std-option docutils literal notranslate"><span class="pre">--workon-home</span></code></a></p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="std envvar" id="uv-workon-kernels-remove-venv-patterns-uv-workon-venv-patterns">
+<dt class="sig sig-object std">
+<span class="sig-name descname"><span class="pre">UV_WORKON_VENV_PATTERNS</span></span></dt>
+<dd><blockquote>
+<div><p>Provide a default for <a class="reference internal" href="#cmdoption-uv-workon-kernels-remove-venv"><code class="xref std std-option docutils literal notranslate"><span class="pre">--venv</span></code></a></p>
+</div></blockquote>
+</dd></dl>
+
+</section>
+</section>
+<section id="uv-workon-link">
+<h3>link<a class="headerlink" href="#uv-workon-link" title="Link to this heading">#</a></h3>
+<p>Create symlink from paths to workon_home.</p>
+<p class="rubric">Usage</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>uv-workon<span class="w"> </span>link<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span><span class="o">[</span>PATHS<span class="o">]</span>...
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-uv-workon-link-parent">
+<span class="sig-name descname"><span class="pre">--parent</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;parents&gt;</span></span><a class="headerlink" href="#cmdoption-uv-workon-link-parent" title="Link to this definition">#</a></dt>
+<dd><p>Parent of directories to check for <code class="docutils literal notranslate"><span class="pre">venv_pattern</span></code> directories
+containing virtual environments. Using <code class="docutils literal notranslate"><span class="pre">uv-workon</span> <span class="pre">--parent</span> <span class="pre">a/path</span></code>
+is roughly equivalent to using <code class="docutils literal notranslate"><span class="pre">uv-workon</span> <span class="pre">a/path/*</span></code></p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-uv-workon-link-link-name">
+<span class="sig-name descname"><span class="pre">--link-name</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;link_names&gt;</span></span><a class="headerlink" href="#cmdoption-uv-workon-link-link-name" title="Link to this definition">#</a></dt>
+<dd><p>Name of the linked virtual environment. Default is to infer the name
+from path. Can specify multiple times. If use this option, it must
+match up with the number of paths. It is intended to be used once only.
+Use with care in other cases.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-uv-workon-link-resolve">
+<span id="cmdoption-uv-workon-link-no-resolve"></span><span class="sig-name descname"><span class="pre">--resolve</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-resolve</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-uv-workon-link-resolve" title="Link to this definition">#</a></dt>
+<dd><p>Pass <code class="docutils literal notranslate"><span class="pre">--resolve</span></code> to resolve paths and symlinks.  Otherwise, use relative paths.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-uv-workon-link-o">
+<span id="cmdoption-uv-workon-link-workon-home"></span><span class="sig-name descname"><span class="pre">-o</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--workon-home</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;workon_home&gt;</span></span><a class="headerlink" href="#cmdoption-uv-workon-link-o" title="Link to this definition">#</a></dt>
+<dd><p>Directory containing the virtual environments and links to virtual
+environments. If not passed, uses in order, <code class="docutils literal notranslate"><span class="pre">WORKON_HOME</span></code> environment
+variable, then <code class="docutils literal notranslate"><span class="pre">~/.virtualenvs</span></code> directory.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-uv-workon-link-venv">
+<span class="sig-name descname"><span class="pre">--venv</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;venv_patterns&gt;</span></span><a class="headerlink" href="#cmdoption-uv-workon-link-venv" title="Link to this definition">#</a></dt>
+<dd><p>Virtual environment pattern. Can specify multiple times.
+Default is to include virtual environment directories of form
+<code class="docutils literal notranslate"><span class="pre">&quot;.venv&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;venv&quot;</span></code>.  To exclude these defaults, pass <code class="docutils literal notranslate"><span class="pre">--no-default-venv</span></code>.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-uv-workon-link-default-venv">
+<span id="cmdoption-uv-workon-link-no-default-venv"></span><span class="sig-name descname"><span class="pre">--default-venv</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-default-venv</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-uv-workon-link-default-venv" title="Link to this definition">#</a></dt>
+<dd><p>Default is to include virtual environment patterns <code class="docutils literal notranslate"><span class="pre">&quot;.venv&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;venv&quot;</span></code>.
+Pass <code class="docutils literal notranslate"><span class="pre">--no-default-venv</span></code> to exclude these default values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-uv-workon-link-dry-run">
+<span id="cmdoption-uv-workon-link-no-dry-run"></span><span class="sig-name descname"><span class="pre">--dry-run</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-dry-run</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-uv-workon-link-dry-run" title="Link to this definition">#</a></dt>
+<dd><p>Perform a dry run, without executing any action</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-uv-workon-link-v">
+<span id="cmdoption-uv-workon-link-verbose"></span><span class="sig-name descname"><span class="pre">-v</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--verbose</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-uv-workon-link-v" title="Link to this definition">#</a></dt>
+<dd><p>Set verbosity level.  Can specify multiple times</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-uv-workon-link-yes">
+<span id="cmdoption-uv-workon-link-no"></span><span class="sig-name descname"><span class="pre">--yes</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-uv-workon-link-yes" title="Link to this definition">#</a></dt>
+<dd><p>Default is confirm yes/No for actions.
+Passing <code class="docutils literal notranslate"><span class="pre">--yes</span></code> confirms all answers as yes.
+Passing <code class="docutils literal notranslate"><span class="pre">--no</span></code> confirms all answers as no.</p>
+</dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-uv-workon-link-arg-PATHS">
+<span class="sig-name descname"><span class="pre">PATHS</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-uv-workon-link-arg-PATHS" title="Link to this definition">#</a></dt>
+<dd><p>Optional argument(s)</p>
+<p>Paths to virtual environments. These can either be full paths to
+virtual environments, or path to the parent of a virtual environment
+that has name <code class="docutils literal notranslate"><span class="pre">venv_pattern</span></code>. If the name (the last element) of the
+path matches <code class="docutils literal notranslate"><span class="pre">venv_pattern</span></code>, then the name of the linked virtual
+environment will come from the parent directory. Otherwise, it will be
+the name.</p>
+</dd></dl>
+
+<p class="rubric">Environment variables</p>
+<dl class="std envvar" id="uv-workon-link-paths-uv-workon-paths">
+<dt class="sig sig-object std">
+<span class="sig-name descname"><span class="pre">UV_WORKON_PATHS</span></span></dt>
+<dd><blockquote>
+<div><p>Provide a default for <a class="reference internal" href="#cmdoption-uv-workon-link-arg-PATHS"><code class="xref std std-option docutils literal notranslate"><span class="pre">PATHS</span></code></a></p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="std envvar" id="uv-workon-link-workon-home-workon-home">
+<dt class="sig sig-object std">
+<span class="sig-name descname"><span class="pre">WORKON_HOME</span></span></dt>
+<dd><blockquote>
+<div><p>Provide a default for <a class="reference internal" href="#cmdoption-uv-workon-link-o"><code class="xref std std-option docutils literal notranslate"><span class="pre">--workon-home</span></code></a></p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="std envvar" id="uv-workon-link-venv-patterns-uv-workon-venv-patterns">
+<dt class="sig sig-object std">
+<span class="sig-name descname"><span class="pre">UV_WORKON_VENV_PATTERNS</span></span></dt>
+<dd><blockquote>
+<div><p>Provide a default for <a class="reference internal" href="#cmdoption-uv-workon-link-venv"><code class="xref std std-option docutils literal notranslate"><span class="pre">--venv</span></code></a></p>
+</div></blockquote>
+</dd></dl>
+
+</section>
+<section id="uv-workon-list">
+<h3>list<a class="headerlink" href="#uv-workon-list" title="Link to this heading">#</a></h3>
+<p>List available central virtual environments</p>
+<p class="rubric">Usage</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>uv-workon<span class="w"> </span>list<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-uv-workon-list-o">
+<span id="cmdoption-uv-workon-list-workon-home"></span><span class="sig-name descname"><span class="pre">-o</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--workon-home</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;workon_home&gt;</span></span><a class="headerlink" href="#cmdoption-uv-workon-list-o" title="Link to this definition">#</a></dt>
+<dd><p>Directory containing the virtual environments and links to virtual
+environments. If not passed, uses in order, <code class="docutils literal notranslate"><span class="pre">WORKON_HOME</span></code> environment
+variable, then <code class="docutils literal notranslate"><span class="pre">~/.virtualenvs</span></code> directory.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-uv-workon-list-v">
+<span id="cmdoption-uv-workon-list-verbose"></span><span class="sig-name descname"><span class="pre">-v</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--verbose</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-uv-workon-list-v" title="Link to this definition">#</a></dt>
+<dd><p>Set verbosity level.  Can specify multiple times</p>
+</dd></dl>
+
+<p class="rubric">Environment variables</p>
+<dl class="std envvar" id="uv-workon-list-workon-home-workon-home">
+<dt class="sig sig-object std">
+<span class="sig-name descname"><span class="pre">WORKON_HOME</span></span></dt>
+<dd><blockquote>
+<div><p>Provide a default for <a class="reference internal" href="#cmdoption-uv-workon-list-o"><code class="xref std std-option docutils literal notranslate"><span class="pre">--workon-home</span></code></a></p>
+</div></blockquote>
+</dd></dl>
+
+</section>
+<section id="uv-workon-run">
+<h3>run<a class="headerlink" href="#uv-workon-run" title="Link to this heading">#</a></h3>
+<p>Run uv commands using using the named or specified virtual environment.</p>
+<p>For example, use <code class="docutils literal notranslate"><span class="pre">uv-workon</span> <span class="pre">run</span> <span class="pre">-n</span> <span class="pre">my-env</span> <span class="pre">--</span> <span class="pre">python</span> <span class="pre">...</span></code> is
+translated to <code class="docutils literal notranslate"><span class="pre">uv</span> <span class="pre">run</span> <span class="pre">-p</span> <span class="pre">patt/to/my-env</span> <span class="pre">--no-project</span> <span class="pre">python</span> <span class="pre">...</span></code>.
+If an option mirrors one of the command options (-n, etc), pass it after <code class="docutils literal notranslate"><span class="pre">--</span></code>.
+Use <code class="docutils literal notranslate"><span class="pre">--dry-run</span></code> to echo the equivalent command to be run in the shell.</p>
+<p>Under the hood, this uses <code class="docutils literal notranslate"><span class="pre">uv</span> <span class="pre">run</span></code> with the environment variables
+<code class="docutils literal notranslate"><span class="pre">VIRTUAL_ENV</span></code> and <code class="docutils literal notranslate"><span class="pre">UV_PROJECT_ENVIRONMENT</span></code> and the option <code class="docutils literal notranslate"><span class="pre">-p</span></code> all
+set to the path of the virtual environment, and with the option
+<code class="docutils literal notranslate"><span class="pre">--no-project</span></code>.</p>
+<p class="rubric">Usage</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>uv-workon<span class="w"> </span>run<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-uv-workon-run-n">
+<span id="cmdoption-uv-workon-run-name"></span><span class="sig-name descname"><span class="pre">-n</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--name</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;venv_name&gt;</span></span><a class="headerlink" href="#cmdoption-uv-workon-run-n" title="Link to this definition">#</a></dt>
+<dd><p>Use virtual environment located at ${workon_home}/{name}.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-uv-workon-run-p">
+<span id="cmdoption-uv-workon-run-path"></span><span class="sig-name descname"><span class="pre">-p</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--path</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;venv_path&gt;</span></span><a class="headerlink" href="#cmdoption-uv-workon-run-p" title="Link to this definition">#</a></dt>
+<dd><p>Path to venv</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-uv-workon-run-resolve">
+<span id="cmdoption-uv-workon-run-no-resolve"></span><span class="sig-name descname"><span class="pre">--resolve</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-resolve</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-uv-workon-run-resolve" title="Link to this definition">#</a></dt>
+<dd><p>Pass <code class="docutils literal notranslate"><span class="pre">--resolve</span></code> to resolve paths and symlinks.  Otherwise, use relative paths.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-uv-workon-run-o">
+<span id="cmdoption-uv-workon-run-workon-home"></span><span class="sig-name descname"><span class="pre">-o</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--workon-home</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;workon_home&gt;</span></span><a class="headerlink" href="#cmdoption-uv-workon-run-o" title="Link to this definition">#</a></dt>
+<dd><p>Directory containing the virtual environments and links to virtual
+environments. If not passed, uses in order, <code class="docutils literal notranslate"><span class="pre">WORKON_HOME</span></code> environment
+variable, then <code class="docutils literal notranslate"><span class="pre">~/.virtualenvs</span></code> directory.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-uv-workon-run-venv">
+<span class="sig-name descname"><span class="pre">--venv</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;venv_patterns&gt;</span></span><a class="headerlink" href="#cmdoption-uv-workon-run-venv" title="Link to this definition">#</a></dt>
+<dd><p>Virtual environment pattern. Can specify multiple times.
+Default is to include virtual environment directories of form
+<code class="docutils literal notranslate"><span class="pre">&quot;.venv&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;venv&quot;</span></code>.  To exclude these defaults, pass <code class="docutils literal notranslate"><span class="pre">--no-default-venv</span></code>.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-uv-workon-run-default-venv">
+<span id="cmdoption-uv-workon-run-no-default-venv"></span><span class="sig-name descname"><span class="pre">--default-venv</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-default-venv</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-uv-workon-run-default-venv" title="Link to this definition">#</a></dt>
+<dd><p>Default is to include virtual environment patterns <code class="docutils literal notranslate"><span class="pre">&quot;.venv&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;venv&quot;</span></code>.
+Pass <code class="docutils literal notranslate"><span class="pre">--no-default-venv</span></code> to exclude these default values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-uv-workon-run-dry-run">
+<span id="cmdoption-uv-workon-run-no-dry-run"></span><span class="sig-name descname"><span class="pre">--dry-run</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-dry-run</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-uv-workon-run-dry-run" title="Link to this definition">#</a></dt>
+<dd><p>Perform a dry run, without executing any action</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-uv-workon-run-v">
+<span id="cmdoption-uv-workon-run-verbose"></span><span class="sig-name descname"><span class="pre">-v</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--verbose</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-uv-workon-run-v" title="Link to this definition">#</a></dt>
+<dd><p>Set verbosity level.  Can specify multiple times</p>
+</dd></dl>
+
+<p class="rubric">Environment variables</p>
+<dl class="std envvar" id="uv-workon-run-workon-home-workon-home">
+<dt class="sig sig-object std">
+<span class="sig-name descname"><span class="pre">WORKON_HOME</span></span></dt>
+<dd><blockquote>
+<div><p>Provide a default for <a class="reference internal" href="#cmdoption-uv-workon-run-o"><code class="xref std std-option docutils literal notranslate"><span class="pre">--workon-home</span></code></a></p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="std envvar" id="uv-workon-run-venv-patterns-uv-workon-venv-patterns">
+<dt class="sig sig-object std">
+<span class="sig-name descname"><span class="pre">UV_WORKON_VENV_PATTERNS</span></span></dt>
+<dd><blockquote>
+<div><p>Provide a default for <a class="reference internal" href="#cmdoption-uv-workon-run-venv"><code class="xref std std-option docutils literal notranslate"><span class="pre">--venv</span></code></a></p>
+</div></blockquote>
+</dd></dl>
+
+</section>
+<section id="uv-workon-shell-config">
+<h3>shell-config<a class="headerlink" href="#uv-workon-shell-config" title="Link to this heading">#</a></h3>
+<p>Use with <code class="docutils literal notranslate"><span class="pre">eval</span> <span class="pre">&quot;$(uv-workon</span> <span class="pre">shell-config)&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">uv-workon</span> <span class="pre">shell-config</span> <span class="pre">|</span> <span class="pre">source</span></code> for fish shell.</p>
+<p>This will add the subcommand <code class="docutils literal notranslate"><span class="pre">uv-workon</span> <span class="pre">activate</span></code> and <code class="docutils literal notranslate"><span class="pre">uv-workon</span> <span class="pre">cd</span></code> to the shell.  Without
+running shell config, <code class="docutils literal notranslate"><span class="pre">activate</span></code> and <code class="docutils literal notranslate"><span class="pre">cd</span></code> will just print the command to screen.</p>
+<p class="rubric">Usage</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>uv-workon<span class="w"> </span>shell-config<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+</section>
+<section id="uv-workon-venv-link">
+<h3>venv-link<a class="headerlink" href="#uv-workon-venv-link" title="Link to this heading">#</a></h3>
+<p>Create symlink from virtual environment to a local <code class="docutils literal notranslate"><span class="pre">.venv</span></code></p>
+<p>This is, in a sense, the inverse of the <code class="docutils literal notranslate"><span class="pre">link</span></code> subcommand. While <code class="docutils literal notranslate"><span class="pre">link</span></code>
+links from a virtualenv to <code class="docutils literal notranslate"><span class="pre">workon_home</span></code>, this links from <code class="docutils literal notranslate"><span class="pre">workon_home</span></code>
+to a local <code class="docutils literal notranslate"><span class="pre">.venv</span></code>. This can then be used (with care) via <code class="docutils literal notranslate"><span class="pre">uv</span> <span class="pre">run</span> <span class="pre">...</span></code>.</p>
+<p>Note that this is experimental and subject to change.</p>
+<p class="rubric">Usage</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>uv-workon<span class="w"> </span>venv-link<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span><span class="o">[</span>DESTINATION<span class="o">]</span>
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-uv-workon-venv-link-n">
+<span id="cmdoption-uv-workon-venv-link-name"></span><span class="sig-name descname"><span class="pre">-n</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--name</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;venv_name&gt;</span></span><a class="headerlink" href="#cmdoption-uv-workon-venv-link-n" title="Link to this definition">#</a></dt>
+<dd><p>Use virtual environment located at ${workon_home}/{name}.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-uv-workon-venv-link-p">
+<span id="cmdoption-uv-workon-venv-link-path"></span><span class="sig-name descname"><span class="pre">-p</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--path</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;venv_path&gt;</span></span><a class="headerlink" href="#cmdoption-uv-workon-venv-link-p" title="Link to this definition">#</a></dt>
+<dd><p>Path to venv</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-uv-workon-venv-link-resolve">
+<span id="cmdoption-uv-workon-venv-link-no-resolve"></span><span class="sig-name descname"><span class="pre">--resolve</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-resolve</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-uv-workon-venv-link-resolve" title="Link to this definition">#</a></dt>
+<dd><p>Pass <code class="docutils literal notranslate"><span class="pre">--resolve</span></code> to resolve paths and symlinks.  Otherwise, use relative paths.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-uv-workon-venv-link-o">
+<span id="cmdoption-uv-workon-venv-link-workon-home"></span><span class="sig-name descname"><span class="pre">-o</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--workon-home</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;workon_home&gt;</span></span><a class="headerlink" href="#cmdoption-uv-workon-venv-link-o" title="Link to this definition">#</a></dt>
+<dd><p>Directory containing the virtual environments and links to virtual
+environments. If not passed, uses in order, <code class="docutils literal notranslate"><span class="pre">WORKON_HOME</span></code> environment
+variable, then <code class="docutils literal notranslate"><span class="pre">~/.virtualenvs</span></code> directory.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-uv-workon-venv-link-venv">
+<span class="sig-name descname"><span class="pre">--venv</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;venv_patterns&gt;</span></span><a class="headerlink" href="#cmdoption-uv-workon-venv-link-venv" title="Link to this definition">#</a></dt>
+<dd><p>Virtual environment pattern. Can specify multiple times.
+Default is to include virtual environment directories of form
+<code class="docutils literal notranslate"><span class="pre">&quot;.venv&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;venv&quot;</span></code>.  To exclude these defaults, pass <code class="docutils literal notranslate"><span class="pre">--no-default-venv</span></code>.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-uv-workon-venv-link-default-venv">
+<span id="cmdoption-uv-workon-venv-link-no-default-venv"></span><span class="sig-name descname"><span class="pre">--default-venv</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-default-venv</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-uv-workon-venv-link-default-venv" title="Link to this definition">#</a></dt>
+<dd><p>Default is to include virtual environment patterns <code class="docutils literal notranslate"><span class="pre">&quot;.venv&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;venv&quot;</span></code>.
+Pass <code class="docutils literal notranslate"><span class="pre">--no-default-venv</span></code> to exclude these default values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-uv-workon-venv-link-dry-run">
+<span id="cmdoption-uv-workon-venv-link-no-dry-run"></span><span class="sig-name descname"><span class="pre">--dry-run</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-dry-run</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-uv-workon-venv-link-dry-run" title="Link to this definition">#</a></dt>
+<dd><p>Perform a dry run, without executing any action</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-uv-workon-venv-link-v">
+<span id="cmdoption-uv-workon-venv-link-verbose"></span><span class="sig-name descname"><span class="pre">-v</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--verbose</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-uv-workon-venv-link-v" title="Link to this definition">#</a></dt>
+<dd><p>Set verbosity level.  Can specify multiple times</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-uv-workon-venv-link-yes">
+<span id="cmdoption-uv-workon-venv-link-no"></span><span class="sig-name descname"><span class="pre">--yes</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-uv-workon-venv-link-yes" title="Link to this definition">#</a></dt>
+<dd><p>Default is confirm yes/No for actions.
+Passing <code class="docutils literal notranslate"><span class="pre">--yes</span></code> confirms all answers as yes.
+Passing <code class="docutils literal notranslate"><span class="pre">--no</span></code> confirms all answers as no.</p>
+</dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-uv-workon-venv-link-arg-DESTINATION">
+<span class="sig-name descname"><span class="pre">DESTINATION</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-uv-workon-venv-link-arg-DESTINATION" title="Link to this definition">#</a></dt>
+<dd><p>Optional argument</p>
+<p>Path of linked virtual environment</p>
+</dd></dl>
+
+<p class="rubric">Environment variables</p>
+<dl class="std envvar" id="uv-workon-venv-link-workon-home-workon-home">
+<dt class="sig sig-object std">
+<span class="sig-name descname"><span class="pre">WORKON_HOME</span></span></dt>
+<dd><blockquote>
+<div><p>Provide a default for <a class="reference internal" href="#cmdoption-uv-workon-venv-link-o"><code class="xref std std-option docutils literal notranslate"><span class="pre">--workon-home</span></code></a></p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="std envvar" id="uv-workon-venv-link-venv-patterns-uv-workon-venv-patterns">
+<dt class="sig sig-object std">
+<span class="sig-name descname"><span class="pre">UV_WORKON_VENV_PATTERNS</span></span></dt>
+<dd><blockquote>
+<div><p>Provide a default for <a class="reference internal" href="#cmdoption-uv-workon-venv-link-venv"><code class="xref std std-option docutils literal notranslate"><span class="pre">--venv</span></code></a></p>
+</div></blockquote>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="index.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">API Reference</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="generated/uv_workon.cli.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Console script (<code class="xref py py-mod docutils literal notranslate"><span class="pre">cli</span></code>)</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#uv-workon">uv-workon</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#uv-workon-activate">activate</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#uv-workon-cd">cd</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#uv-workon-clean">clean</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#uv-workon-kernels">kernels</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#uv-workon-kernels-install">install</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#uv-workon-kernels-list">list</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#uv-workon-kernels-remove">remove</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#uv-workon-link">link</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#uv-workon-list">list</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#uv-workon-run">run</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#uv-workon-shell-config">shell-config</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#uv-workon-venv-link">venv-link</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By William P. Krekelberg
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2025, William P. Krekelberg.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    <p class="last-updated">
+  Last updated on 2026-02-20.
+  <br/>
+</p>
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
