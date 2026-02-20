@@ -125,7 +125,7 @@ ty==0.0.17 \
     --hash=sha256:eb2dbd8acd5c5a55f4af0d479523e7c7265a88542efe73ed3d696eb1ba7b6454 \
     --hash=sha256:f18f5fd927bc628deb9ea2df40f06b5f79c5ccf355db732025a3e8e7152801f6
     # via -r requirements/uvx-tools.txt
-typecheck-runner==0.1.5 \
-    --hash=sha256:2071d945d4aae2f262ce72b84e17cca28d0863723c9ab2284f98e8e7d758ac48 \
-    --hash=sha256:2c056aa26acb486cc0d8825ec391b9f52aa9abba2c74a4f0d36ab4d83bea7de6
+typecheck-runner==0.1.6 \
+    --hash=sha256:a97f7ce67bf6397fe0e0e4072c1813a8961dc8e8233d0745d2702c29cd61e88d \
+    --hash=sha256:ae402b59bb3d6239e619d94aaa07ca4404b4b308d70daf2c0550238fdd1ccc7b
     # via -r requirements/uvx-tools.txt
