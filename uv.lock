@@ -2040,7 +2040,7 @@ wheels = [
 
 [[package]]
 name = "uv-workon"
-version = "0.7.3"
+version = "0.7.4"
 source = { editable = "." }
 dependencies = [
     { name = "attrs" },

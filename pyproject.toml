@@ -6,7 +6,7 @@ requires = [
 
 [project]
 name = "uv-workon"
-version = "0.7.3"
+version = "0.7.4"
 description = "Tools to activate and run virtual environments from central location"
 readme = "README.md"
 keywords = [
