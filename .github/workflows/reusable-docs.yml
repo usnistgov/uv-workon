@@ -31,7 +31,7 @@ env:
 
 jobs:
   build:
-    name: Build docs
+    name: Build (and optionally deploy) docs
     runs-on: ubuntu-latest
     permissions:
       contents: write

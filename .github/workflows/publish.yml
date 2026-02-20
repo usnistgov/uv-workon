@@ -19,7 +19,7 @@ concurrency:
 
 jobs:
   dist:
-    name: Build and verify
+    name: Build and verify package
     runs-on: ubuntu-latest
     env:
       DIST: "/tmp/baipp/dist"
