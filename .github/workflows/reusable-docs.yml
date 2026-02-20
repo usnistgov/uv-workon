@@ -3,29 +3,29 @@ name: Docs
 on:
   workflow_call:
     inputs:
-      no-history:
-        description: "Force new commit without parent history."
-        required: false
-        type: boolean
-        default: true
       deploy:
         description: "Deploy docs to nist-page."
         required: false
         type: boolean
         default: false
+      no-history:
+        description: "Force new commit without parent history."
+        required: false
+        type: boolean
+        default: true
 
   workflow_dispatch:
     inputs:
-      no-history:
-        description: "Force new commit without parent history."
-        required: false
-        type: boolean
-        default: true
       deploy:
         description: "Deploy docs to nist-page."
         required: false
         type: boolean
         default: false
+      no-history:
+        description: "Force new commit without parent history."
+        required: false
+        type: boolean
+        default: true
 env:
   FORCE_COLOR: "3"
 
