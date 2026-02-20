@@ -26,12 +26,13 @@ on:
         required: false
         type: boolean
         default: true
+
 env:
   FORCE_COLOR: "3"
 
 jobs:
   build:
-    name: Build (and optionally deploy) docs
+    name: Build/deploy docs
     runs-on: ubuntu-latest
     permissions:
       contents: write
