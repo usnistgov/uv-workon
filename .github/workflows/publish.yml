@@ -1,12 +1,14 @@
 name: Publish
 on:
   workflow_dispatch:
+    inputs:
+      deploy:
+        description: "Deploy package and docs."
+        required: false
+        type: boolean
+        default: false
   release:
     types: [published]
-    # these covered by ci?
-    # pull_request:
-    # push:
-    #   branches: [main]
 
 env:
   FORCE_COLOR: "3"
@@ -17,7 +19,7 @@ concurrency:
 
 jobs:
   dist:
-    name: Build and verify
+    name: Build and verify package
     runs-on: ubuntu-latest
     env:
       DIST: "/tmp/baipp/dist"
@@ -71,7 +73,9 @@ jobs:
     permissions:
       id-token: write
     runs-on: ubuntu-latest
-    if: github.event_name == 'release' && github.event.action == 'published'
+    if:
+      ${{ (github.event_name == 'release' && github.event.action == 'published')
+      || (github.event_name == 'workflow_dispatch' && inputs.deploy) }}
     steps:
       - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
         with:
@@ -91,7 +95,9 @@ jobs:
     permissions:
       id-token: write
     runs-on: ubuntu-latest
-    if: github.event_name == 'release' && github.event.action == 'published'
+    if:
+      ${{ (github.event_name == 'release' && github.event.action == 'published')
+      || (github.event_name == 'workflow_dispatch' && inputs.deploy) }}
     steps:
       - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
         with:
@@ -104,4 +110,9 @@ jobs:
   docs:
     permissions:
       contents: write
-    uses: ./.github/workflows/reusable-docs.yml
+    uses: ./.github/workflows/docs.yml
+    with:
+      deploy:
+        ${{ (github.event_name == 'release' && github.event.action ==
+        'published') || (github.event_name == 'workflow_dispatch' &&
+        inputs.deploy) }}

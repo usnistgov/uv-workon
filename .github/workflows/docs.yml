@@ -3,27 +3,36 @@ name: Docs
 on:
   workflow_call:
     inputs:
-      force_orphan:
-        description: "Pass false to keep history."
+      deploy:
+        description: "Deploy docs to nist-page."
+        required: false
+        type: boolean
+        default: false
+      no-history:
+        description: "Force new commit without parent history."
         required: false
         type: boolean
         default: true
 
   workflow_dispatch:
     inputs:
-      force_orphan:
-        # with dispatch, default to keeping history
-        description: "Pass true to remove history."
+      deploy:
+        description: "Deploy docs to nist-page."
         required: false
         type: boolean
         default: false
+      no-history:
+        description: "Force new commit without parent history."
+        required: false
+        type: boolean
+        default: true
 
 env:
   FORCE_COLOR: "3"
 
 jobs:
   build:
-    name: Build docs
+    name: Build/deploy docs
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -44,12 +53,10 @@ jobs:
 
       - name: Deploy docs
         uses: peaceiris/actions-gh-pages@4f9cc6602d3f66b9c108549d475ec49e8ef4d45e # v4.0.0
-        if:
-          github.event_name == 'workflow_dispatch' || (github.event_name ==
-          'release' && github.event.action == 'published')
+        if: ${{ inputs.deploy }}
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./docs/_build/html
           publish_branch: nist-pages
-          force_orphan: ${{ inputs.force_orphan }}
+          force_orphan: ${{ inputs.no-history }}
           commit_message: ${{ github.event.head_commit.message }}
