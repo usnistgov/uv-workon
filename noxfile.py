@@ -158,6 +158,10 @@ class SessionParams(DataclassParser):
         list[Literal["erase", "combine", "report", "html", "open", "markdown"]] | None
     ) = None
 
+    coverage_options: OPT_TYPE = add_option(
+        "--coverage-options", help="Options to coverage commands"
+    )
+
     # docs
     docs: (
         list[
@@ -601,6 +605,8 @@ def coverage(
                 session.log(f"removing {path}")
                 path.unlink()
 
+    coverage_options = combine_list_str(opts.coverage_options or [])
+
     for c in cmd:
         if c == "combine":
             uvx_run(
@@ -621,6 +627,7 @@ def coverage(
                     "coverage",
                     "report",
                     "--format=markdown",
+                    *coverage_options,
                     stdout=f,
                 )
         else:
@@ -628,6 +635,7 @@ def coverage(
                 session,
                 "coverage",
                 c,
+                *coverage_options,
             )
 
 
