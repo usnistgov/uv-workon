@@ -305,8 +305,11 @@ ipython *options:
 
 # update templates
 [group("tools")]
-copier-update *options="-r main --trust -A":
-    {{ UVX_WITH_OPTS }} --with copier-template-extensions copier update {{ options }}
+copier-update *options="":
+    {{ UVX_WITH_OPTS }} --with copier-template-extensions \
+    copier update --trust -A \
+    -r main \
+    {{ options }}
 
 # create changelog snippet with scriv
 [group("tools")]
