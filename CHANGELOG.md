@@ -1,10 +1,7 @@
-<!-- markdownlint-disable MD024 -->
-
-<!-- markdownlint-disable MD013 -->
-
-<!-- prettier-ignore-start -->
-
 # Changelog
+
+<!-- markdownlint-disable-file -->
+
 
 Changelog for `uv-workon`
 
@@ -33,16 +30,6 @@ Released on 2026-02-19.
 - [@pre-commit-ci](https://github.com/pre-commit-ci)
 - [@wpk-nist-gov](https://github.com/wpk-nist-gov)
 
-## Unreleased
-
-[changelog.d]: https://github.com/usnistgov/uv-workon/tree/main/changelog.d
-
-See the fragment files in [changelog.d]
-<!-- prettier-ignore-end -->
-
-<!-- markdownlint-enable MD013 -->
-
-<!-- scriv-insert-here -->
 
 ## 0.7.0 — 2025-06-02
 
