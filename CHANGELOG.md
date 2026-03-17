@@ -1,3 +1,4 @@
+<<<<<<< before updating
 <!-- markdownlint-disable MD024 -->
 
 <!-- markdownlint-disable MD013 -->
@@ -34,14 +35,16 @@ Released on 2026-02-19.
 - [@wpk-nist-gov](https://github.com/wpk-nist-gov)
 
 ## Unreleased
+=======
+# Changelog
 
-[changelog.d]: https://github.com/usnistgov/uv-workon/tree/main/changelog.d
+<!-- markdownlint-disable-file -->
+>>>>>>> after updating
 
-See the fragment files in [changelog.d]
-<!-- prettier-ignore-end -->
 
-<!-- markdownlint-enable MD013 -->
+Changelog for `uv-workon`
 
+<<<<<<< before updating
 <!-- scriv-insert-here -->
 
 ## 0.7.0 — 2025-06-02
@@ -94,3 +97,6 @@ See the fragment files in [changelog.d]
   - list - list jupyter kernels This adds functionality to easy transition from
     nb_conda_kernels to using uv to manage virtual environment.
 - Added tests to have full coverage.
+=======
+## Initial release
+>>>>>>> after updating
