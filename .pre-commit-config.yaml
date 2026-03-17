@@ -31,7 +31,7 @@ repos:
       - id: sync-uv-dependency-groups
       - id: justfile-format
         additional_dependencies:
-          - rust-just==1.47.1
+          - rust-just==1.46.0
 
   # * Forbidden files
   - repo: local
@@ -67,20 +67,12 @@ repos:
       - id: taplo-lint
         args: ["--no-schema"]
   - repo: https://github.com/tox-dev/pyproject-fmt
-<<<<<<< before updating
-    rev: v2.16.2
-=======
     rev: v2.19.0
->>>>>>> after updating
     hooks:
       - id: pyproject-fmt
   # ** validate (schema-store)
   - repo: https://github.com/henryiii/validate-pyproject-schema-store
-<<<<<<< before updating
-    rev: 2026.03.02
-=======
     rev: 2026.03.15
->>>>>>> after updating
     hooks:
       - id: validate-pyproject
         name: validate-pyproject-schema-store
@@ -114,11 +106,7 @@ repos:
 
   # * Linting
   - repo: https://github.com/astral-sh/ruff-pre-commit
-<<<<<<< before updating
-    rev: v0.15.4
-=======
     rev: v0.15.6
->>>>>>> after updating
     hooks:
       - id: ruff-check
         alias: ruff
@@ -138,11 +126,7 @@ repos:
           - "--command"
           - "ruff format"
         additional_dependencies:
-<<<<<<< before updating
-          - ruff==0.15.4
-=======
           - ruff==0.15.6
->>>>>>> after updating
 
   # * Spelling
   # ** typos
@@ -166,11 +150,7 @@ repos:
           - "--custom-command=prek run pyproject2conda-project --all-files"
   # ** uv
   - repo: https://github.com/astral-sh/uv-pre-commit
-<<<<<<< before updating
-    rev: 0.10.7
-=======
     rev: 0.10.11
->>>>>>> after updating
     hooks:
       - id: uv-lock
         alias: requirements
