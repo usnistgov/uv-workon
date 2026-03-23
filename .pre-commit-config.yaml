@@ -97,7 +97,7 @@ repos:
 
   # * Markdown
   - repo: https://github.com/DavidAnson/markdownlint-cli2
-    rev: v0.21.0
+    rev: v0.22.0
     hooks:
       - id: markdownlint-cli2
         alias: markdownlint
@@ -197,7 +197,7 @@ repos:
         priority: 0
   - repo: https://github.com/zizmorcore/zizmor-pre-commit
     # Zizmor version.
-    rev: v1.22.0
+    rev: v1.23.1
     hooks:
       # Run the linter.
       - id: zizmor
