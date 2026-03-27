@@ -94,9 +94,9 @@ def _get_venv_name_path_mapping(
         name_mapping.update({p.name: p for p in get_virtualenv_paths(workon_home)})
 
     if venv_names:
-        name_mapping.update(
-            {name: validate_is_virtualenv(workon_home / name) for name in venv_names}
-        )
+        name_mapping.update({
+            name: validate_is_virtualenv(workon_home / name) for name in venv_names
+        })
 
     if venv_paths:
         for p in venv_paths:

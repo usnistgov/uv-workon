@@ -188,8 +188,5 @@ repos:
       # Run the linter.
       - id: zizmor
         alias: actions
-<<<<<<< before updating
-=======
 
   # * Other tools --------------------------------------------------------------
->>>>>>> after updating
