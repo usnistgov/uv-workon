@@ -68,6 +68,7 @@ test = [
 ]
 type = [
     "ipykernel",
+    { include-group = "nox" },
     { include-group = "optional" },
     { include-group = "pylint" },
     { include-group = "pytest" },
@@ -167,17 +168,12 @@ CPY = "CPY"
 
 # * typecheck ---------------------------------------------------------------------
 [tool.mypy]
-exclude = [
-    ".eggs",
-    ".nox",
-    ".numba_cache",
-    ".tox",
-    ".venv",
-    "docs",
-]
 files = [
     "src",
     "tests",
+    # tools
+    "noxfile.py",
+    "tools",
 ]
 strict = true
 # options
@@ -201,7 +197,14 @@ ignore_missing_imports = true
 
 [tool.pyrefly]
 enabled-ignores = [ "pyrefly" ]
-project-includes = [ "src", "tests" ]
+project-includes = [
+    "src",
+    "tests",
+    # tools
+    "noxfile.py",
+    "tools",
+]
+search-path = [ "." ]
 
 [tool.pyright]
 exclude = [
@@ -215,6 +218,9 @@ exclude = [
 include = [
     "src",
     "tests",
+    # tools
+    "noxfile.py",
+    "tools",
 ]
 typeCheckingMode = "strict"
 # options
@@ -250,7 +256,13 @@ reportUnusedCallResult = false
 [tool.ty]
 # Disable support for `type: ignore` comments
 analysis.respect-type-ignore-comments = false
-src.include = [ "src", "tests" ]
+src.include = [
+    "src",
+    "tests",
+    # tools
+    "noxfile.py",
+    "tools",
+]
 
 # * Testing --------------------------------------------------------------------
 [tool.pytest.ini_options]
