@@ -67,12 +67,9 @@ test = [
     { include-group = "test-noopt" },
 ]
 type = [
-<<<<<<< before updating
     "ipykernel",
-    { include-group = "optional" },
-=======
     { include-group = "nox" },
->>>>>>> after updating
+    { include-group = "optional" },
     { include-group = "pylint" },
     { include-group = "pytest" },
     { include-group = "typecheck-runner" },

@@ -773,12 +773,6 @@ def typecheck(  # noqa: PLR0912
 
     cmd = opts.typecheck or []
     if not opts.typecheck_run and not cmd:
-<<<<<<< before updating
-        cmd = ["mypy", "basedpyright", "pyrefly", "ty"]
-
-    if "all" in cmd:
-        cmd = ["mypy", "basedpyright", "pylint"]
-=======
         cmd = ["all"]
 
     if "all" in cmd:
@@ -789,7 +783,6 @@ def typecheck(  # noqa: PLR0912
             "ty",
             "pylint",
         ]
->>>>>>> after updating
 
     # set the cache directory for mypy
     session.env["MYPY_CACHE_DIR"] = str(Path(session.create_tmp()) / ".mypy_cache")
