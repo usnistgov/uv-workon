@@ -13,7 +13,7 @@ except PackageNotFoundError:  # pragma: no cover
 
 
 __author__ = """William P. Krekelberg"""
-__email__ = "wpk@nist.gov"  # noqa: RUF067
+__email__ = "wpk@nist.gov"
 
 
 __all__ = [
