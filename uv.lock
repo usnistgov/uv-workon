@@ -9,7 +9,7 @@ resolution-markers = [
 ]
 
 [options]
-exclude-newer = "2026-04-01T17:01:58.855526Z"
+exclude-newer = "2026-04-02T18:38:10.736153Z"
 exclude-newer-span = "P7D"
 
 [[package]]
@@ -2236,7 +2236,7 @@ dev = [
     { name = "pytest-mock", marker = "python_full_version >= '3.14'", specifier = ">=3.14.0" },
     { name = "pytest-sugar", marker = "python_full_version >= '3.14'" },
     { name = "pytest-xdist", marker = "python_full_version >= '3.14'" },
-    { name = "typecheck-runner", marker = "python_full_version >= '3.14'", specifier = ">=0.1.0" },
+    { name = "typecheck-runner", marker = "python_full_version >= '3.14'", specifier = ">=0.1.6" },
     { name = "uv-workon", extras = ["all"], marker = "python_full_version >= '3.14'" },
 ]
 docs = [
@@ -2304,10 +2304,10 @@ type = [
     { name = "pylint" },
     { name = "pytest" },
     { name = "pytest-mock", specifier = ">=3.14.0" },
-    { name = "typecheck-runner", marker = "python_full_version >= '3.10'", specifier = ">=0.1.0" },
+    { name = "typecheck-runner", marker = "python_full_version >= '3.10'", specifier = ">=0.1.6" },
     { name = "uv-workon", extras = ["all"] },
 ]
-typecheck-runner = [{ name = "typecheck-runner", marker = "python_full_version >= '3.10'", specifier = ">=0.1.0" }]
+typecheck-runner = [{ name = "typecheck-runner", marker = "python_full_version >= '3.10'", specifier = ">=0.1.6" }]
 
 [[package]]
 name = "uvicorn"

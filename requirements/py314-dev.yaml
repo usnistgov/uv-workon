@@ -24,6 +24,6 @@ dependencies:
   - pytest-sugar
   - pytest-xdist
   - simple-term-menu>=1.6.6
-  - typecheck-runner>=0.1.0
+  - typecheck-runner>=0.1.6
   - typer>=0.15.2
   - pip
