@@ -103,6 +103,7 @@ pytest = [ "pytest", "pytest-mock>=3.14.0" ]
 test-extras = [
     { include-group = "test" },
 ]
+<<<<<<< before updating
 test-noopt = [
     "pytest",
     "pytest-cov",
@@ -111,6 +112,9 @@ test-noopt = [
     { include-group = "pytest" },
 ]
 typecheck-runner = [ "typecheck-runner>=0.1.0; python_version>'3.9'" ]
+=======
+typecheck-runner = [ "typecheck-runner>=0.1.6; python_version>'3.9'" ]
+>>>>>>> after updating
 
 # * uv -------------------------------------------------------------------------
 [tool.uv]
