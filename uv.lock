@@ -9,7 +9,7 @@ resolution-markers = [
 ]
 
 [options]
-exclude-newer = "2026-04-13T13:59:18.836133Z"
+exclude-newer = "2026-04-13T16:38:13.408386Z"
 exclude-newer-span = "P7D"
 
 [[package]]
@@ -2229,14 +2229,14 @@ basedpyright = [{ name = "basedpyright", specifier = ">=1.31.3" }]
 dev = [
     { name = "ipykernel", marker = "python_full_version >= '3.14'" },
     { name = "mypy", extras = ["faster-cache"], marker = "python_full_version >= '3.14'", specifier = ">=1.20.1" },
-    { name = "nox", marker = "python_full_version >= '3.14'", specifier = ">=2025.5.1" },
+    { name = "nox", marker = "python_full_version >= '3.14'", specifier = ">=2026.4.10" },
     { name = "pylint", marker = "python_full_version >= '3.14'" },
     { name = "pytest", marker = "python_full_version >= '3.14'" },
     { name = "pytest-cov", marker = "python_full_version >= '3.14'" },
     { name = "pytest-mock", marker = "python_full_version >= '3.14'", specifier = ">=3.14.0" },
     { name = "pytest-sugar", marker = "python_full_version >= '3.14'" },
     { name = "pytest-xdist", marker = "python_full_version >= '3.14'" },
-    { name = "typecheck-runner", marker = "python_full_version >= '3.14'", specifier = ">=0.1.6" },
+    { name = "typecheck-runner", marker = "python_full_version >= '3.14'", specifier = ">=0.2.0" },
     { name = "uv-workon", extras = ["all"], marker = "python_full_version >= '3.14'" },
 ]
 docs = [
@@ -2268,7 +2268,7 @@ docs-spelling = [
 ]
 ipython = [{ name = "ipython", marker = "python_full_version >= '3.14'" }]
 mypy = [{ name = "mypy", extras = ["faster-cache"], marker = "python_full_version >= '3.14'", specifier = ">=1.20.1" }]
-nox = [{ name = "nox", marker = "python_full_version >= '3.14'", specifier = ">=2025.5.1" }]
+nox = [{ name = "nox", marker = "python_full_version >= '3.14'", specifier = ">=2026.4.10" }]
 optional = [{ name = "uv-workon", extras = ["all"] }]
 pylint = [{ name = "pylint" }]
 pytest = [
@@ -2300,14 +2300,14 @@ test-noopt = [
 ]
 type = [
     { name = "ipykernel" },
-    { name = "nox", marker = "python_full_version >= '3.14'", specifier = ">=2025.5.1" },
+    { name = "nox", marker = "python_full_version >= '3.14'", specifier = ">=2026.4.10" },
     { name = "pylint" },
     { name = "pytest" },
     { name = "pytest-mock", specifier = ">=3.14.0" },
-    { name = "typecheck-runner", marker = "python_full_version >= '3.10'", specifier = ">=0.1.6" },
+    { name = "typecheck-runner", marker = "python_full_version >= '3.10'", specifier = ">=0.2.0" },
     { name = "uv-workon", extras = ["all"] },
 ]
-typecheck-runner = [{ name = "typecheck-runner", marker = "python_full_version >= '3.10'", specifier = ">=0.1.6" }]
+typecheck-runner = [{ name = "typecheck-runner", marker = "python_full_version >= '3.10'", specifier = ">=0.2.0" }]
 
 [[package]]
 name = "uvicorn"
