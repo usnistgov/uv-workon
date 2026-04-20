@@ -96,7 +96,7 @@ docs-spelling = [
 ]
 ipython = [ "ipython" ]
 mypy = [ "mypy[faster-cache]>=1.20.1" ]
-nox = [ "nox>=2025.5.1" ]
+nox = [ "nox>=2026.4.10" ]
 optional = [ "uv-workon[all]" ]
 pylint = [ "pylint" ]
 pytest = [ "pytest", "pytest-mock>=3.14.0" ]
@@ -110,7 +110,7 @@ test-noopt = [
     "pytest-xdist",
     { include-group = "pytest" },
 ]
-typecheck-runner = [ "typecheck-runner>=0.1.6; python_version>'3.9'" ]
+typecheck-runner = [ "typecheck-runner>=0.2.0; python_version>'3.9'" ]
 
 # * uv -------------------------------------------------------------------------
 [tool.uv]
