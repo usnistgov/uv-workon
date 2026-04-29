@@ -7,7 +7,7 @@ email: wpk@nist.gov
 full_name: William P. Krekelberg
 github_username: usnistgov
 project_name: uv-workon
-project_short_description: Tools activate and run from virtual environments
+project_short_description: Tools to activate and run virtual environments from central location
 project_slug: uv_workon
 pypi_username: wpk-nist
 sphinx_theme: sphinx_book_theme

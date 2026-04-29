@@ -6,13 +6,8 @@ requires = [
 
 [project]
 name = "uv-workon"
-<<<<<<< before updating
 version = "0.7.4"
 description = "Tools to activate and run virtual environments from central location"
-=======
-version = "0.1.0"
-description = "Tools activate and run from virtual environments"
->>>>>>> after updating
 readme = "README.md"
 keywords = [
     "uv-workon",
@@ -344,15 +339,6 @@ skip-package = true
 
 [tool.pyproject2conda.envs.uvx-tools]
 reqs = [
-<<<<<<< before updating
-    "conda-lock>=2.5.5",
-    "copier",
-    "copier-template-extensions>=0.3.1",
-    "grayskull>=2.5.3",
-    "prek",
-    "pyrefly>=0.37.0",
-    "pyright>=1.1.396",
-=======
     # these used solely for specking tools to be run via uvx ...
     "conda-lock>=4.0.0",
     "copier-template-extensions>=0.3.3",
@@ -361,7 +347,6 @@ reqs = [
     "prek>=0.3.10",
     "pyrefly>=0.61.1",
     "pyright>=1.1.408",
->>>>>>> after updating
     "rooster>=0.1.1",
     "twine>=6.2.0",
     "ty>=0.0.31",
