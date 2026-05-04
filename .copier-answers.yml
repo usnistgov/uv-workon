@@ -1,5 +1,5 @@
 # Changes here will be overwritten by Copier; NEVER EDIT MANUALLY
-_commit: v0.12.0-89-g4fb3775
+_commit: v0.12.0-94-gcbefa37
 _src_path: https://github.com/usnistgov/cookiecutter-nist-python.git
 command_line_interface: typer
 conda_channel: wpk-nist
@@ -7,7 +7,8 @@ email: wpk@nist.gov
 full_name: William P. Krekelberg
 github_username: usnistgov
 project_name: uv-workon
-project_short_description: Tools to activate and run virtual environments from central location
+project_short_description: Tools to activate and run virtual environments from central
+    location
 project_slug: uv_workon
 pypi_username: wpk-nist
 sphinx_theme: sphinx_book_theme
