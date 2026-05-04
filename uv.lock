@@ -2204,7 +2204,7 @@ requires-dist = [
 provides-extras = ["all", "menu", "jupyter"]
 
 [package.metadata.requires-dev]
-basedpyright = [{ name = "basedpyright", specifier = ">=1.31.3" }]
+basedpyright = [{ name = "basedpyright", specifier = ">=1.39.3" }]
 dev = [
     { name = "ipykernel", marker = "python_full_version >= '3.14'" },
     { name = "mypy", extras = ["faster-cache"], marker = "python_full_version >= '3.14'", specifier = ">=1.20.2" },
