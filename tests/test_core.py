@@ -89,7 +89,7 @@ def test_find_venvs_with_name(venvs_parent_path: Path, workon_home: Path) -> Non
     assert [x.link.name for x in out] == ["a"]
 
     with pytest.raises(ValueError, match=r".* shorter.*"):
-        out = list(
+        _ = list(
             VirtualEnvPathAndLink.from_paths_and_workon(
                 paths,
                 names="a",

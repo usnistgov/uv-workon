@@ -77,8 +77,7 @@ def test__select_venv_path(
     path = func(venv_path=venvs_parent_path / "is_venv_0", venv_name=None)
     assert path == venvs_parent_path / "is_venv_0"
 
-    path = func(venv_path=None, venv_name=None)
-
+    _ = func(venv_path=None, venv_name=None)
     options = [p.name for p in workon_home_with_is_venv.glob("*")]
     assert mock_terminalmenu.mock_calls == [
         mocker.call(
