@@ -18,7 +18,7 @@ if TYPE_CHECKING:
     from pytest_mock import MockerFixture
 
 
-def find_venvs_interface(
+def get_venv_paths(
     *args: Path, workon_home: Path, venv_patterns: list[str] | None = None
 ) -> list[Path]:
     if venv_patterns is None:
@@ -33,7 +33,7 @@ def find_venvs_interface(
 
 
 def test_find_venvs_explicit(venvs_parent_path: Path, workon_home: Path) -> None:
-    find_venvs = partial(find_venvs_interface, workon_home=workon_home)
+    find_venvs = partial(get_venv_paths, workon_home=workon_home)
     paths_dotvenv = list(venvs_parent_path.glob("has_dotvenv_*/.venv"))
 
     assert find_venvs(*paths_dotvenv) == paths_dotvenv
