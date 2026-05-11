@@ -4,6 +4,7 @@ import os
 from functools import partial
 from pathlib import Path
 from subprocess import CalledProcessError
+from tempfile import TemporaryDirectory
 from typing import TYPE_CHECKING
 
 import pytest
@@ -116,8 +117,6 @@ def test_generate_shell_config_bash_and_fish(
 
 
 def test_uv_run_error() -> None:
-    from tempfile import TemporaryDirectory
-
     args = ["python", "-c", "import sys; print(sys.executable)"]
     with TemporaryDirectory() as e, pytest.raises(CalledProcessError):
         _ = uv_run(Path(e), *args, dry_run=False)
