@@ -5,7 +5,6 @@ Working with ipykernel (:mod:`~uv_workon.kernels`)
 
 from __future__ import annotations
 
-import logging
 from collections.abc import Iterator  # noqa: TC003
 from functools import lru_cache
 from importlib.util import find_spec
@@ -14,9 +13,6 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from typing import Any
-
-
-logger: logging.Logger = logging.getLogger(__name__)
 
 
 def has_jupyter_client() -> None:
