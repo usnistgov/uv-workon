@@ -84,12 +84,7 @@ docs = [
     "sphinx-copybutton",
 ]
 # other groups
-<<<<<<< before updating
-basedpyright = [ "basedpyright>=1.39.3" ]
-=======
 basedpyright = [ "basedpyright>=1.39.4" ]
-cog = [ "cogapp" ]
->>>>>>> after updating
 docs-live = [
     "sphinx-autobuild",
     { include-group = "docs" },
@@ -328,12 +323,6 @@ python = "default"
 channels = "conda-forge"
 style = "yaml"
 conda-deps = "pip"
-<<<<<<< before updating
-=======
-
-[tool.pyproject2conda.dependencies]
-pytest-accept = { pip = true }
->>>>>>> after updating
 
 [tool.pyproject2conda.envs.dev]
 groups = "dev"
