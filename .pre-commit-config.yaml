@@ -174,11 +174,7 @@ repos:
         priority: 0
   - repo: https://github.com/zizmorcore/zizmor-pre-commit
     # Zizmor version.
-<<<<<<< before updating
-    rev: v1.25.0
-=======
     rev: v1.25.2
->>>>>>> after updating
     hooks:
       # Run the linter.
       - id: zizmor
