@@ -33,6 +33,7 @@ classifiers = [
 ]
 dependencies = [
     "attrs>=25.3.0",
+    "click<8.4.0; python_version<'3.11'",
     "typer>=0.15.2",
     "typing-extensions>=4.12.2; python_full_version<'3.11'",
 ]
