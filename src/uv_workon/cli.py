@@ -3,6 +3,8 @@ Console script (:mod:`~uv_workon.cli`)
 ======================================
 """
 
+# pyright: reportUnknownMemberType=false
+
 from __future__ import annotations
 
 import itertools
