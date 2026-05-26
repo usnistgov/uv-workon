@@ -1,6 +1,8 @@
 Command line interface
 ======================
 
-.. click:: uv_workon._click:click_app
+.. typer:: uv_workon.cli.app_typer
     :prog: uv-workon
-    :nested: full
+    :width: 80
+    :show-nested:
+    :make-sections:
