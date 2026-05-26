@@ -7,21 +7,21 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 import pytest
-from click.testing import CliRunner
+from typer.testing import CliRunner
 
 if TYPE_CHECKING:
     from collections.abc import Generator
     from typing import Any
 
-    from click import Command
     from pytest_mock import MockerFixture
+    from typer import Typer
 
 
 @pytest.fixture(scope="session")
-def click_app() -> Command:
-    import uv_workon._click
+def typer_app() -> Typer:
+    from uv_workon.cli import app_typer
 
-    return uv_workon._click.click_app  # pylint: disable=protected-access
+    return app_typer
 
 
 @pytest.fixture
@@ -93,11 +93,11 @@ def clirunner() -> CliRunner:
 
 @pytest.fixture
 def workon_home_with_is_venv(
-    click_app: Command, workon_home: Path, venvs_parent_path: Path, clirunner: CliRunner
+    typer_app: Typer, workon_home: Path, venvs_parent_path: Path, clirunner: CliRunner
 ) -> Path:
     paths = venvs_parent_path.glob("is_venv_*")
     clirunner.invoke(
-        click_app, ["link", "--workon-home", str(workon_home), "-vv", *map(str, paths)]
+        typer_app, ["link", "--workon-home", str(workon_home), "-vv", *map(str, paths)]
     )
 
     return workon_home

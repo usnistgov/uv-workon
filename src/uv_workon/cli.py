@@ -15,7 +15,6 @@ from functools import lru_cache
 from pathlib import Path
 from typing import TYPE_CHECKING, Annotated, cast
 
-import click
 import typer
 
 from .core import (
@@ -390,9 +389,8 @@ def link_virtualenvs_to_workon_home(
 ) -> None:
     """Create symlink from paths to workon_home."""
     if not (input_paths := list(_get_input_paths(paths, parents))):
-        with click.get_current_context() as ctx:
-            typer.echo(ctx.get_help())
-            sys.exit(2)
+        typer.echo("Require input paths")
+        sys.exit(2)
 
     logger.debug("params: %s", locals())
 

@@ -33,7 +33,7 @@ classifiers = [
 ]
 dependencies = [
     "attrs>=25.3.0",
-    "click<8.4.0; python_version<'3.11'",
+    # NOTE: typer==0.26.0 isn't working with envvar on options.
     "typer>=0.15.2",
     "typing-extensions>=4.12.2; python_full_version<'3.11'",
 ]
@@ -81,8 +81,8 @@ docs = [
     "sphinx>=5.3.0",
     # other
     "sphinx-book-theme",
-    "sphinx-click",
     "sphinx-copybutton",
+    "sphinxcontrib-typer",
 ]
 # other groups
 basedpyright = [ "basedpyright>=1.39.4" ]
@@ -124,6 +124,9 @@ build-backend.source-include = [ "tests/**" ]
 pip.annotation-style = "line"
 pip.generate-hashes = true
 
+# I'll add support for typer>0.26.0 when envvar get sorted.
+# [tool.uv.exclude-newer-package]
+# typer = "7 days"
 [tool.uv.dependency-groups]
 dev.requires-python = ">=3.14"
 docs-live.requires-python = ">=3.14"

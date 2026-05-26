@@ -13,7 +13,6 @@ channels:
 dependencies:
   - python=3.10
   - attrs>=25.3.0
-  - click<8.4.0
   - jupyter-client>=8.6.3
   - pytest
   - pytest-cov

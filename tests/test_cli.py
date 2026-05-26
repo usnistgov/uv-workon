@@ -23,10 +23,9 @@ from .utils import normalize_path  # pyrefly: ignore[missing-import]
 if TYPE_CHECKING:
     from typing import Any
 
-    from click import Command
-    from click.testing import CliRunner
     from pytest_mock import MockerFixture
-    from typer import Context
+    from typer import Context, Typer
+    from typer.testing import CliRunner
 
 
 # * Callbacks
@@ -158,7 +157,7 @@ def test__add_verbose_logger() -> None:
 
 # * Callbacks/defaults
 @pytest.fixture(scope="session")
-def workon_home_click_app() -> Command:
+def workon_home_typer_app() -> Typer:
     app = typer.Typer()
 
     @app.command()
@@ -166,7 +165,7 @@ def workon_home_click_app() -> Command:
         typer.echo(str(workon_home))
         return workon_home
 
-    return typer.main.get_command(app)
+    return app
 
 
 @pytest.mark.parametrize(
@@ -180,7 +179,7 @@ def workon_home_click_app() -> Command:
     ],
 )
 def test_workon_home_option(
-    workon_home_click_app: Command,
+    workon_home_typer_app: Typer,
     clirunner: CliRunner,
     environment_val: str | None,
     cli_val: str | None,
@@ -188,13 +187,13 @@ def test_workon_home_option(
 ) -> None:
     env = {"WORKON_HOME": environment_val} if environment_val else {}
     opts = [] if cli_val is None else ["--workon-home", cli_val]
-    out = clirunner.invoke(workon_home_click_app, opts, env=env)
+    out = clirunner.invoke(workon_home_typer_app, opts, env=env)
     assert not out.exit_code
     assert str(Path(expected).expanduser()) == out.output.strip()
 
 
 @pytest.fixture(scope="session")
-def venv_patterns_app() -> Command:
+def venv_patterns_app() -> Typer:
     app = typer.Typer()
 
     @app.command()
@@ -206,7 +205,7 @@ def venv_patterns_app() -> Command:
         assert isinstance(venv_patterns, list)
         typer.echo(str(sorted(venv_patterns)))
 
-    return typer.main.get_command(app)
+    return app
 
 
 @pytest.mark.parametrize(
@@ -224,7 +223,7 @@ def venv_patterns_app() -> Command:
     ],
 )
 def test_venv_patterns_option(
-    venv_patterns_app: Command,
+    venv_patterns_app: Typer,
     clirunner: CliRunner,
     environment_val: str | None,
     venv_patterns: list[str],
@@ -252,13 +251,13 @@ def test__complete_path() -> None:
 
 # * Version
 def test_version(
-    click_app: Command,
+    typer_app: Typer,
     clirunner: CliRunner,
 ) -> None:
     from uv_workon import __version__
 
     out = clirunner.invoke(
-        click_app,
+        typer_app,
         ["--version"],
     )
 
@@ -281,7 +280,7 @@ def test_version(
 @pytest.mark.parametrize("resolve", [True, False])
 @pytest.mark.parametrize("dry", [True, False])
 def test_link_paths(
-    click_app: Command,
+    typer_app: Typer,
     clirunner: CliRunner,
     workon_home: Path,
     venvs_parent_path: Path,
@@ -293,7 +292,7 @@ def test_link_paths(
     paths = list(venvs_parent_path.glob(pattern))
 
     clirunner.invoke(
-        click_app,
+        typer_app,
         [
             "link",
             "--workon-home",
@@ -337,7 +336,7 @@ def test_link_paths(
     # try again with exiting symlinks
     for opt in ("--no", "--yes"):
         out = clirunner.invoke(
-            click_app,
+            typer_app,
             [
                 "link",
                 "--workon-home",
@@ -353,10 +352,10 @@ def test_link_paths(
 
 
 def test_link_parent(
-    click_app: Command, clirunner: CliRunner, workon_home: Path, venvs_parent_path: Path
+    typer_app: Typer, clirunner: CliRunner, workon_home: Path, venvs_parent_path: Path
 ) -> None:
     clirunner.invoke(
-        click_app,
+        typer_app,
         [
             "link",
             "--workon-home",
@@ -377,21 +376,21 @@ def test_link_parent(
 
 
 def test_link_help(
-    click_app: Command,
+    typer_app: Typer,
     clirunner: CliRunner,
 ) -> None:
-    out = clirunner.invoke(click_app, ["link"])
+    out = clirunner.invoke(typer_app, ["link"])
 
-    assert "Create symlink from paths" in out.output
+    assert "Require input paths" in out.output
 
 
 def test_list(
-    click_app: Command,
+    typer_app: Typer,
     clirunner: CliRunner,
     workon_home_with_is_venv: Path,
 ) -> None:
     out = clirunner.invoke(
-        click_app, ["list", "--workon-home", str(workon_home_with_is_venv)]
+        typer_app, ["list", "--workon-home", str(workon_home_with_is_venv)]
     )
 
     assert not out.exit_code
@@ -403,7 +402,7 @@ def test_list(
 
 @pytest.mark.parametrize("dry_run", [False, True])
 def test_link_workon_home_to_venv(
-    click_app: Command,
+    typer_app: Typer,
     clirunner: CliRunner,
     example_path: Path,
     # venvs_parent_path: Path,
@@ -413,7 +412,7 @@ def test_link_workon_home_to_venv(
     link_path = example_path / ".venv"
 
     out = clirunner.invoke(
-        click_app,
+        typer_app,
         [
             "venv-link",
             "--workon-home",
@@ -434,7 +433,7 @@ def test_link_workon_home_to_venv(
         # try again with existing symlink and no
         for opt in ("--no", "--yes"):
             out = clirunner.invoke(
-                click_app,
+                typer_app,
                 [
                     "venv-link",
                     "--workon-home",
@@ -453,7 +452,7 @@ def test_link_workon_home_to_venv(
         path.mkdir(exist_ok=True)
 
         out = clirunner.invoke(
-            click_app,
+            typer_app,
             [
                 "venv-link",
                 "--workon-home",
@@ -492,7 +491,7 @@ def test_name_completions(
 @pytest.mark.parametrize("dry", [True, False])
 @pytest.mark.parametrize("yes", [True, False])
 def test_clean(
-    click_app: Command,
+    typer_app: Typer,
     clirunner: CliRunner,
     workon_home_with_is_venv: Path,
     venvs_parent_path: Path,
@@ -501,7 +500,7 @@ def test_clean(
 ) -> None:
     paths = venvs_parent_path.glob("is_venv_*")
     clirunner.invoke(
-        click_app,
+        typer_app,
         [
             "link",
             "--workon-home",
@@ -521,7 +520,7 @@ def test_clean(
     assert path == normalize_path(link.readlink())
 
     clirunner.invoke(
-        click_app,
+        typer_app,
         [
             "clean",
             "--workon-home",
@@ -540,11 +539,11 @@ def test_clean(
 
 
 def test_run_help(
-    click_app: Command,
+    typer_app: Typer,
     clirunner: CliRunner,
 ) -> None:
     out = clirunner.invoke(
-        click_app,
+        typer_app,
         ["run"],
     )
 
@@ -556,7 +555,7 @@ def test_run_help(
 @pytest.mark.parametrize("resolve", [True, False])
 # @pytest.mark.parametrize("resolve", [False])
 def test_run(
-    click_app: Command,
+    typer_app: Typer,
     clirunner: CliRunner,
     workon_home_with_is_venv: Path,
     dry: bool,
@@ -576,7 +575,7 @@ def test_run(
     )
 
     out = clirunner.invoke(
-        click_app,
+        typer_app,
         [
             "run",
             "--workon-home",
@@ -593,24 +592,24 @@ def test_run(
         assert expected == out.output.strip()
 
 
-def test_shell_config(click_app: Command, clirunner: CliRunner) -> None:
-    out = clirunner.invoke(click_app, ["shell-config"])
+def test_shell_config(typer_app: Typer, clirunner: CliRunner) -> None:
+    out = clirunner.invoke(typer_app, ["shell-config"])
     assert out.output.strip() == generate_shell_config().strip()
 
 
 def test_shell_activate(
-    click_app: Command,
+    typer_app: Typer,
     clirunner: CliRunner,
     workon_home_with_is_venv: Path,
 ) -> None:
     out = clirunner.invoke(
-        click_app,
+        typer_app,
         ["activate", "-n", "is_venv_0", "--workon-home", str(workon_home_with_is_venv)],
     )
     assert f"source {workon_home_with_is_venv / 'is_venv_0'}" in out.output
 
     out = clirunner.invoke(
-        click_app,
+        typer_app,
         [
             "activate",
             "-p",
@@ -622,7 +621,7 @@ def test_shell_activate(
     assert f"source {workon_home_with_is_venv / 'is_venv_1'}" in out.output
 
     out = clirunner.invoke(
-        click_app,
+        typer_app,
         [
             "activate",
             "-p",
@@ -636,12 +635,12 @@ def test_shell_activate(
 
 
 def test_shell_cd(
-    click_app: Command,
+    typer_app: Typer,
     clirunner: CliRunner,
     workon_home_with_is_venv: Path,
 ) -> None:
     out = clirunner.invoke(
-        click_app,
+        typer_app,
         ["cd", "-n", "is_venv_0", "--workon-home", str(workon_home_with_is_venv)],
     )
 
@@ -651,15 +650,15 @@ def test_shell_cd(
 
 
 def test_no_subcommand(
-    click_app: Command,
+    typer_app: Typer,
     clirunner: CliRunner,
 ) -> None:
     a = clirunner.invoke(
-        click_app,
+        typer_app,
         ["--help"],
     )
     b = clirunner.invoke(
-        click_app,
+        typer_app,
         [],
     )
 
@@ -668,7 +667,7 @@ def test_no_subcommand(
 
 @skip_if_no_jupyter_client
 def test_install_ipykernels(
-    click_app: Command,
+    typer_app: Typer,
     clirunner: CliRunner,
     workon_home_with_is_venv: Path,
     venvs_parent_path: Path,
@@ -679,7 +678,7 @@ def test_install_ipykernels(
     ]
 
     out = clirunner.invoke(
-        click_app,
+        typer_app,
         [
             "kernels",
             "install",
@@ -694,7 +693,7 @@ def test_install_ipykernels(
         assert expected in out.output
 
     out = clirunner.invoke(
-        click_app,
+        typer_app,
         [
             "kernels",
             "install",
@@ -711,7 +710,7 @@ def test_install_ipykernels(
         assert not_expected not in out.output
 
     out = clirunner.invoke(
-        click_app,
+        typer_app,
         [
             "kernels",
             "install",
@@ -733,7 +732,7 @@ def test_install_ipykernels(
 @skip_if_no_jupyter_client
 @pytest.mark.parametrize("yes", [True, False])
 def test_install_ipykernels_replace(
-    click_app: Command,
+    typer_app: Typer,
     clirunner: CliRunner,
     workon_home_with_is_venv: Path,
     venvs_parent_path: Path,
@@ -750,7 +749,7 @@ def test_install_ipykernels_replace(
     mocked_uv_run = mocker.patch("uv_workon.cli.uv_run", autospec=True)
 
     out = clirunner.invoke(
-        click_app,
+        typer_app,
         [
             "kernels",
             "install",
@@ -796,7 +795,7 @@ def test_install_ipykernels_replace(
     ],
 )
 def test_remove_ipykernels(
-    click_app: Command,
+    typer_app: Typer,
     clirunner: CliRunner,
     workon_home_with_is_venv: Path,
     mocker: MockerFixture,
@@ -818,7 +817,7 @@ def test_remove_ipykernels(
     mocked_remove_kernelspecs = mocker.patch("uv_workon.kernels.remove_kernelspecs")
 
     out = clirunner.invoke(
-        click_app,
+        typer_app,
         [
             "kernels",
             "remove",
@@ -839,14 +838,14 @@ def test_remove_ipykernels(
 
 @skip_if_no_jupyter_client
 def test_list_kernels(
-    click_app: Command,
+    typer_app: Typer,
     clirunner: CliRunner,
     mocker: MockerFixture,
 ) -> None:
     mocked = mocker.patch("jupyter_client.kernelspecapp.ListKernelSpecs")
 
     clirunner.invoke(
-        click_app,
+        typer_app,
         [
             "kernels",
             "list",
