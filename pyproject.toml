@@ -33,9 +33,7 @@ classifiers = [
 ]
 dependencies = [
     "attrs>=25.3.0",
-    "click<8.4.0; python_full_version<'3.11'",
-    "typer<0.26.0; python_full_version<'3.11'",
-    "typer>=0.26.2; python_full_version>='3.11'",
+    "typer>=0.26.2",
     "typing-extensions>=4.12.2; python_full_version<'3.11'",
 ]
 
@@ -121,8 +119,6 @@ required-version = ">=0.11.8"
 default-groups = [ "dev" ]
 fork-strategy = "requires-python"
 exclude-newer = "7 days"
-# NOTE: remove this when typer>0.26.1 is > 7 days old
-exclude-newer-package.typer = "6 days"
 managed = true
 build-backend.source-include = [ "tests/**" ]
 pip.annotation-style = "line"
@@ -136,6 +132,11 @@ docs.requires-python = ">=3.14"
 ipython.requires-python = ">=3.14"
 mypy.requires-python = ">=3.14"
 nox.requires-python = ">=3.14"
+
+[tool.uv.exclude-newer-package]
+# NOTE: remove this when able
+typer = "6 days"
+sphinxcontrib-typer = "0 days"
 
 # * Checks ---------------------------------------------------------------------
 [tool.repo-review]
@@ -164,6 +165,7 @@ expand_tables = [
     "tool.pytest",
     "tool.typos",
     "tool.uv.dependency-groups",
+    "tool.uv.exclude-newer-package",
 ]
 indent = 4
 keep_full_version = true
