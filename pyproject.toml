@@ -122,7 +122,7 @@ default-groups = [ "dev" ]
 fork-strategy = "requires-python"
 exclude-newer = "7 days"
 # NOTE: remove this when typer>0.26.1 is > 7 days old
-exclude-newer-package.typer = "0 days"
+exclude-newer-package.typer = "6 days"
 managed = true
 build-backend.source-include = [ "tests/**" ]
 pip.annotation-style = "line"

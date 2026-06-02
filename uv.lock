@@ -14,7 +14,7 @@ exclude-newer = "0001-01-01T00:00:00Z" # This has no effect and is included for 
 exclude-newer-span = "P7D"
 
 [options.exclude-newer-package]
-typer = { timestamp = "0001-01-01T00:00:00Z", span = "PT0S" }
+typer = { timestamp = "0001-01-01T00:00:00Z", span = "P6D" }
 
 [[package]]
 name = "accessible-pygments"
@@ -1966,7 +1966,7 @@ version = "0.8.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "sphinx", marker = "python_full_version >= '3.14'" },
-    { name = "typer", version = "0.26.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.14'" },
+    { name = "typer", version = "0.26.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.14'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/ff/17/7e07799e1df369c170e747f8866b80563ff88d385f14304f8891a9f0fe4e/sphinxcontrib_typer-0.8.1.tar.gz", hash = "sha256:223016757b3ab1995971fce048ed5e939b4fd45ca0c255e320e0f87d04dbf9ef", size = 228669, upload-time = "2026-03-06T00:43:01.459Z" }
 wheels = [
@@ -2129,7 +2129,7 @@ wheels = [
 
 [[package]]
 name = "typer"
-version = "0.26.6"
+version = "0.26.2"
 source = { registry = "https://pypi.org/simple" }
 resolution-markers = [
     "python_full_version >= '3.15'",
@@ -2143,9 +2143,9 @@ dependencies = [
     { name = "rich", marker = "python_full_version >= '3.11'" },
     { name = "shellingham", marker = "python_full_version >= '3.11'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/f4/8a/8dc5733b8939e7f1a71173091a6e27a1658345edbff548a0bf3f5bb26173/typer-0.26.6.tar.gz", hash = "sha256:cdbc160fe7e795b835fb6016419494a521a67bfb86b9476a1ccd0e7727d3ae5b", size = 201595, upload-time = "2026-06-02T13:47:50.536Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/67/a5/756f2e6bc81a7dd79aa3c625dd01b74cabc4516628cace2caaec09ca6ff2/typer-0.26.2.tar.gz", hash = "sha256:9b4f19e08fcc9427a822d1ef467b1fe76737a2f65c7926bdeba2337d73569b68", size = 198991, upload-time = "2026-05-27T10:41:39.166Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/30/c7/519138260db5e2fe03a509bf9e8ef6af9a514d3565c8fa74fc4fededbae1/typer-0.26.6-py3-none-any.whl", hash = "sha256:49f96d9ee5730cef607bbe155042f40b41fa4c0d0dec04990d580837493805be", size = 122464, upload-time = "2026-06-02T13:47:51.768Z" },
+    { url = "https://files.pythonhosted.org/packages/8b/a5/6ffd702beda8798b2b82ff70805ed4a66d963557e43a5d1823ab456251a4/typer-0.26.2-py3-none-any.whl", hash = "sha256:39beff72ffbb31978a5b545f677d57edb97c6f980f433b38556deb0af25f094d", size = 123123, upload-time = "2026-05-27T10:41:40.504Z" },
 ]
 
 [[package]]
@@ -2174,7 +2174,7 @@ dependencies = [
     { name = "attrs" },
     { name = "click", version = "8.3.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
     { name = "typer", version = "0.25.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
-    { name = "typer", version = "0.26.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
+    { name = "typer", version = "0.26.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
     { name = "typing-extensions", marker = "python_full_version < '3.11'" },
 ]
 
