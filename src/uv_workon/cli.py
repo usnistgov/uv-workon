@@ -186,7 +186,11 @@ def version_callback(value: bool) -> None:
 def main(
     ctx: typer.Context,
     version: bool = typer.Option(  # pyright: ignore[reportCallInDefaultInitializer]
-        None, "--version", "-v", callback=version_callback, is_eager=True
+        None,
+        "--version",
+        "-v",
+        callback=version_callback,
+        is_eager=True,
     ),
 ) -> None:
     """Manage uv virtual environments from central location."""
