@@ -13,7 +13,7 @@ import sys
 from collections.abc import Iterator  # noqa: TC003
 from functools import lru_cache
 from pathlib import Path
-from typing import TYPE_CHECKING, Annotated, cast
+from typing import TYPE_CHECKING, Annotated, Any, cast
 
 import typer
 
@@ -120,7 +120,7 @@ def _callback_expand_user(x: Path) -> Path:
 
 def _callback_venv_patterns(
     ctx: typer.Context,
-    venv_patterns: list[str],
+    venv_patterns: Any,  # NOTE: use Any to fix issue with typer>=0.26.2 and python<3.11
 ) -> list[str]:
     use_default = cast("bool", ctx.params.get("use_default_venv_patterns"))
     return list({*venv_patterns, *((".venv", "venv") if use_default else ())})
@@ -186,7 +186,11 @@ def version_callback(value: bool) -> None:
 def main(
     ctx: typer.Context,
     version: bool = typer.Option(  # pyright: ignore[reportCallInDefaultInitializer]
-        None, "--version", "-v", callback=version_callback, is_eager=True
+        None,
+        "--version",
+        "-v",
+        callback=version_callback,
+        is_eager=True,
     ),
 ) -> None:
     """Manage uv virtual environments from central location."""

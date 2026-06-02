@@ -25,5 +25,5 @@ dependencies:
   - pytest-xdist
   - simple-term-menu>=1.6.6
   - typecheck-runner>=0.2.0
-  - typer>=0.15.2
+  - typer>=0.26.2
   - pip

@@ -33,10 +33,7 @@ classifiers = [
 ]
 dependencies = [
     "attrs>=25.3.0",
-    # NOTE: remove this when don't need click anymore
-    "click<8.4.0; python_version<'3.11'",
-    # NOTE: typer==0.26.0 isn't working with envvar on options.
-    "typer>=0.15.2",
+    "typer>=0.26.2",
     "typing-extensions>=4.12.2; python_full_version<'3.11'",
 ]
 
@@ -127,9 +124,6 @@ build-backend.source-include = [ "tests/**" ]
 pip.annotation-style = "line"
 pip.generate-hashes = true
 
-# I'll add support for typer>0.26.0 when envvar get sorted.
-# [tool.uv.exclude-newer-package]
-# typer = "7 days"
 [tool.uv.dependency-groups]
 dev.requires-python = ">=3.14"
 docs-live.requires-python = ">=3.14"
@@ -138,6 +132,11 @@ docs.requires-python = ">=3.14"
 ipython.requires-python = ">=3.14"
 mypy.requires-python = ">=3.14"
 nox.requires-python = ">=3.14"
+
+[tool.uv.exclude-newer-package]
+# NOTE: remove this when able
+typer = "6 days"
+sphinxcontrib-typer = "0 days"
 
 # * Checks ---------------------------------------------------------------------
 [tool.repo-review]
@@ -166,6 +165,7 @@ expand_tables = [
     "tool.pytest",
     "tool.typos",
     "tool.uv.dependency-groups",
+    "tool.uv.exclude-newer-package",
 ]
 indent = 4
 keep_full_version = true
