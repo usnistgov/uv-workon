@@ -741,20 +741,38 @@ def remove_kernels(
         name for name in to_remove if _confirm_action(yes, f"Remove {name}")
     )
 
+<<<<<<< before updating
     if not to_remove_filtered:
         return
+=======
+main = typer.Typer()
+>>>>>>> after updating
 
     if not dry_run:
         remove_kernelspecs(to_remove_filtered)
 
+<<<<<<< before updating
+=======
+@main.command()
+def func() -> int:
+    """Console script for uv_workon."""
+    print(f"Replace this message by putting your code into {PACKAGE}.cli.main")  # noqa: T201
+    print("See click documentation at https://typer.tiangolo.com/")  # noqa: T201
+    return 0
+>>>>>>> after updating
 
 @app_kernels.command("list")
 def list_kernels() -> None:
     """List installed kernels.  Interface to jupyter kernelspec list."""
     from .kernels import has_jupyter_client
 
+<<<<<<< before updating
     has_jupyter_client()
 
     from jupyter_client.kernelspecapp import ListKernelSpecs
 
     ListKernelSpecs(log_level="ERROR").start()  # ty: ignore[missing-argument]  # pyright: ignore[reportUnusedCallResult]
+=======
+if __name__ == "__main__":
+    sys.exit(main())  # pragma: no cover
+>>>>>>> after updating
