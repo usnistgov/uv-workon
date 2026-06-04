@@ -5,6 +5,18 @@
 
 Changelog for `uv-workon`
 
+## 0.8.0
+
+Released on 2026-06-04.
+
+### Enhancements
+
+- feat: bump release ([#142](https://github.com/usnistgov/uv-workon/pull/142))
+
+### Contributors
+
+- [@wpk-nist-gov](https://github.com/wpk-nist-gov)
+
 ## 0.7.3
 
 Released on 2026-02-19.
@@ -30,13 +42,12 @@ Released on 2026-02-19.
 - [@pre-commit-ci](https://github.com/pre-commit-ci)
 - [@wpk-nist-gov](https://github.com/wpk-nist-gov)
 
-
 ## 0.7.0 — 2025-06-02
 
 ### Changed
 
 - Main executable is now named `uv-workon`, and removed `uvw` executable. This
-  is to avoid conflict with `uv` which added a `uvw` alias for windows machines.
+is to avoid conflict with `uv` which added a `uvw` alias for windows machines.
 
 ## 0.6.0 — 2025-05-30
 
@@ -49,7 +60,7 @@ Released on 2026-02-19.
 ### Changed
 
 - Cleanup output for kernels install for environments without ipykernels. Now
-  only outputs `No ipykernels` if `--verbose` option passed
+only outputs `No ipykernels` if `--verbose` option passed
 
 ## v0.5.0 — 2025-03-27
 
@@ -62,8 +73,8 @@ Released on 2026-02-19.
 ### Changed
 
 - Now supports `--yes/--no` options. Default is to query the user to yes/no
-  questions. Passing `--yes` will always answer yes. Passing `--no` will always
-  answer no.
+questions. Passing `--yes` will always answer yes. Passing `--no` will always
+answer no.
 
 ## v0.3.1 — 2025-03-25
 
@@ -79,5 +90,5 @@ Released on 2026-02-19.
   - install - install ipykernels
   - remove - remove jupyer kernels
   - list - list jupyter kernels This adds functionality to easy transition from
-    nb_conda_kernels to using uv to manage virtual environment.
+nb_conda_kernels to using uv to manage virtual environment.
 - Added tests to have full coverage.
