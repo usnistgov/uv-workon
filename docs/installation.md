@@ -6,6 +6,7 @@
 :start-after: <!-- start-installation -->
 :end-before: <!-- end-installation -->
 ```
+<<<<<<< before updating
 
 This is the preferred method to install `uv-workon`, as it will always install
 the most recent stable release.
@@ -13,3 +14,5 @@ the most recent stable release.
 ## From sources
 
 See [](./contributing) for details on installing from source.
+=======
+>>>>>>> after updating
