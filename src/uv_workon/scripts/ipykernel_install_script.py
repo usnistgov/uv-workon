@@ -37,18 +37,18 @@ def main(args: Sequence[str] | None = None) -> int:
     )
 
     try:
-        import ipykernel  # noqa: F401  # pylint: disable=unused-import
+        import ipykernel  # ruff:ignore[unused-import]  # pylint: disable=unused-import
     except ImportError:
         import sys
 
         if options.verbose:
-            print(f"No ipykernel for {sys.executable}")  # noqa: T201
+            print(f"No ipykernel for {sys.executable}")  # ruff:ignore[print]
         return 0
 
     args_ = ["python", "-m", "ipykernel", "install", *options.args]
 
     if options.dry_run:
-        print("args", args_)  # noqa: T201
+        print("args", args_)  # ruff:ignore[print]
     else:
         import subprocess
 

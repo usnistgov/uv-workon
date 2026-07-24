@@ -5,7 +5,7 @@ Working with ipykernel (:mod:`~uv_workon.kernels`)
 
 from __future__ import annotations
 
-from collections.abc import Iterator  # noqa: TC003
+from collections.abc import Iterator  # ruff:ignore[typing-only-standard-library-import]
 from functools import lru_cache
 from importlib.util import find_spec
 from pathlib import Path

@@ -200,7 +200,7 @@ def venv_patterns_app() -> Typer:
     def dummy(  # pyright: ignore[reportUnusedFunction]
         *,
         venv_patterns: cli.VENV_PATTERNS_CLI,
-        use_default_venv_patterns: cli.USE_DEFAULT_VENV_PATTERNS_CLI = True,  # noqa: ARG001
+        use_default_venv_patterns: cli.USE_DEFAULT_VENV_PATTERNS_CLI = True,  # ruff:ignore[unused-function-argument]
     ) -> None:
         assert isinstance(venv_patterns, list)
         typer.echo(str(sorted(venv_patterns)))
@@ -860,6 +860,6 @@ def test__main__(
 ) -> None:
     mocked_app = mocker.patch("uv_workon.cli.app_typer")
     with contextlib.suppress(SystemExit):
-        import uv_workon.__main__  # noqa: F401
+        import uv_workon.__main__  # ruff:ignore[unused-import]
 
         mocked_app.assert_called_once_with(prog_name="uv-workon")
