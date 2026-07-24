@@ -10,7 +10,7 @@ from __future__ import annotations
 import itertools
 import logging
 import sys
-from collections.abc import Iterator  # noqa: TC003
+from collections.abc import Iterator  # ruff:ignore[typing-only-standard-library-import]
 from functools import lru_cache
 from pathlib import Path
 from typing import TYPE_CHECKING, Annotated, Any, cast

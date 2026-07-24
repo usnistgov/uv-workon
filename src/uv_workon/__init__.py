@@ -6,7 +6,7 @@ Top level API (:mod:`uv_workon`)
 from importlib.metadata import PackageNotFoundError
 from importlib.metadata import version as _version
 
-try:  # noqa: RUF067
+try:  # ruff:ignore[non-empty-init-module]
     __version__ = _version("uv-workon")
 except PackageNotFoundError:  # pragma: no cover
     __version__ = "999"
