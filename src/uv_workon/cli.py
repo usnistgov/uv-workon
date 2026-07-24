@@ -753,7 +753,16 @@ def list_kernels() -> None:
     """List installed kernels.  Interface to jupyter kernelspec list."""
     from .kernels import has_jupyter_client
 
+<<<<<<< before updating
     has_jupyter_client()
+=======
+@main.command()
+def func() -> int:
+    """Console script for uv_workon."""
+    print(f"Replace this message by putting your code into {PACKAGE}.cli.main")  # ruff:ignore[print]
+    print("See click documentation at https://typer.tiangolo.com/")  # ruff:ignore[print]
+    return 0
+>>>>>>> after updating
 
     from jupyter_client.kernelspecapp import ListKernelSpecs
 
