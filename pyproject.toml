@@ -96,8 +96,12 @@ docs-spelling = [
 ]
 ipython = [ "ipython" ]
 mypy = [ "mypy[faster-cache]>=2.3.0" ]
+<<<<<<< before updating
 nox = [ "nox>=2026.4.10" ]
 optional = [ "uv-workon[all]" ]
+=======
+nox = [ "nox>=2026.7.11" ]
+>>>>>>> after updating
 pylint = [ "pylint" ]
 pytest = [ "pytest", "pytest-mock>=3.14.0" ]
 test-extras = [
@@ -371,7 +375,11 @@ style = "requirements"
 scripts = [
     "noxfile.py",
     "tools/check_dist_version.py",
+<<<<<<< before updating
     "tools/sync_pyproject_min_versions.py",
+=======
+    "tools/cog_runner.py",
+>>>>>>> after updating
 ]
 
 [[tool.uv-locker.requirements]]
