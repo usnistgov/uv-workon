@@ -1,4 +1,5 @@
 """Script to be called under uv run to install an ipykernel"""
+# ruff:file-ignore[implicit-namespace-package]
 
 from __future__ import annotations
 

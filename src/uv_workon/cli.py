@@ -4,6 +4,7 @@ Console script (:mod:`~uv_workon.cli`)
 """
 
 # pyright: reportUnknownMemberType=false
+# ruff:file-ignore[unused-function-argument]
 
 from __future__ import annotations
 

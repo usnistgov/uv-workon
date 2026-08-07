@@ -156,6 +156,7 @@ select = [
 ]
 # fixable = [ "ALL" ]
 unfixable = [
+    "B006",    # Disable because need default value of [] in for callbacks
     "PLR6104",
     "ERA",
     "T",
@@ -205,12 +206,13 @@ ruff.strictly-empty-init-modules = false
     # "E402",    # - module level import not at top of file
     # "ERA",     # - eradicate (want to keep some stuff)
     # "ISC",     # - flake8-implicit-str-concat
-    "NPY", # - not using numpy?
+    "NPY",    # - not using numpy?
     # "SLF001",  # - flake8-self (private access sometimes OK)
-    "PD",  # - not using pandas?
+    "PD",     # - not using pandas?
     # "PLR2004", # - numbers in comparison sometimes ok
     # "PLR0913", # - complexity sometimes ok
     # "PLR0917", # - complexity sometimes ok
+    "DOC402",
 ]
 
 # * Checks ---------------------------------------------------------------------
