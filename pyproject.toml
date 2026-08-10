@@ -194,22 +194,16 @@ pylint.max-public-methods = 30
 ruff.strictly-empty-init-modules = false
 
 [tool.ruff.lint.per-file-ignores]
-<<<<<<< before updating
-"src/**/*.py" = [ "DOC402" ]
-"tests/**/*.py" = [
+"src/**" = [
+    "NPY",    # - not using numpy?
+    "PD",     # - not using pandas?
+    "DOC402",
+]
+"tests/**" = [
     "D",      # - Don't need to document tests
     "S101",   # - Assert is fine with tests
     "SLF001",
     "T201",
-=======
-"src/**" = [
-    "NPY", # - not using numpy?
-    "PD",  # - not using pandas?
-]
-"tests/**" = [
-    "D",    # - Don't need to document tests
-    "S101", # - Assert is fine with tests
->>>>>>> after updating
 ]
 
 # * Checks ---------------------------------------------------------------------
