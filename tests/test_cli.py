@@ -328,7 +328,6 @@ def test_link_paths(
                 Path(os.path.relpath(p, workon_home)) for p in expected_paths
             }
 
-        print(expected_paths)
         assert expected_paths == set(
             map(normalize_path, (p.readlink() for p in workon_home.glob("*")))
         )
