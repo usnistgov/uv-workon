@@ -69,7 +69,7 @@ class VirtualEnvPathAndLink:
         venv_patterns: VirtualEnvPattern,
         names: str | Iterable[str] | None = None,
     ) -> Iterable[Self]:
-        """Get iterable of objects from paths"""
+        """Get iterable of objects from paths"""  # ruff: ignore[docstring-missing-yields]
         venv_patterns = validate_venv_patterns(venv_patterns)
         workon_home = validate_dir_exists(workon_home)
 
@@ -96,7 +96,7 @@ class VirtualEnvPathAndLink:
 
 
 def get_invalid_symlinks(workon_home: Path) -> Iterator[Path]:
-    """Get iterator of paths to invalid symlinks under a given path"""
+    """Get iterator of paths to invalid symlinks under a given path"""  # ruff: ignore[docstring-missing-yields]
     for path in workon_home.glob("*"):
         if path.is_symlink() and not is_valid_virtualenv(path):
             yield path

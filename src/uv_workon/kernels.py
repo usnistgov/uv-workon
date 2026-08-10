@@ -62,6 +62,6 @@ def remove_kernelspecs(names: list[str]) -> None:
 
 
 def complete_kernelspec_names(incomplete: str) -> Iterator[str]:
-    """Complete possible kernel specs"""
+    """Complete possible kernel specs"""  # ruff: ignore[docstring-missing-yields]
     valid_names = get_kernelspecs()
     yield from (name for name in valid_names if name.startswith(incomplete))

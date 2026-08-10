@@ -38,7 +38,6 @@ def test_is_valid_venv(
 ) -> None:
     for i in range(3):
         path = venvs_parent_path.joinpath(pattern.format(i), *args)
-        print(path)
 
         assert is_valid_virtualenv(path) == valid
 

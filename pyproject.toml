@@ -195,15 +195,13 @@ ruff.strictly-empty-init-modules = false
 
 [tool.ruff.lint.per-file-ignores]
 "src/**" = [
-    "NPY",    # - not using numpy?
-    "PD",     # - not using pandas?
-    "DOC402",
+    "NPY", # - not using numpy?
+    "PD",  # - not using pandas?
 ]
 "tests/**" = [
     "D",      # - Don't need to document tests
     "S101",   # - Assert is fine with tests
     "SLF001",
-    "T201",
 ]
 
 # * Checks ---------------------------------------------------------------------
