@@ -62,7 +62,7 @@ repos:
       - id: taplo-lint
         args: ["--no-schema"]
   - repo: https://github.com/tox-dev/pyproject-fmt
-    rev: v2.26.0
+    rev: v2.27.0
     hooks:
       - id: pyproject-fmt
   # ** validate (schema-store)
@@ -100,7 +100,7 @@ repos:
 
   # Just
   - repo: https://github.com/wpk-nist-gov/just-pre-commit
-    rev: v1.57.0
+    rev: v1.58.0
     hooks:
       - id: justfile-format
 
@@ -121,7 +121,7 @@ repos:
   # Revert to crate-ci/typos if https://github.com/crate-ci/typos/issues/390 is fixed.
   # - repo: https://github.com/crate-ci/typos
   - repo: https://github.com/adhtruong/mirrors-typos
-    rev: v1.48.0
+    rev: v1.49.0
     hooks:
       - id: typos
         exclude_types: [jupyter]
