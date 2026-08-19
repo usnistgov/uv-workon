@@ -97,10 +97,7 @@ docs-spelling = [
 ipython = [ "ipython" ]
 mypy = [ "mypy[faster-cache]>=2.3.0" ]
 nox = [ "nox>=2026.8.10" ]
-<<<<<<< before updating
 optional = [ "uv-workon[all]" ]
-=======
->>>>>>> after updating
 pylint = [ "pylint" ]
 pytest = [ "pytest", "pytest-mock>=3.14.0" ]
 test-extras = [
