@@ -159,14 +159,10 @@ select = [
 ]
 # fixable = [ "ALL" ]
 unfixable = [
-<<<<<<< before updating
-    "B006",    # Disable because need default value of [] in for callbacks
-    "PLR6104",
-=======
     "non-augmented-assignment",
->>>>>>> after updating
     "ERA",
     "T",
+    "mutable-argument-default", # Disable because need default value of [] in for callbacks
 ]
 ignore = [
     "any-type",                             # - Any ok sometimes
@@ -205,13 +201,9 @@ ruff.strictly-empty-init-modules = false
     "PD",  # - not using pandas?
 ]
 "tests/**" = [
-    "D",      # - Don't need to document tests
-<<<<<<< before updating
-    "S101",   # - Assert is fine with tests
-    "SLF001",
-=======
-    "assert", # - Assert is fine with tests
->>>>>>> after updating
+    "D",                     # - Don't need to document tests
+    "assert",                # - Assert is fine with tests
+    "private-member-access",
 ]
 
 # * Checks ---------------------------------------------------------------------
