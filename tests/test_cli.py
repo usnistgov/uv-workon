@@ -348,7 +348,8 @@ def test_link_paths(
         )
         assert not out.exit_code
         assert not out.output
-
+        if opt == "--no":
+            assert not out.output
 
 def test_link_parent(
     typer_app: Typer, clirunner: CliRunner, workon_home: Path, venvs_parent_path: Path
