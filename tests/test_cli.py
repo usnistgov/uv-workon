@@ -551,8 +551,8 @@ def test_run_help(
     assert "Run uv commands using" in out.output
 
 
-@pytest.mark.parametrize("dry", [True])
 @pytest.mark.parametrize("dry", [True, False])
+@pytest.mark.parametrize("named", [True, False])
 @pytest.mark.parametrize("resolve", [True, False])
 # @pytest.mark.parametrize("resolve", [False])
 def test_run(
@@ -593,7 +593,7 @@ def test_run(
         assert expected == out.output.strip()
 
     else:
-        assert out.exit_code == 0
+        assert not out.output.strip()
 
 
 def test_shell_config(typer_app: Typer, clirunner: CliRunner) -> None:
