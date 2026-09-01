@@ -550,7 +550,7 @@ def test_run_help(
 
 
 @pytest.mark.parametrize("dry", [True])
-@pytest.mark.parametrize("named", [True, False])
+@pytest.mark.parametrize("dry", [True, False])
 @pytest.mark.parametrize("resolve", [True, False])
 # @pytest.mark.parametrize("resolve", [False])
 def test_run(
@@ -590,6 +590,8 @@ def test_run(
         expected = f"VIRTUAL_ENV={path} UV_PROJECT_ENVIRONMENT={path} {shlex.join(['uv', 'run', '-p', str(path), '--no-project', *args])}"
         assert expected == out.output.strip()
 
+    else:
+        assert out.exit_code == 0
 
 def test_shell_config(typer_app: Typer, clirunner: CliRunner) -> None:
     out = clirunner.invoke(typer_app, ["shell-config"])
