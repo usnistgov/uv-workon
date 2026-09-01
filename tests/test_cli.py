@@ -348,6 +348,8 @@ def test_link_paths(
         )
         assert not out.exit_code
         assert not out.output
+        if opt == "--no":
+            assert not out.output
 
 
 def test_link_parent(
@@ -549,7 +551,7 @@ def test_run_help(
     assert "Run uv commands using" in out.output
 
 
-@pytest.mark.parametrize("dry", [True])
+@pytest.mark.parametrize("dry", [True, False])
 @pytest.mark.parametrize("named", [True, False])
 @pytest.mark.parametrize("resolve", [True, False])
 # @pytest.mark.parametrize("resolve", [False])
@@ -589,6 +591,9 @@ def test_run(
     if dry:
         expected = f"VIRTUAL_ENV={path} UV_PROJECT_ENVIRONMENT={path} {shlex.join(['uv', 'run', '-p', str(path), '--no-project', *args])}"
         assert expected == out.output.strip()
+
+    else:
+        assert not out.output.strip()
 
 
 def test_shell_config(typer_app: Typer, clirunner: CliRunner) -> None:
