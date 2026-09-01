@@ -351,6 +351,7 @@ def test_link_paths(
         if opt == "--no":
             assert not out.output
 
+
 def test_link_parent(
     typer_app: Typer, clirunner: CliRunner, workon_home: Path, venvs_parent_path: Path
 ) -> None:
@@ -593,6 +594,7 @@ def test_run(
 
     else:
         assert out.exit_code == 0
+
 
 def test_shell_config(typer_app: Typer, clirunner: CliRunner) -> None:
     out = clirunner.invoke(typer_app, ["shell-config"])
