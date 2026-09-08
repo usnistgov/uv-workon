@@ -1,11 +1,7 @@
 [build-system]
 build-backend = "uv_build"
 requires = [
-<<<<<<< before updating
-    "uv-build>=0.12.7,<0.13.0",
-=======
     "uv-build>=0.12.8,<0.13.0",
->>>>>>> after updating
 ]
 
 [project]
@@ -162,24 +158,15 @@ docstring-code-format = true
     "PD",  # - not using pandas?
 ]
 "tests/**" = [
-    "assert", # - Assert is fine with tests
-    "D",      # - Don't need to document tests
+    "assert",                # - Assert is fine with tests
+    "D",                     # - Don't need to document tests
+    "private-member-access",
 ]
 
 [tool.ruff.lint]
 select = [
     "ALL",
 ]
-<<<<<<< before updating
-# fixable = [ "ALL" ]
-unfixable = [
-    "non-augmented-assignment",
-    "ERA",
-    "T",
-    "mutable-argument-default", # Disable because need default value of [] in for callbacks
-]
-=======
->>>>>>> after updating
 ignore = [
     "any-type",                             # - Any ok sometimes
     "COM",                                  # - flake8-commas, formatter should take care of this?
@@ -205,6 +192,7 @@ ignore = [
 # fixable = [ "ALL" ]
 unfixable = [
     "ERA",
+    "mutable-argument-default", # Disable because need default value of [] in for callbacks
     "non-augmented-assignment",
     "T",
 ]
@@ -218,20 +206,6 @@ pylint.max-public-methods = 30
 preview = true
 ruff.strictly-empty-init-modules = false
 
-<<<<<<< before updating
-[tool.ruff.lint.per-file-ignores]
-"src/**" = [
-    "NPY", # - not using numpy?
-    "PD",  # - not using pandas?
-]
-"tests/**" = [
-    "D",                     # - Don't need to document tests
-    "assert",                # - Assert is fine with tests
-    "private-member-access",
-]
-
-=======
->>>>>>> after updating
 # * Checks ---------------------------------------------------------------------
 [tool.repo-review]
 ignore = [
@@ -374,8 +348,8 @@ analysis.respect-type-ignore-comments = false
 minversion = "8"
 testpaths = [
     "README.md",
-    "uv_workon",
     "tests",
+    "uv_workon",
 ]
 addopts = [
     "--cov-config=pyproject.toml",
@@ -386,28 +360,14 @@ addopts = [
     "--strict-markers",
     "-ra",
 ]
-<<<<<<< before updating
-testpaths = [
-    "README.md",
-    "tests",
-    "uv_workon",
-]
+xfail_strict = true
 # options
 filterwarnings = [
     "error",
     "ignore: Jupyter is migrating its paths to use standard platformdirs:DeprecationWarning",
 ]
-log_cli_level = "INFO"
-log_level = "INFO"
-minversion = "8"
-xfail_strict = true
-=======
-# options
-filterwarnings = [ "error" ]
 log_level = "INFO"
 log_cli_level = "INFO"
-strict_xfail = "true"
->>>>>>> after updating
 
 [tool.coverage]
 run.source = [
@@ -463,18 +423,14 @@ pip-deps = [
     # these used solely for specking tools to be run via uvx ...
     "conda-lock>=4.0.2",
     "copier-template-extensions>=0.3.3",
-    "copier>=9.18.1",
+    "copier>=9.17.2",
     "grayskull>=3.1.1",
     "prek>=0.5.2",
     "pyrefly>=1.2.0",
     "pyright>=1.1.411",
     "rooster>=0.1.1",
     "twine>=7.0.0",
-<<<<<<< before updating
     "ty>=0.0.75",
-=======
-    "ty>=0.0.77",
->>>>>>> after updating
 ]
 groups = [
     "basedpyright",
@@ -489,11 +445,7 @@ style = "requirements"
 scripts = [
     "noxfile.py",
     "tools/check_dist_version.py",
-<<<<<<< before updating
-=======
-    "tools/cog_runner.py",
     "tools/get_version_from_pre_commit_config.py",
->>>>>>> after updating
 ]
 
 [[tool.uv-locker.requirements]]
