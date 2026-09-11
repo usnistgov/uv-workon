@@ -106,7 +106,7 @@ repos:
 
   # * Linting
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.16.5
+    rev: v0.16.6
     hooks:
       - id: ruff-check
         alias: ruff
@@ -127,7 +127,7 @@ repos:
   # Revert to crate-ci/typos if https://github.com/crate-ci/typos/issues/390 is fixed.
   # - repo: https://github.com/crate-ci/typos
   - repo: https://github.com/adhtruong/mirrors-typos
-    rev: v1.50.0
+    rev: v1.50.1
     hooks:
       - id: typos
         exclude_types: [jupyter]
