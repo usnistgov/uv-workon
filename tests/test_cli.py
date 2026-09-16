@@ -396,7 +396,7 @@ def test_list(
 
     assert not out.exit_code
 
-    links = sorted(workon_home_with_is_venv.glob("*"), key=lambda x: x.name)
+    links = sorted(workon_home_with_is_venv.glob("*"), key=lambda x: x.name)  # pyrefly: ignore [implicit-any-lambda]
     expected = "\n".join([f"{p.name:25}  {p.resolve()}" for p in links])
     assert expected == out.output.strip()
 

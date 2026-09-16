@@ -57,7 +57,7 @@ def test_find_venvs_explicit(venvs_parent_path: Path, workon_home: Path) -> None
 
 
 def test_find_venvs_with_name(venvs_parent_path: Path, workon_home: Path) -> None:
-    paths = sorted(venvs_parent_path.glob("has_dotvenv_*"), key=lambda x: x.name)
+    paths = sorted(venvs_parent_path.glob("has_dotvenv_*"), key=lambda x: x.name)  # pyrefly: ignore [implicit-any-lambda]
 
     out = list(
         VirtualEnvPathAndLink.from_paths_and_workon(
