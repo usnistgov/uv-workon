@@ -75,21 +75,15 @@ def test_validate_symlink(venvs_parent_path: Path) -> None:
     [
         (
             ("has_dotvenv_0",),
-            nullcontext(  # pyrefly: ignore[no-matching-overload,bad-argument-type]
-                ("has_dotvenv_0", ".venv")
-            ),
+            nullcontext(("has_dotvenv_0", ".venv")),
         ),
         (
             ("has_venv_0", "venv"),
-            nullcontext(  # pyrefly: ignore[no-matching-overload,bad-argument-type]
-                ("has_venv_0", "venv")
-            ),
+            nullcontext(("has_venv_0", "venv")),
         ),
         (
             ("is_venv_0",),
-            nullcontext(  # pyrefly: ignore[no-matching-overload,bad-argument-type]
-                ("is_venv_0",)
-            ),
+            nullcontext(("is_venv_0",)),
         ),
         (
             ("bad_dotvenv_0",),

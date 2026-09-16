@@ -92,7 +92,7 @@ class VirtualEnvPathAndLink:
                     else name_
                 )
                 link = validate_symlink(workon_home / name)
-                yield cls(path=path, link=link)  # pyrefly: ignore[unexpected-keyword]
+                yield cls(path=path, link=link)
 
 
 def get_invalid_symlinks(workon_home: Path) -> Iterator[Path]:

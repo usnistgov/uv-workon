@@ -1,7 +1,7 @@
 [build-system]
 build-backend = "uv_build"
 requires = [
-    "uv-build>=0.12.10,<0.13.0",
+    "uv-build>=0.12.11,<0.13.0",
 ]
 
 [project]
@@ -84,7 +84,7 @@ docs = [
     "sphinxcontrib-typer",
 ]
 # other groups
-basedpyright = [ "basedpyright>=1.39.10" ]
+basedpyright = [ "basedpyright>=1.40.0" ]
 docs-live = [
     "sphinx-autobuild",
     { include-group = "docs" },
@@ -223,7 +223,7 @@ toplevel = [ "uv_workon" ]
 [tool.pyproject-fmt]
 indent = 4
 keep_full_version = true
-# max_supported_python = "3.13"
+max_supported_python = "3.14"
 expand_tables = [
     "project.entry-points",
     "project.optional-dependencies",
@@ -231,12 +231,14 @@ expand_tables = [
     "project.urls",
     "tool.mypy.overrides",
     "tool.pyproject2conda",
+    "tool.pyrefly",
     "tool.pyright.executionEnvironments",
     "tool.pytest",
     "tool.ruff.format",
     "tool.ruff.lint",
     "tool.ruff.lint.per-file-ignores",
     "tool.ty.overrides",
+    "tool.ty.rules",
     "tool.typos",
     "tool.uv.dependency-groups",
     "tool.uv.exclude-newer-package",
@@ -282,6 +284,10 @@ project-includes = [
 ]
 search-path = [ "." ]
 enabled-ignores = [ "pyrefly" ]
+min-severity = "warn"
+
+[tool.pyrefly.errors]
+unused-ignore = "error"
 
 [tool.pyright]
 typeCheckingMode = "strict"
@@ -342,6 +348,9 @@ src.include = [
     "tools",
 ]
 analysis.respect-type-ignore-comments = false
+
+[tool.ty.rules]
+unused-ignore-comment = "error"
 
 # * Testing --------------------------------------------------------------------
 [tool.pytest.ini_options]
@@ -423,14 +432,14 @@ pip-deps = [
     # these used solely for specking tools to be run via uvx ...
     "conda-lock>=4.0.2",
     "copier-template-extensions>=0.3.3",
-    "copier>=9.18.1",
-    "grayskull>=3.1.1",
-    "prek>=0.5.2",
+    "copier>=9.18.2",
+    "grayskull>=3.2.0",
+    "prek>=0.5.3",
     "pyrefly>=1.2.0",
     "pyright>=1.1.411",
     "rooster>=0.1.1",
     "twine>=7.0.0",
-    "ty>=0.0.78",
+    "ty>=0.0.79",
 ]
 groups = [
     "basedpyright",
