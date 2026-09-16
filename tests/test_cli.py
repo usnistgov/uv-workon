@@ -17,8 +17,8 @@ from uv_workon import cli
 from uv_workon.core import generate_shell_config
 from uv_workon.kernels import get_ipykernel_install_script_path
 
-from .test_kernels import skip_if_no_jupyter_client  # pyrefly: ignore[missing-import]
-from .utils import normalize_path  # pyrefly: ignore[missing-import]
+from .test_kernels import skip_if_no_jupyter_client
+from .utils import normalize_path
 
 if TYPE_CHECKING:
     from typing import Any
