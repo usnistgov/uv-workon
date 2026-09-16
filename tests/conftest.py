@@ -118,7 +118,7 @@ def dummy_kernelspec() -> dict[str, Any]:
                     "-f",
                     "{connection_file}",
                 ],
-                "env": {},
+                "env": {},  # pyrefly: ignore [implicit-any-empty-container]
                 "display_name": "Python [venv: dummy0]",
                 "language": "python",
                 "interrupt_mode": "signal",
@@ -139,7 +139,7 @@ def dummy_kernelspec() -> dict[str, Any]:
                 "-f",
                 "{connection_file}",
             ],
-            "env": {},
+            "env": {},  # pyrefly: ignore [implicit-any-empty-container]
             "display_name": "Python [venv: dummy0]",
             "language": "python",
             "interrupt_mode": "signal",
