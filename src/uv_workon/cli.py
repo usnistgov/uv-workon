@@ -427,7 +427,7 @@ def list_virtualenvs(
     venv_paths = get_virtualenv_paths(workon_home)
     logger.debug("params: %s", locals())
 
-    for p in sorted(venv_paths, key=lambda x: x.name):  # pyrefly: ignore [implicit-any-lambda]
+    for p in sorted(venv_paths, key=lambda x: x.name):
         typer.echo(f"{p.name:25}  {p.resolve()}")
 
 
