@@ -161,7 +161,7 @@ def workon_home_typer_app() -> Typer:
     app = typer.Typer()
 
     @app.command()
-    def dummy(workon_home: cli.WORKON_HOME_CLI) -> Path:  # pyright: ignore[reportUnusedFunction]
+    def dummy(workon_home: cli.WORKON_HOME_CLI) -> Path:
         typer.echo(str(workon_home))
         return workon_home
 
@@ -197,7 +197,7 @@ def venv_patterns_app() -> Typer:
     app = typer.Typer()
 
     @app.command()
-    def dummy(  # pyright: ignore[reportUnusedFunction]
+    def dummy(
         *,
         venv_patterns: cli.VENV_PATTERNS_CLI,
         use_default_venv_patterns: cli.USE_DEFAULT_VENV_PATTERNS_CLI = True,  # ruff:ignore[unused-function-argument]
@@ -396,7 +396,7 @@ def test_list(
 
     assert not out.exit_code
 
-    links = sorted(workon_home_with_is_venv.glob("*"), key=lambda x: x.name)  # pyrefly: ignore [implicit-any-lambda]
+    links = sorted(workon_home_with_is_venv.glob("*"), key=lambda x: x.name)
     expected = "\n".join([f"{p.name:25}  {p.resolve()}" for p in links])
     assert expected == out.output.strip()
 
