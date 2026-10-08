@@ -34,6 +34,7 @@ classifiers = [
 ]
 dependencies = [
     "attrs>=25.3.0",
+    "shellingham>=1.5.4",
     "typer>=0.26.2",
     "typing-extensions>=4.12.2; python_full_version<'3.11'",
 ]
