@@ -34,6 +34,7 @@ classifiers = [
 ]
 dependencies = [
     "attrs>=25.3.0",
+    "shellingham>=1.5.4",
     "typer>=0.26.2",
     "typing-extensions>=4.12.2; python_full_version<'3.11'",
 ]
@@ -220,6 +221,12 @@ ignore = [
 [tool.check-wheel-contents]
 src_dir = [ "src" ]
 toplevel = [ "uv_workon" ]
+
+[tool.deptry]
+known_first_party = [ "uv_workon" ]
+# Group: ignores
+per_rule_ignores.DEP001 = [ "pkginfo" ]
+per_rule_ignores.DEP004 = [ "nox", "pytest" ]
 
 [tool.pyproject-fmt]
 indent = 4

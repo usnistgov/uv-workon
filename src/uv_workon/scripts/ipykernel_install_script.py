@@ -38,7 +38,7 @@ def main(args: Sequence[str] | None = None) -> int:
     )
 
     try:
-        import ipykernel  # ruff:ignore[unused-import]  # pylint: disable=unused-import
+        import ipykernel  # ruff:ignore[unused-import]  # pylint: disable=unused-import  # deptry: ignore[DEP004]
     except ImportError:
         import sys
 
