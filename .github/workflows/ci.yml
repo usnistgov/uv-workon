@@ -191,33 +191,19 @@ jobs:
       matrix:
         os:
           - ubuntu-latest
-<<<<<<< before updating
         style:
           - test
-        python-version:
-          ${{
-          fromJson(needs.build-package.outputs.minmax-default-python-versions)
-          }}
-=======
         python-version: ${{ fromJson(needs.build-package.outputs.minmax-default-python-versions) }}
->>>>>>> after updating
         session:
           - test
         include:
           - os: windows-latest
-<<<<<<< before updating
-            python-version:
-              ${{ needs.build-package.outputs.default-python-version }}
+            python-version: ${{ needs.build-package.outputs.default-python-version }}
             session: test-noopt
           - os: ubuntu-latest
-            python-version:
-              ${{ needs.build-package.outputs.default-python-version }}
+            python-version: ${{ needs.build-package.outputs.default-python-version }}
             session: test-noopt
 
-=======
-            python-version: ${{ needs.build-package.outputs.default-python-version }}
-            session: test
->>>>>>> after updating
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
