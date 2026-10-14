@@ -41,13 +41,13 @@ if TYPE_CHECKING:
     R = TypeVar("R")
 
 
-# * Logging -------------------------------------------------------------------
+# * Logging ----------------------------------------------------------------------------
 FORMAT = "[%(name)s - %(levelname)s] %(message)s"
 logging.basicConfig(level=logging.WARNING, format=FORMAT)
 logger: logging.Logger = logging.getLogger(__name__)
 
 
-# * Utils ---------------------------------------------------------------------
+# * Utils ------------------------------------------------------------------------------
 def _get_input_paths(
     paths: list[Path] | None, parents: list[Path] | None
 ) -> Iterable[Path]:
@@ -114,7 +114,7 @@ def _confirm_action(yes: bool | None, msg: str) -> bool:
     return yes
 
 
-# * Callbacks -----------------------------------------------------------------
+# * Callbacks --------------------------------------------------------------------------
 def _callback_expand_user(x: Path) -> Path:
     return x.expanduser()
 
@@ -147,7 +147,7 @@ def _callback_verbose(
     return verbose
 
 
-# * Completions ---------------------------------------------------------------
+# * Completions ------------------------------------------------------------------------
 @lru_cache
 def _all_virtualenv_names(workon_home: Path) -> list[str]:
     return [p.name for p in get_virtualenv_paths(workon_home)]
@@ -166,7 +166,7 @@ def _complete_path() -> list[str]:
     return []
 
 
-# * Main app ------------------------------------------------------------------
+# * Main app ---------------------------------------------------------------------------
 app_typer: typer.Typer = typer.Typer()
 app_kernels: typer.Typer = typer.Typer(help="Jupyter kernel utilities")
 app_typer.add_typer(app_kernels, name="kernels")
@@ -199,7 +199,7 @@ def main(
         typer.echo(ctx.get_help())
 
 
-# * Options -------------------------------------------------------------------
+# * Options ----------------------------------------------------------------------------
 WORKON_HOME_CLI = Annotated[
     Path,
     typer.Option(
@@ -376,7 +376,7 @@ SHELL_TYPE_CLI = Annotated[
 ]
 
 
-# * Commands ------------------------------------------------------------------
+# * Commands ---------------------------------------------------------------------------
 # ** Links
 @app_typer.command("link")
 def link_virtualenvs_to_workon_home(
