@@ -112,7 +112,7 @@ test-noopt = [
     "pytest-xdist",
     { include-group = "pytest" },
 ]
-typecheck-runner = [ "typecheck-runner>=0.2.0; python_version>'3.9'" ]
+typecheck-runner = [ "typecheck-runner>=0.2.2; python_version>'3.9'" ]
 
 # * uv ---------------------------------------------------------------------------------------------
 [tool.uv]
@@ -470,7 +470,7 @@ pip-deps = [
     "rooster>=0.1.1",
     "rust-just>=1.59.0",
     "twine>=7.0.0",
-    "ty>=0.0.88",
+    "ty>=0.0.89",
 ]
 groups = [
     "basedpyright",
