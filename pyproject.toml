@@ -105,7 +105,6 @@ pytest = [ "pytest", "pytest-mock>=3.14.0" ]
 test-extras = [
     { include-group = "test" },
 ]
-<<<<<<< before updating
 test-noopt = [
     "pytest",
     "pytest-cov",
@@ -113,8 +112,6 @@ test-noopt = [
     "pytest-xdist",
     { include-group = "pytest" },
 ]
-=======
->>>>>>> after updating
 typecheck-runner = [ "typecheck-runner>=0.2.2; python_version>'3.9'" ]
 
 # * uv ---------------------------------------------------------------------------------------------
