@@ -15,7 +15,7 @@ dependencies:
   - attrs>=25.3.0
   - ipykernel
   - jupyter-client>=8.6.3
-  - mypy>=2.4.0
+  - mypy>=2.4.1
   - nox>=2026.10.20
   - pylint
   - pytest
