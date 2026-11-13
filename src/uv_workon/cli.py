@@ -758,4 +758,4 @@ def list_kernels() -> None:
 
     from jupyter_client.kernelspecapp import ListKernelSpecs
 
-    ListKernelSpecs(log_level="ERROR").start()  # ty: ignore[missing-argument]  # pyright: ignore[reportUnusedCallResult]
+    ListKernelSpecs(log_level="ERROR").start()  # pyright: ignore[reportUnusedCallResult]
