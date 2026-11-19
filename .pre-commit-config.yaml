@@ -78,7 +78,11 @@ repos:
       - id: pyproject-fmt
   # ** validate (schema-store)
   - repo: https://github.com/henryiii/validate-pyproject-schema-store
+<<<<<<< before updating
     rev: "2026.11.07"
+=======
+    rev: "2026.11.10"
+>>>>>>> after updating
     hooks:
       - id: validate-pyproject
         name: validate-pyproject-schema-store
