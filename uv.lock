@@ -2505,7 +2505,6 @@ requires-dist = [
     { name = "shellingham", specifier = ">=1.5.4" },
     { name = "simple-term-menu", marker = "extra == 'menu'", specifier = ">=1.6.6" },
     { name = "typer", specifier = ">=0.26.2" },
-    { name = "typing-extensions", marker = "python_full_version < '3.11'", specifier = ">=4.12.2" },
     { name = "uv-workon", extras = ["jupyter", "menu"], marker = "extra == 'all'" },
 ]
 provides-extras = ["all", "menu", "jupyter"]
